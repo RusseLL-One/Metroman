@@ -3,8 +3,11 @@ package com.one.russell.metronomekotlin
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -32,6 +35,22 @@ class MainActivity : AppCompatActivity() {
                 clickPlayerTask.stop()
 
             }
+        }
+
+        ivIncBeatsPerBar.setOnClickListener {
+            setBeatsPerBar(true)
+        }
+
+        ivDecBeatsPerBar.setOnClickListener {
+            setBeatsPerBar(false)
+        }
+
+        ivIncValueOfBeat.setOnClickListener {
+            setValueOfBeat(true)
+        }
+
+        ivDecValueOfBeat.setOnClickListener {
+            setValueOfBeat(false)
         }
 
         tapButton.setOnClickListener(
@@ -106,5 +125,34 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
         )
+    }
+    private fun setBeatsPerBar(isIncreasing: Boolean) {
+        try {
+            var beatsPerBar = tvBeatsPerBar.text.toString().toInt()
+            if(isIncreasing) beatsPerBar++
+            else beatsPerBar--
+
+            if(beatsPerBar in 1..16) {
+                tvBeatsPerBar.text = beatsPerBar.toString()
+
+                clickPlayerTask.setBeatSize(beatsPerBar)
+            }
+        } catch (e: NumberFormatException) {
+        }
+    }
+
+    private fun setValueOfBeat(isIncreasing: Boolean) {
+        try {
+            var beatsPerBar = tvValueOfBeat.text.toString().toInt()
+            if(isIncreasing) beatsPerBar *= 2
+            else beatsPerBar /= 2
+
+            if(beatsPerBar in 1..64) {
+                tvValueOfBeat.text = beatsPerBar.toString()
+
+                //todo смена длительности ноты
+            }
+        } catch (e: NumberFormatException) {
+        }
     }
 }

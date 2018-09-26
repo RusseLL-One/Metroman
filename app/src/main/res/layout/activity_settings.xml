@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/tvAccentSound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Accent sound:"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/tvBeatSound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Beat sound:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvAccentSound"/>
+
+    <TextView
+        android:id="@+id/tvAccentSoundValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tvAccentSound"/>
+
+    <TextView
+        android:id="@+id/tvBeatSoundValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2"
+        app:layout_constraintTop_toTopOf="@id/tvBeatSound"
+        app:layout_constraintStart_toEndOf="@id/tvBeatSound"/>
+</android.support.constraint.ConstraintLayout>

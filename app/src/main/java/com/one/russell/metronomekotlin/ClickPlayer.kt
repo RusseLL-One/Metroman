@@ -2,38 +2,53 @@ package com.one.russell.metronomekotlin
 
 import android.app.Activity
 import android.content.Context
-import android.support.constraint.ConstraintLayout
+import android.media.AudioFormat
+import android.media.AudioTrack
 import android.view.View
 import java.io.IOException
-import android.transition.TransitionManager
-import android.support.constraint.ConstraintSet
-import android.transition.ChangeBounds
 import android.util.Log
+import android.view.animation.*
 import com.github.piasy.rxandroidaudio.StreamAudioPlayer
+import com.github.piasy.rxandroidaudio.StreamAudioRecorder
+import java.util.Collections.frequency
+import android.media.AudioManager
+import android.support.annotation.WorkerThread
 
-private const val SAMPLE_RATE = 28800
+
+private const val SAMPLE_RATE = 44100
+private const val BUFFER_SIZE = 28800
 
 class ClickPlayer(private var context: Context) {
     private var initSoundArray: ByteArray
     private var initAccentSoundArray: ByteArray
-    private var mainLayout: ConstraintLayout
     private var beatLine: View
     private var beatBall: View
     private var soundLength: Int = 0
     private var bpm = 0
     private var beat = 0
+    private var beatsPerBar = 4
+    private var isBeatBallOnTop = true
     private val mStreamAudioPlayer: StreamAudioPlayer
+    //private val audioTrack: AudioTrack
 
     init {
-        initSoundArray = ByteArray(SAMPLE_RATE)
-        initAccentSoundArray = ByteArray(SAMPLE_RATE)
+        initSoundArray = ByteArray(BUFFER_SIZE)
+        initAccentSoundArray = ByteArray(BUFFER_SIZE)
 
-        mainLayout = (context as Activity).findViewById(R.id.clMainActivity)
-        beatLine = mainLayout.findViewById(R.id.vLine)
-        beatBall = mainLayout.findViewById(R.id.vBall)
+        beatLine = (context as Activity).findViewById(R.id.vLine)
+        beatBall = (context as Activity).findViewById(R.id.vBall)
+
 
         mStreamAudioPlayer = StreamAudioPlayer.getInstance()
-        mStreamAudioPlayer.init()
+        mStreamAudioPlayer.init(StreamAudioPlayer.DEFAULT_SAMPLE_RATE, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT, BUFFER_SIZE)
+
+//        audioTrack = AudioTrack(AudioManager.STREAM_MUSIC,
+//                SAMPLE_RATE,
+//                AudioFormat.CHANNEL_OUT_MONO,
+//                AudioFormat.ENCODING_PCM_16BIT,
+//                SAMPLE_RATE,
+//                AudioTrack.MODE_STREAM)
+//        audioTrack.play()
     }
 
     fun initSound() {
@@ -48,47 +63,59 @@ class ClickPlayer(private var context: Context) {
     }
 
     fun play() {
-        val silenceLength = (60f / bpm * SAMPLE_RATE.toFloat() * 2f - soundLength).toInt()
+            val silenceLength = (60f / bpm * StreamAudioPlayer.DEFAULT_SAMPLE_RATE.toFloat() * 2f - soundLength).toInt()
         Log.d("qwe", "play(), silenceLength=" + silenceLength)
 
-        if(beat % 4 == 0) {
-            beat = 0
-            if(silenceLength < 0) {
-                mStreamAudioPlayer.play(initAccentSoundArray, initAccentSoundArray.size + silenceLength)
+            val beatSound: ByteArray
+            if (beat % beatsPerBar == 0) {
+                beatSound = initAccentSoundArray
+                beat = 0
             } else {
-                mStreamAudioPlayer.play(initAccentSoundArray, initAccentSoundArray.size)
+                beatSound = initSoundArray
+            }
+
+            animateBeatBall(beatSound.size + silenceLength)
+
+            if (silenceLength < 0) {
+                //audioTrack.write(beatSound, 0, beatSound.size + silenceLength)
+                mStreamAudioPlayer.play(beatSound, beatSound.size + silenceLength)
+            } else {
+                //audioTrack.write(beatSound, 0, beatSound.size)
+                //audioTrack.write(ByteArray(silenceLength), 0, silenceLength)
+                mStreamAudioPlayer.play(beatSound, beatSound.size)
                 mStreamAudioPlayer.play(ByteArray(silenceLength), silenceLength)
             }
-        } else {
-            if(silenceLength < 0) {
-                mStreamAudioPlayer.play(initSoundArray, initSoundArray.size + silenceLength)
-            } else {
-                mStreamAudioPlayer.play(initSoundArray, initSoundArray.size)
-                mStreamAudioPlayer.play(ByteArray(silenceLength), silenceLength)
-            }
-        }
-        beat++
 
-        mainLayout.postOnAnimation {
-            TransitionManager.beginDelayedTransition(mainLayout, ChangeBounds().setDuration((5000 / 100).toLong()))
-
-            val constraintSet = ConstraintSet()
-            constraintSet.clone(mainLayout)
-
-            if(beat % 2 == 0) {
-                constraintSet.connect(beatBall.id, ConstraintSet.BOTTOM, beatLine.id, ConstraintSet.BOTTOM)
-                constraintSet.clear(beatBall.id, ConstraintSet.TOP)
-
-            } else {
-                constraintSet.connect(beatBall.id, ConstraintSet.TOP, beatLine.id, ConstraintSet.TOP)
-                constraintSet.clear(beatBall.id, ConstraintSet.BOTTOM)
-
-            }
-            constraintSet.applyTo(mainLayout)
-        }
+            beat++
     }
 
-    fun stop() {
+    private fun animateBeatBall(duration: Int) {
+        val pathLength = (beatLine.height - beatBall.height).toFloat()
+        val animation: Animation
+        animation = if(isBeatBallOnTop) {
+            TranslateAnimation(Animation.ABSOLUTE, 0f, Animation.ABSOLUTE, 0f, Animation.ABSOLUTE, 0f, Animation.ABSOLUTE, pathLength);
+        } else {
+            TranslateAnimation(Animation.ABSOLUTE, 0f, Animation.ABSOLUTE, 0f, Animation.ABSOLUTE, pathLength, Animation.ABSOLUTE, 0f);
+        }
+        isBeatBallOnTop = !isBeatBallOnTop
+        animation.interpolator = LinearInterpolator()
+        animation.duration = (duration * 1000 / (2 * StreamAudioPlayer.DEFAULT_SAMPLE_RATE)).toLong()
+
+            Log.d("qwe", "animateBeatBall(), duration=" + duration)
+        beatBall.postDelayed({
+            beatBall.startAnimation(animation)
+            beatBall.requestLayout()
+        }, 400) //todo magic numbers
+
+    }
+
+    fun setBeatSize(size: Int) {
+        beatsPerBar = size
+    }
+
+    fun release() {
+        //audioTrack.stop()
+        //audioTrack.release()
         mStreamAudioPlayer.release()
     }
 

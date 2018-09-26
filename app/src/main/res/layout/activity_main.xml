@@ -17,23 +17,32 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
-        <TextView
-            android:id="@+id/debugTextView"
+        <Button
+            android:id="@+id/bSettings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:text="Settings"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/bTempoTrain"/>
+        <Button
+            android:id="@+id/bTempoTrain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tempo training"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/bSettings"/>
 
         <ImageView
             android:id="@+id/knobImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginBottom="80dp"
             android:contentDescription="RotaryKnob"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/playButton"
@@ -42,7 +51,7 @@
             android:text="Play"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <Button
             android:id="@+id/tapButton"
@@ -50,8 +59,7 @@
             android:layout_height="wrap_content"
             android:text="Tap"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <TextView
             android:id="@+id/bpmTextView"
@@ -61,21 +69,100 @@
             android:text="BPM:\n10"
             android:textSize="24sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/knobImageView"
+            app:layout_constraintEnd_toEndOf="@id/knobImageView"
+            app:layout_constraintStart_toStartOf="@id/knobImageView" />
+
+        <TextView
+            android:id="@+id/tvBeatSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Size:"
+            android:textSize="24sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/knobImageView"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/bpmTextView" />
+
+        <TextView
+            android:id="@+id/tvBeatsPerBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/tvSeparator"
+            app:layout_constraintTop_toTopOf="@id/tvSeparator" />
+        <TextView
+            android:id="@+id/tvSeparator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="/"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/knobImageView"
+            app:layout_constraintTop_toBottomOf="@+id/tvBeatSize" />
+        <TextView
+            android:id="@+id/tvValueOfBeat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/tvSeparator"
+            app:layout_constraintTop_toTopOf="@id/tvSeparator" />
+
+        <ImageView
+            android:id="@+id/ivIncBeatsPerBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_arrow_drop_up_black_24dp"
+            app:layout_constraintBottom_toTopOf="@id/tvBeatsPerBar"
+            app:layout_constraintEnd_toEndOf="@id/tvBeatsPerBar"
+            app:layout_constraintStart_toStartOf="@id/tvBeatsPerBar"
+            />
+
+        <ImageView
+            android:id="@+id/ivDecBeatsPerBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_arrow_drop_down_black_24dp"
+            app:layout_constraintTop_toBottomOf="@id/tvBeatsPerBar"
+            app:layout_constraintEnd_toEndOf="@id/tvBeatsPerBar"
+            app:layout_constraintStart_toStartOf="@id/tvBeatsPerBar"
+            />
+
+        <ImageView
+            android:id="@+id/ivIncValueOfBeat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_arrow_drop_up_black_24dp"
+            app:layout_constraintBottom_toTopOf="@id/tvValueOfBeat"
+            app:layout_constraintEnd_toEndOf="@id/tvValueOfBeat"
+            app:layout_constraintStart_toStartOf="@id/tvValueOfBeat"
+            />
+
+        <ImageView
+            android:id="@+id/ivDecValueOfBeat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_arrow_drop_down_black_24dp"
+            app:layout_constraintTop_toBottomOf="@id/tvValueOfBeat"
+            app:layout_constraintEnd_toEndOf="@id/tvValueOfBeat"
+            app:layout_constraintStart_toStartOf="@id/tvValueOfBeat"
+            />
 
         <View
             android:id="@+id/vLine"
             android:layout_width="50dp"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_margin="16dp"
             android:background="@drawable/visual_beat_line"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
+            app:layout_constraintTop_toBottomOf="@id/bSettings">
         </View>
 
         <View
@@ -84,9 +171,10 @@
             android:layout_height="0dp"
             android:background="@drawable/visual_beat_ball"
             app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toEndOf="@id/vLine"
-            app:layout_constraintStart_toStartOf="@id/vLine"
-            app:layout_constraintTop_toTopOf="@id/vLine" />
+            app:layout_constraintEnd_toEndOf="@+id/vLine"
+            app:layout_constraintStart_toStartOf="@+id/vLine"
+            app:layout_constraintTop_toTopOf="@+id/vLine" />
+
 
     </android.support.constraint.ConstraintLayout>
 

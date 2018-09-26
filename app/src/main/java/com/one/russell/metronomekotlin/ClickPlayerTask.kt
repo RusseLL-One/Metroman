@@ -23,13 +23,16 @@ class ClickPlayerTask(context: Context, bpm: Int) : AsyncTask<Void, Void, Void>(
         player?.setBPM(bpm)
     }
 
+    fun setBeatSize(size: Int) {
+        player?.setBeatSize(size)
+    }
+
     fun initSound() {
         player?.initSound()
     }
 
     fun stop() {
         isPlaying = false
-        player?.stop()
     }
 
     override fun doInBackground(objects: Array<Void>): Void? {
@@ -37,6 +40,7 @@ class ClickPlayerTask(context: Context, bpm: Int) : AsyncTask<Void, Void, Void>(
         while (isPlaying) {
             player?.play()
         }
+        player?.release()
         return null
     }
 
