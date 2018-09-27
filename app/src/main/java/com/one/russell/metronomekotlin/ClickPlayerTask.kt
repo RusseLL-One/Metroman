@@ -1,34 +1,33 @@
 package com.one.russell.metronomekotlin
 
 import android.os.AsyncTask
-import android.content.Context
+import android.support.v4.app.FragmentActivity
 import java.lang.ref.WeakReference
 
-class ClickPlayerTask(context: Context, bpm: Int) : AsyncTask<Void, Void, Void>() {
+class ClickPlayerTask(activity: FragmentActivity) : AsyncTask<Void, Void, Void>() {
     private var player: ClickPlayer? = null
-    var weakActivity: WeakReference<Context> = WeakReference(context)
+    var weakActivity: WeakReference<FragmentActivity> = WeakReference(activity)
 
     var isPlaying = false
         private set
 
     init {
-        val weakContext = weakActivity.get()
-        if(weakContext != null) {
-            player = ClickPlayer(weakContext)
-            player?.setBPM(bpm)
+        val weakActivity = weakActivity.get()
+        if(weakActivity != null) {
+            player = ClickPlayer(weakActivity)
         }
-    }
-
-    fun setBPM(bpm: Int) {
-        player?.setBPM(bpm)
     }
 
     fun setBeatSize(size: Int) {
         player?.setBeatSize(size)
     }
 
-    fun initSound() {
-        player?.initSound()
+    fun setAccentSound(id: Int) {
+        player?.setAccentSound(id)
+    }
+
+    fun setBeatSound(id: Int) {
+        player?.setBeatSound(id)
     }
 
     fun stop() {

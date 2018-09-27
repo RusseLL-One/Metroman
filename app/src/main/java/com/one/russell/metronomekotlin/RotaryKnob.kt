@@ -1,18 +1,21 @@
 package com.one.russell.metronomekotlin
 
+import android.app.Activity
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.media.AudioManager
 import android.media.SoundPool
-import android.support.v7.app.AppCompatActivity
+import android.support.v4.app.FragmentActivity
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import kotlin.properties.Delegates
 
-class RotaryKnob (context: Context) : View(context) {
+class RotaryKnob (activity: FragmentActivity) {
     private val MIN_BPM = 10
     private val MAX_BPM = 500
     var knobImageView: ImageView
@@ -20,18 +23,19 @@ class RotaryKnob (context: Context) : View(context) {
     private var bpmTextView: TextView
     private var rotateClickPlayer: SoundPool
     private var rotateClickId: Int = 0
-    var bpm = 10
-    internal var clickPlayerTask: ClickPlayerTask? = null
+    private var model: MainViewModel by Delegates.notNull()
 
     init {
-        this.knobImageView = (context as AppCompatActivity).findViewById(R.id.knobImageView)
-        this.bpmTextView = context.findViewById(R.id.bpmTextView)
+        this.knobImageView = activity.findViewById(R.id.knobImageView)
+        this.bpmTextView = activity.findViewById(R.id.bpmTextView)
         rotateMatrix = Matrix()
 
-        setKnobImage()
+        setKnobImage(activity)
+
+        model = ViewModelProviders.of(activity).get(MainViewModel::class.java)
 
         rotateClickPlayer = SoundPool(2, AudioManager.STREAM_MUSIC, 0)
-        rotateClickId = rotateClickPlayer.load(context, R.raw.rotate_click, 1)
+        rotateClickId = rotateClickPlayer.load(activity, R.raw.rotate_click, 1)
     }
 
     private val knobRotateListener = object : View.OnTouchListener {
@@ -59,16 +63,13 @@ class RotaryKnob (context: Context) : View(context) {
                         //Если шаг слишком большой (например, при переходе от 0 к 360), то уменьшаем его
                         if (Math.abs(step) >= 30) step = -((if (step > 0) 1 else -1) * 36 - step)
 
-                        if (bpm + step >= MIN_BPM && bpm + step <= MAX_BPM) {
-                            bpm += step
-                            if (clickPlayerTask != null) {
-                                clickPlayerTask!!.setBPM(bpm)
-                            }
+                        if (model.bpm + step in MIN_BPM..MAX_BPM) {
+                            model.bpm += step
                         }
 
                         rotateClickPlayer.play(rotateClickId, 0.75f, 0.75f, 0, 0, 1f)
                     }
-                    bpmTextView.text = "BPM:\n$bpm"
+                    bpmTextView.text = "BPM:\n" + model.bpm
                     currentDegrees = newDegrees
                     turn(currentDegrees - startDegrees)
                 }
@@ -82,7 +83,7 @@ class RotaryKnob (context: Context) : View(context) {
         }
     }
 
-    private fun setKnobImage() {
+    private fun setKnobImage(context: Context) {
         knobImageView.post {
             val knobImage = BitmapFactory.decodeResource(context.resources, R.drawable.red_knob)
             val imageSizeMatrix = Matrix()
@@ -104,9 +105,5 @@ class RotaryKnob (context: Context) : View(context) {
 
     private fun cartesianToPolar(x: Float, y: Float): Float {
         return 180 + (-Math.toDegrees(Math.atan2((x - 0.5f).toDouble(), (y - 0.5f).toDouble()))).toFloat()
-    }
-
-    fun setPlayerTask(task: ClickPlayerTask) {
-        this.clickPlayerTask = task
     }
 }

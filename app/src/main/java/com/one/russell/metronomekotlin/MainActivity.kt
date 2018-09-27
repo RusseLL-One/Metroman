@@ -1,39 +1,44 @@
 package com.one.russell.metronomekotlin
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
+import android.support.v4.app.FragmentTransaction
 import android.util.Log
 import android.view.View
-import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity() {
     internal lateinit var knob: RotaryKnob
     internal lateinit var clickPlayerTask: ClickPlayerTask
+    private var model: MainViewModel by Delegates.notNull()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        model = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        model.initPrefs(this)
+
+        bpmTextView.text = "BPM:\n" + model.bpm
+
         knob = RotaryKnob(this)
-        clickPlayerTask = ClickPlayerTask(this, knob.bpm)
-        applicationContext
+        clickPlayerTask = ClickPlayerTask(this)
 
         playButton.setOnClickListener {
             if (clickPlayerTask.status != AsyncTask.Status.RUNNING) {
-                clickPlayerTask = ClickPlayerTask(this, knob.bpm)
+                clickPlayerTask = ClickPlayerTask(this)
                 playButton.setText(R.string.buttonStop)
-                knob.setPlayerTask(clickPlayerTask)
-                clickPlayerTask.initSound()
+                //val accentSoundId = model.prefs.getAccentSoundId()
+                //val beatSoundId = model.prefs.getBeatSoundId()
+                //clickPlayerTask.setAccentSound(accentSoundId)
+                //clickPlayerTask.setBeatSound(beatSoundId)
                 clickPlayerTask.execute()
             } else {
                 playButton.setText(R.string.buttonPlay)
                 clickPlayerTask.stop()
-
             }
         }
 
@@ -51,6 +56,17 @@ class MainActivity : AppCompatActivity() {
 
         ivDecValueOfBeat.setOnClickListener {
             setValueOfBeat(false)
+        }
+
+        bSettings.setOnClickListener {
+            if (supportFragmentManager != null) {
+                supportFragmentManager.
+                    beginTransaction().
+                        setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).
+                        replace(R.id.frameForFragment, SettingsFragment()).
+                        addToBackStack(null).
+                        commit()
+            }
         }
 
         tapButton.setOnClickListener(
@@ -126,6 +142,12 @@ class MainActivity : AppCompatActivity() {
                 }
         )
     }
+
+    override fun onStop() {
+        super.onStop()
+        model.saveToPrefs()
+    }
+
     private fun setBeatsPerBar(isIncreasing: Boolean) {
         try {
             var beatsPerBar = tvBeatsPerBar.text.toString().toInt()

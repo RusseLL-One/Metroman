@@ -13,6 +13,12 @@ class Preferences(context : Context) {
         pref = PreferenceManager.getDefaultSharedPreferences(context)
     }
 
+    fun setLastBpm(bpm: Int) {
+        val editor = pref.edit()
+        editor.putInt("last_bpm", bpm)
+        editor.apply()
+    }
+
     fun setAccentSoundId(soundId: Int) {
         val editor = pref.edit()
         editor.putInt("accent_sound_id", soundId)
@@ -25,6 +31,7 @@ class Preferences(context : Context) {
         editor.apply()
     }
 
+    fun getLastBpm() = pref.getInt("last_bpm", 10)
     fun getBeatSoundId() = pref.getInt("beat_sound_id", 1)
     fun getAccentSoundId() = pref.getInt("accent_sound_id", 1)
 }

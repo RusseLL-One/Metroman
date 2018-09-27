@@ -1,24 +1,25 @@
 package com.one.russell.metronomekotlin
 
 import android.app.Activity
-import android.content.Context
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.media.AudioFormat
+import android.media.AudioManager
 import android.media.AudioTrack
+import android.support.v4.app.FragmentActivity
+import android.support.v7.app.AppCompatActivity
 import android.view.View
 import java.io.IOException
 import android.util.Log
 import android.view.animation.*
 import com.github.piasy.rxandroidaudio.StreamAudioPlayer
-import com.github.piasy.rxandroidaudio.StreamAudioRecorder
-import java.util.Collections.frequency
-import android.media.AudioManager
-import android.support.annotation.WorkerThread
+import kotlin.properties.Delegates
 
 
 private const val SAMPLE_RATE = 44100
 private const val BUFFER_SIZE = 28800
 
-class ClickPlayer(private var context: Context) {
+class ClickPlayer(private var activity: FragmentActivity) {
     private var initSoundArray: ByteArray
     private var initAccentSoundArray: ByteArray
     private var beatLine: View
@@ -28,45 +29,71 @@ class ClickPlayer(private var context: Context) {
     private var beat = 0
     private var beatsPerBar = 4
     private var isBeatBallOnTop = true
-    private val mStreamAudioPlayer: StreamAudioPlayer
-    //private val audioTrack: AudioTrack
+    //private val mStreamAudioPlayer: StreamAudioPlayer
+    private val audioTrack: AudioTrack
+    private var model: MainViewModel by Delegates.notNull()
 
     init {
         initSoundArray = ByteArray(BUFFER_SIZE)
         initAccentSoundArray = ByteArray(BUFFER_SIZE)
 
-        beatLine = (context as Activity).findViewById(R.id.vLine)
-        beatBall = (context as Activity).findViewById(R.id.vBall)
+        beatLine = activity.findViewById(R.id.vLine)
+        beatBall = activity.findViewById(R.id.vBall)
 
+        //mStreamAudioPlayer = StreamAudioPlayer.getInstance()
+        //mStreamAudioPlayer.init(StreamAudioPlayer.DEFAULT_SAMPLE_RATE, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT, BUFFER_SIZE)
 
-        mStreamAudioPlayer = StreamAudioPlayer.getInstance()
-        mStreamAudioPlayer.init(StreamAudioPlayer.DEFAULT_SAMPLE_RATE, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT, BUFFER_SIZE)
+        audioTrack = AudioTrack(AudioManager.STREAM_MUSIC,
+                SAMPLE_RATE,
+                AudioFormat.CHANNEL_OUT_MONO,
+                AudioFormat.ENCODING_PCM_16BIT,
+                BUFFER_SIZE,
+                AudioTrack.MODE_STREAM)
+        audioTrack.play()
 
-//        audioTrack = AudioTrack(AudioManager.STREAM_MUSIC,
-//                SAMPLE_RATE,
-//                AudioFormat.CHANNEL_OUT_MONO,
-//                AudioFormat.ENCODING_PCM_16BIT,
-//                SAMPLE_RATE,
-//                AudioTrack.MODE_STREAM)
-//        audioTrack.play()
+        model = ViewModelProviders.of(activity).get(MainViewModel::class.java)
+
+        model.accentSoundLiveData.observe(activity, Observer {
+            setAccentSound(it)
+        })
+        model.beatSoundLiveData.observe(activity, Observer {
+            setBeatSound(it)
+        })
     }
 
-    fun initSound() {
+    fun setAccentSound(id: Int?) {
+        val soundResourceId = when (id) {
+            1 -> R.raw.drum_1
+            2 -> R.raw.wave_1
+            3 -> R.raw.wave_2
+            else -> R.raw.drum_1
+        }
         try {
-            var inputStream = context.resources.openRawResource(R.raw.crisp_1)
-            soundLength = inputStream.read(initSoundArray, 0, initSoundArray.size)
-
-            inputStream = context.resources.openRawResource(R.raw.drum_1)
+            val inputStream = activity.resources.openRawResource(soundResourceId)
             inputStream.read(initAccentSoundArray, 0, initAccentSoundArray.size)
         } catch (e: IOException) {
         }
     }
 
+    fun setBeatSound(id: Int?) {
+        val soundResourceId = when (id) {
+            1 -> R.raw.crisp_1
+            2 -> R.raw.crisp_2
+            3 -> R.raw.drum_2
+            else -> R.raw.crisp_1
+        }
+        try {
+            val inputStream = activity.resources.openRawResource(soundResourceId)
+            soundLength = inputStream.read(initSoundArray, 0, initSoundArray.size)
+        } catch (e: IOException) {
+        }
+    }
+
     fun play() {
-            val silenceLength = (60f / bpm * StreamAudioPlayer.DEFAULT_SAMPLE_RATE.toFloat() * 2f - soundLength).toInt()
+        val silenceLength = (60f / model.bpm * StreamAudioPlayer.DEFAULT_SAMPLE_RATE.toFloat() * 2f - soundLength).toInt()
         Log.d("qwe", "play(), silenceLength=" + silenceLength)
 
-            val beatSound: ByteArray
+        val beatSound: ByteArray
             if (beat % beatsPerBar == 0) {
                 beatSound = initAccentSoundArray
                 beat = 0
@@ -77,16 +104,17 @@ class ClickPlayer(private var context: Context) {
             animateBeatBall(beatSound.size + silenceLength)
 
             if (silenceLength < 0) {
-                //audioTrack.write(beatSound, 0, beatSound.size + silenceLength)
-                mStreamAudioPlayer.play(beatSound, beatSound.size + silenceLength)
+                audioTrack.write(beatSound, 0, beatSound.size + silenceLength)
+                //mStreamAudioPlayer.play(beatSound, beatSound.size + silenceLength)
             } else {
-                //audioTrack.write(beatSound, 0, beatSound.size)
-                //audioTrack.write(ByteArray(silenceLength), 0, silenceLength)
-                mStreamAudioPlayer.play(beatSound, beatSound.size)
-                mStreamAudioPlayer.play(ByteArray(silenceLength), silenceLength)
+                audioTrack.write(beatSound, 0, beatSound.size)
+                audioTrack.write(ByteArray(silenceLength), 0, silenceLength)
+                //mStreamAudioPlayer.play(beatSound, beatSound.size)
+                //mStreamAudioPlayer.play(ByteArray(silenceLength), silenceLength)
             }
 
-            beat++
+
+        beat++
     }
 
     private fun animateBeatBall(duration: Int) {
@@ -115,11 +143,7 @@ class ClickPlayer(private var context: Context) {
 
     fun release() {
         //audioTrack.stop()
-        //audioTrack.release()
-        mStreamAudioPlayer.release()
-    }
-
-    fun setBPM(bpm: Int) {
-        this.bpm = bpm
+        audioTrack.release()
+        //mStreamAudioPlayer.release()
     }
 }
