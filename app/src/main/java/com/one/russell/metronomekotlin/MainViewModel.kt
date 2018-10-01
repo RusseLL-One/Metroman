@@ -6,11 +6,11 @@ import android.arch.lifecycle.ViewModel
 import android.content.Context
 import android.util.Log
 import kotlin.properties.Delegates
+const val MIN_BPM = 10
+const val MAX_BPM = 500
 
 class MainViewModel : ViewModel() {
     var bpm = 10
-    //var accentSoundId = 1
-    //var beatSoundId = 1
     private var prefs: Preferences by Delegates.notNull()
     var accentSoundLiveData = MutableLiveData<Int>()
     var beatSoundLiveData = MutableLiveData<Int>()

@@ -1,25 +1,30 @@
 package com.one.russell.metronomekotlin
 
-import android.app.Activity
+import android.animation.ValueAnimator
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.graphics.Color
 import android.media.AudioFormat
 import android.media.AudioManager
 import android.media.AudioTrack
 import android.support.v4.app.FragmentActivity
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import java.io.IOException
 import android.util.Log
 import android.view.animation.*
+import android.widget.FrameLayout
 import com.github.piasy.rxandroidaudio.StreamAudioPlayer
 import kotlin.properties.Delegates
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
+
+
 
 
 private const val SAMPLE_RATE = 44100
 private const val BUFFER_SIZE = 28800
 
-class ClickPlayer(private var activity: FragmentActivity) {
+class ClickPlayer(activity: FragmentActivity): Runnable {
     private var initSoundArray: ByteArray
     private var initAccentSoundArray: ByteArray
     private var beatLine: View
@@ -32,6 +37,7 @@ class ClickPlayer(private var activity: FragmentActivity) {
     //private val mStreamAudioPlayer: StreamAudioPlayer
     private val audioTrack: AudioTrack
     private var model: MainViewModel by Delegates.notNull()
+    var isPlaying = false
 
     init {
         initSoundArray = ByteArray(BUFFER_SIZE)
@@ -69,7 +75,7 @@ class ClickPlayer(private var activity: FragmentActivity) {
             else -> R.raw.drum_1
         }
         try {
-            val inputStream = activity.resources.openRawResource(soundResourceId)
+            val inputStream = App.getAppInstance().resources.openRawResource(soundResourceId)
             inputStream.read(initAccentSoundArray, 0, initAccentSoundArray.size)
         } catch (e: IOException) {
         }
@@ -83,7 +89,7 @@ class ClickPlayer(private var activity: FragmentActivity) {
             else -> R.raw.crisp_1
         }
         try {
-            val inputStream = activity.resources.openRawResource(soundResourceId)
+            val inputStream = App.getAppInstance().resources.openRawResource(soundResourceId)
             soundLength = inputStream.read(initSoundArray, 0, initSoundArray.size)
         } catch (e: IOException) {
         }
@@ -101,7 +107,7 @@ class ClickPlayer(private var activity: FragmentActivity) {
                 beatSound = initSoundArray
             }
 
-            animateBeatBall(beatSound.size + silenceLength)
+            animateBeatBall ((beatSound.size + silenceLength) * 1000 / (2 * StreamAudioPlayer.DEFAULT_SAMPLE_RATE))
 
             if (silenceLength < 0) {
                 audioTrack.write(beatSound, 0, beatSound.size + silenceLength)
@@ -117,28 +123,58 @@ class ClickPlayer(private var activity: FragmentActivity) {
         beat++
     }
 
-    private fun animateBeatBall(duration: Int) {
-        val pathLength = (beatLine.height - beatBall.height).toFloat()
-        val animation: Animation
-        animation = if(isBeatBallOnTop) {
-            TranslateAnimation(Animation.ABSOLUTE, 0f, Animation.ABSOLUTE, 0f, Animation.ABSOLUTE, 0f, Animation.ABSOLUTE, pathLength);
-        } else {
-            TranslateAnimation(Animation.ABSOLUTE, 0f, Animation.ABSOLUTE, 0f, Animation.ABSOLUTE, pathLength, Animation.ABSOLUTE, 0f);
+    override fun run() {
+        isPlaying = true
+        while(isPlaying) {
+            play()
         }
-        isBeatBallOnTop = !isBeatBallOnTop
-        animation.interpolator = LinearInterpolator()
-        animation.duration = (duration * 1000 / (2 * StreamAudioPlayer.DEFAULT_SAMPLE_RATE)).toLong()
+        //release()
+    }
 
-            Log.d("qwe", "animateBeatBall(), duration=" + duration)
-        beatBall.postDelayed({
-            beatBall.startAnimation(animation)
+    //todo перенести в MainActivity
+    private fun animateBeatBall(duration: Int) {
+        val pathLength = beatLine.height - beatBall.height
+
+        val positionAnimator: ValueAnimator
+        if (isBeatBallOnTop) {
+            positionAnimator = ValueAnimator.ofInt(0, pathLength)
+        } else {
+            positionAnimator = ValueAnimator.ofInt(pathLength, 0)
+        }
+
+        isBeatBallOnTop = !isBeatBallOnTop
+        positionAnimator.duration = duration.toLong()
+        positionAnimator.interpolator = LinearInterpolator()
+        positionAnimator.addUpdateListener { animation ->
+            val x = animation.animatedValue as Int
+            (beatBall.layoutParams as FrameLayout.LayoutParams).topMargin = x
             beatBall.requestLayout()
-        }, 400) //todo magic numbers
+        }
+
+        val colorAnimator = ValueAnimator.ofInt(0, 255)
+        colorAnimator.interpolator = DecelerateInterpolator()
+        colorAnimator.addUpdateListener { animation ->
+
+            val animatorValue = (animation.animatedValue as Int)
+            val colorStr = Color.rgb(animatorValue,animatorValue,animatorValue)
+            val blackFilter = PorterDuffColorFilter(colorStr, PorterDuff.Mode.MULTIPLY)
+            beatBall.background.setColorFilter(blackFilter)
+        }
+
+        Log.d("qwe", "onTick, thread:" + Thread.currentThread().name)
+        beatBall.post {
+            positionAnimator.start()
+            colorAnimator.start()
+        }
 
     }
 
     fun setBeatSize(size: Int) {
         beatsPerBar = size
+    }
+
+    fun stop() {
+        isPlaying = false
     }
 
     fun release() {

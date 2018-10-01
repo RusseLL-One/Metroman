@@ -2,18 +2,17 @@ package com.one.russell.metronomekotlin
 
 import android.app.Application
 
-class Application : Application() {
+class App : Application() {
     companion object {
-        lateinit var instance: Application
+        private lateinit var instance: App
+
+        fun getAppInstance(): Application {
+            return instance
+        }
     }
 
     override fun onCreate() {
         super.onCreate()
         instance = this
     }
-
-    fun getAppContext() {
-        instance.applicationContext
-    }
-
 }

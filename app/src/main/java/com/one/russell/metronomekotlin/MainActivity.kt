@@ -1,9 +1,11 @@
 package com.one.russell.metronomekotlin
 
 import android.arch.lifecycle.ViewModelProviders
-import android.os.AsyncTask
+import android.content.ComponentName
+import android.content.ServiceConnection
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.IBinder
 import android.support.v4.app.FragmentTransaction
 import android.util.Log
 import android.view.View
@@ -12,8 +14,20 @@ import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity() {
     internal lateinit var knob: RotaryKnob
-    internal lateinit var clickPlayerTask: ClickPlayerTask
+    internal lateinit var sConn: ServiceConnection
+    internal lateinit var tickService: TickService
+    internal lateinit var clickPlayer: ClickPlayer
+    internal lateinit var t: Thread
+    internal var isBound = false
+
     private var model: MainViewModel by Delegates.notNull()
+
+    private var tickListener = object : TickListener {
+        override fun onTick(isEmphasis: Boolean) {
+
+
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,21 +39,44 @@ class MainActivity : AppCompatActivity() {
         bpmTextView.text = "BPM:\n" + model.bpm
 
         knob = RotaryKnob(this)
-        clickPlayerTask = ClickPlayerTask(this)
+        clickPlayer = ClickPlayer(this)
+
+        sConn = object : ServiceConnection {
+
+            override fun onServiceConnected(name: ComponentName, binder: IBinder) {
+                tickService = (binder as TickService.ServiceBinder).service
+                Log.d("qwe", "onServiceConnected, thread:" + Thread.currentThread().name)
+
+                tickService.setTickListener(tickListener)
+                isBound = true
+            }
+
+            override fun onServiceDisconnected(name: ComponentName) {
+                Log.d("qwe", "MainActivity onServiceDisconnected")
+                isBound = false
+            }
+        }
 
         playButton.setOnClickListener {
-            if (clickPlayerTask.status != AsyncTask.Status.RUNNING) {
-                clickPlayerTask = ClickPlayerTask(this)
+            if(!clickPlayer.isPlaying){
+            //if (clickPlayerTask.status != AsyncTask.Status.RUNNING) {
+            //    clickPlayerTask = ClickPlayerTask(this)
+                t = Thread(clickPlayer)
+                Log.d("asd", "play")
+
                 playButton.setText(R.string.buttonStop)
-                //val accentSoundId = model.prefs.getAccentSoundId()
-                //val beatSoundId = model.prefs.getBeatSoundId()
-                //clickPlayerTask.setAccentSound(accentSoundId)
-                //clickPlayerTask.setBeatSound(beatSoundId)
-                clickPlayerTask.execute()
+                //clickPlayerTask.execute()
+                t.start()
+                //clickPlayer.run()
             } else {
                 playButton.setText(R.string.buttonPlay)
-                clickPlayerTask.stop()
+                Log.d("asd", "stop")
+
+                //clickPlayerTask.stop()
+                //clickPlayer.stop()
+                //t.interrupt()
             }
+            clickPlayer.isPlaying = !clickPlayer.isPlaying
         }
 
         ivIncBeatsPerBar.setOnClickListener {
@@ -69,83 +106,49 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        tapButton.setOnClickListener(
-                object : View.OnClickListener {
+        tapButton.setOnClickListener(object : View.OnClickListener {
+            var prevTouchTime = 0L
+            var prevTouchInterval = 0L
+            var isFirstClick = true
 
-                    //todo доделать
-                    var startTime = 0L;
-                    var tapCount = 0
-                    var list = LongArray(10)
-                    var sum = 0L
+            override fun onClick(p0: View?) {
+                if (prevTouchTime > 0) {
+                    val interval = System.currentTimeMillis() - prevTouchTime
 
-                    override fun onClick(p0: View?) {
-                        val currTime = System.currentTimeMillis()
-                        if (startTime == 0L) {
-                            startTime = currTime - 1
-                        }
-                        val y = currTime - startTime
-
-                        if (tapCount < 10) {
-                            list[tapCount] = (y)
-                            tapCount++
-
-                            var str = ""
-                            for(l in list) {
-                                str += l.toString() + " "
+                    if (interval > 60000 / MAX_BPM) {
+                        if (interval < 60000 / MIN_BPM) {
+                            if (isFirstClick) {
+                                prevTouchInterval = interval
+                                isFirstClick = false
                             }
-                            Log.d("qwe", str)
-
-                            sum = 0L
-                            for (i in 0 until tapCount) {
-                                sum += list[i]
+                            else {
+                                prevTouchInterval = (prevTouchInterval + interval) / 2
                             }
-                            sum /= tapCount
-
                         } else {
-                            for(i in 0 until tapCount - 1) {
-                                list[i] = list[i+1]
-                            }
-                            list[tapCount - 1] = y
-
-                            var str = ""
-                            for(l in list) {
-                                str += l.toString() + " "
-                            }
-                            Log.d("qwe", str)
-
-                            sum = 0L
-                            for (i in 0 until tapCount) {
-                                sum += list[i]
-                            }
-                            sum /= tapCount
+                            //Если интервал нажатий слишком большой, сбрасываем последовательность
+                            isFirstClick = true
                         }
-
-                        val tempo = 60000 * tapCount / y;
-
-                        bpmTextView.text = sum.toString()
-
-                        /*val currTime = System.currentTimeMillis()
-                        if (startTime == 0L) {
-                            startTime = currTime - 1
-                        }
-                        val y = currTime - startTime
-
-                        val tempo = 60000 * tapCount / y;
-
-                        if (tapCount < 20) {
-                            tapCount++
-                        }
-                        startTime = currTime
-
-                        bpmTextView.text = tempo.toString()*/
+                    } else {
+                        //Если интервал нажатий слишком маленький, устанавливаем его минимальное значение
+                        prevTouchInterval = (60000 / MAX_BPM).toLong()
                     }
+
+                    val bpm = (60000 / prevTouchInterval).toInt()
+                    model.bpm = bpm
+                    bpmTextView.text = "BPM:\n$bpm"
                 }
-        )
+                prevTouchTime = System.currentTimeMillis()
+            }
+        })
     }
 
     override fun onStop() {
         super.onStop()
         model.saveToPrefs()
+    }
+
+    interface TickListener {
+        fun onTick(isEmphasis: Boolean)
     }
 
     private fun setBeatsPerBar(isIncreasing: Boolean) {
@@ -157,7 +160,8 @@ class MainActivity : AppCompatActivity() {
             if(beatsPerBar in 1..16) {
                 tvBeatsPerBar.text = beatsPerBar.toString()
 
-                clickPlayerTask.setBeatSize(beatsPerBar)
+                //clickPlayerTask.setBeatSize(beatsPerBar)
+                clickPlayer.setBeatSize(beatsPerBar)
             }
         } catch (e: NumberFormatException) {
         }

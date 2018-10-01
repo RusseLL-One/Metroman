@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.graphics.Matrix
 import android.media.AudioManager
 import android.media.SoundPool
@@ -14,10 +15,11 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import kotlin.properties.Delegates
+import android.graphics.drawable.Drawable
+
+
 
 class RotaryKnob (activity: FragmentActivity) {
-    private val MIN_BPM = 10
-    private val MAX_BPM = 500
     var knobImageView: ImageView
     var rotateMatrix: Matrix? = null
     private var bpmTextView: TextView
@@ -85,7 +87,14 @@ class RotaryKnob (activity: FragmentActivity) {
 
     private fun setKnobImage(context: Context) {
         knobImageView.post {
-            val knobImage = BitmapFactory.decodeResource(context.resources, R.drawable.red_knob)
+            //val knobImage = BitmapFactory.decodeResource(context.resources, R.drawable.knob_drawable)
+            val drawable = context.resources.getDrawable(R.drawable.knob_drawable)
+            val canvas = Canvas()
+            val knobImage = Bitmap.createBitmap(knobImageView.measuredWidth, knobImageView.measuredHeight, Bitmap.Config.ARGB_8888);
+            canvas.setBitmap(knobImage);
+            drawable.setBounds(0, 0, knobImageView.measuredWidth, knobImageView.measuredHeight);
+            drawable.draw(canvas);
+
             val imageSizeMatrix = Matrix()
             val width = knobImageView.measuredWidth.toFloat() / knobImage.width.toFloat()
             val height = knobImageView.measuredHeight.toFloat() / knobImage.height.toFloat()
