@@ -65,6 +65,12 @@ class ClickPlayer(activity: FragmentActivity): Runnable {
         model.beatSoundLiveData.observe(activity, Observer {
             setBeatSound(it)
         })
+
+        model.bpmLiveData.observe(activity, Observer {
+            if(it != null) {
+                bpm = it
+            }
+        })
     }
 
     fun setAccentSound(id: Int?) {
@@ -96,7 +102,7 @@ class ClickPlayer(activity: FragmentActivity): Runnable {
     }
 
     fun play() {
-        val silenceLength = (60f / model.bpm * StreamAudioPlayer.DEFAULT_SAMPLE_RATE.toFloat() * 2f - soundLength).toInt()
+        val silenceLength = (60f / bpm * StreamAudioPlayer.DEFAULT_SAMPLE_RATE.toFloat() * 2f - soundLength).toInt()
         Log.d("qwe", "play(), silenceLength=" + silenceLength)
 
         val beatSound: ByteArray

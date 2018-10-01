@@ -10,8 +10,8 @@ const val MIN_BPM = 10
 const val MAX_BPM = 500
 
 class MainViewModel : ViewModel() {
-    var bpm = 10
     private var prefs: Preferences by Delegates.notNull()
+    var bpmLiveData = MutableLiveData<Int>()
     var accentSoundLiveData = MutableLiveData<Int>()
     var beatSoundLiveData = MutableLiveData<Int>()
 
@@ -20,7 +20,11 @@ class MainViewModel : ViewModel() {
 
         accentSoundLiveData.postValue(prefs.getAccentSoundId())
         beatSoundLiveData.postValue(prefs.getBeatSoundId())
-        bpm = prefs.getLastBpm()
+        bpmLiveData.postValue(prefs.getLastBpm())
+    }
+
+    fun setBpmLiveData(bpm: Int) {
+        bpmLiveData.postValue(bpm)
     }
 
     fun setAccentSoundId(id: Int) {
@@ -38,8 +42,7 @@ class MainViewModel : ViewModel() {
         val beatSoundId = beatSoundLiveData.value ?: 1
         prefs.setBeatSoundId(beatSoundId)
 
-        prefs.setLastBpm(bpm)
+        val lastBpm = bpmLiveData.value ?: 10
+        prefs.setLastBpm(lastBpm)
     }
-    //todo вынести все глобальные переменные сюда
-
 }

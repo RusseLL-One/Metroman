@@ -1,43 +1,52 @@
 package com.one.russell.metronomekotlin
 
-import android.app.Activity
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Matrix
+import android.graphics.*
 import android.media.AudioManager
 import android.media.SoundPool
 import android.support.v4.app.FragmentActivity
 import android.view.MotionEvent
 import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
 import kotlin.properties.Delegates
-import android.graphics.drawable.Drawable
+import android.util.AttributeSet
 
 
+class RotaryKnob @JvmOverloads constructor(
+        activity: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+) : View(activity, attrs, defStyleAttr) {
 
-class RotaryKnob (activity: FragmentActivity) {
-    var knobImageView: ImageView
-    var rotateMatrix: Matrix? = null
-    private var bpmTextView: TextView
+    var bpm = 10
+    lateinit var knobImage: Bitmap
+    var degrees = 0f
+    var rotateMatrix = Matrix()
     private var rotateClickPlayer: SoundPool
     private var rotateClickId: Int = 0
     private var model: MainViewModel by Delegates.notNull()
+    private val paint: Paint
 
     init {
-        this.knobImageView = activity.findViewById(R.id.knobImageView)
-        this.bpmTextView = activity.findViewById(R.id.bpmTextView)
         rotateMatrix = Matrix()
 
         setKnobImage(activity)
 
-        model = ViewModelProviders.of(activity).get(MainViewModel::class.java)
+        model = ViewModelProviders.of(activity as FragmentActivity).get(MainViewModel::class.java)
 
         rotateClickPlayer = SoundPool(2, AudioManager.STREAM_MUSIC, 0)
         rotateClickId = rotateClickPlayer.load(activity, R.raw.rotate_click, 1)
+
+        model.bpmLiveData.observe(activity, Observer {
+            if(it != null) {
+                bpm = it
+            }
+        })
+
+        paint = Paint()
+        paint.setStyle(Paint.Style.FILL)
+        paint.setAntiAlias(true)
+        paint.setColor(Color.BLACK)
     }
 
     private val knobRotateListener = object : View.OnTouchListener {
@@ -48,16 +57,16 @@ class RotaryKnob (activity: FragmentActivity) {
 
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    val startX = event.x / knobImageView.width.toFloat()
-                    val startY = event.y / knobImageView.height.toFloat()
+                    val startX = event.x / this@RotaryKnob.width.toFloat()
+                    val startY = event.y / this@RotaryKnob.height.toFloat()
                     currentDegrees = cartesianToPolar(startX, startY)
                     //Вычисляем начальные градусы с учётом предыдущего поворота
                     startDegrees = currentDegrees - startDegrees
                 }
                 MotionEvent.ACTION_MOVE -> {
                     val newDegrees: Float
-                    val x = event.x / knobImageView.width.toFloat()
-                    val y = event.y / knobImageView.height.toFloat()
+                    val x = event.x / this@RotaryKnob.width.toFloat()
+                    val y = event.y / this@RotaryKnob.height.toFloat()
                     newDegrees = cartesianToPolar(x, y)
                     //bpm увеличивается каждые 10 градусов. 10 градусов - это наш шаг
                     var step = (newDegrees / 10).toInt() - (currentDegrees / 10).toInt()
@@ -65,15 +74,16 @@ class RotaryKnob (activity: FragmentActivity) {
                         //Если шаг слишком большой (например, при переходе от 0 к 360), то уменьшаем его
                         if (Math.abs(step) >= 30) step = -((if (step > 0) 1 else -1) * 36 - step)
 
-                        if (model.bpm + step in MIN_BPM..MAX_BPM) {
-                            model.bpm += step
+                        if (bpm + step in MIN_BPM..MAX_BPM) {
+                            bpm += step
+                            model.setBpmLiveData(bpm)
                         }
 
                         rotateClickPlayer.play(rotateClickId, 0.75f, 0.75f, 0, 0, 1f)
                     }
-                    bpmTextView.text = "BPM:\n" + model.bpm
                     currentDegrees = newDegrees
-                    turn(currentDegrees - startDegrees)
+                    degrees = currentDegrees - startDegrees
+                    invalidate()
                 }
                 MotionEvent.ACTION_UP -> {
                     startDegrees = currentDegrees - startDegrees
@@ -86,30 +96,24 @@ class RotaryKnob (activity: FragmentActivity) {
     }
 
     private fun setKnobImage(context: Context) {
-        knobImageView.post {
-            //val knobImage = BitmapFactory.decodeResource(context.resources, R.drawable.knob_drawable)
+        this.post {
             val drawable = context.resources.getDrawable(R.drawable.knob_drawable)
-            val canvas = Canvas()
-            val knobImage = Bitmap.createBitmap(knobImageView.measuredWidth, knobImageView.measuredHeight, Bitmap.Config.ARGB_8888);
-            canvas.setBitmap(knobImage);
-            drawable.setBounds(0, 0, knobImageView.measuredWidth, knobImageView.measuredHeight);
-            drawable.draw(canvas);
 
-            val imageSizeMatrix = Matrix()
-            val width = knobImageView.measuredWidth.toFloat() / knobImage.width.toFloat()
-            val height = knobImageView.measuredHeight.toFloat() / knobImage.height.toFloat()
-            imageSizeMatrix.preScale(width, height)
-            knobImageView.setImageBitmap(Bitmap.createBitmap(knobImage, 0, 0,
-                    knobImage.width, knobImage.height, imageSizeMatrix, true))
-            knobImageView.scaleType = ImageView.ScaleType.MATRIX
-            knobImageView.imageMatrix = rotateMatrix
-            knobImageView.setOnTouchListener(knobRotateListener)
+            knobImage = Bitmap.createBitmap(this.measuredWidth, this.measuredHeight, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(knobImage)
+            drawable.setBounds(0, 0, this.measuredWidth, this.measuredHeight)
+            drawable.draw(canvas)
+
+            this.setOnTouchListener(knobRotateListener)
         }
     }
 
-    private fun turn(degrees: Float) {
-        rotateMatrix!!.setRotate(degrees, (knobImageView.width / 2).toFloat(), (knobImageView.height / 2).toFloat())
-        knobImageView.imageMatrix = rotateMatrix
+    override fun onDraw(canvas: Canvas?) {
+        super.onDraw(canvas)
+
+        //Делим ширину и высоту пополам, чтобы вращать вью вокруг середины
+        rotateMatrix.setRotate(degrees, (this.width / 2).toFloat(), (this.height / 2).toFloat())
+        canvas?.drawBitmap(knobImage, rotateMatrix, paint)
     }
 
     private fun cartesianToPolar(x: Float, y: Float): Float {

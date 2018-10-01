@@ -22,4 +22,9 @@ class TickService : Service() {
         val service: TickService
             get() = this@TickService
     }
+
+    override fun onCreate() {
+        super.onCreate()
+
+    }
 }
