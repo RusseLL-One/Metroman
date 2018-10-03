@@ -1,5 +1,6 @@
 package com.one.russell.metronomekotlin
 
+import android.animation.ValueAnimator
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.ComponentName
@@ -12,20 +13,60 @@ import android.util.Log
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.properties.Delegates
+import android.content.Intent
+import android.graphics.Color
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.LinearInterpolator
+import android.widget.FrameLayout
+
 
 class MainActivity : AppCompatActivity() {
     internal lateinit var sConn: ServiceConnection
-    internal lateinit var tickService: TickService
-    internal lateinit var clickPlayer: ClickPlayer
-    internal lateinit var t: Thread
+    internal var tickService: TickService? = null
+    internal lateinit var tickServiceIntent: Intent
     internal var isBound = false
 
     private var model: MainViewModel by Delegates.notNull()
 
     private var tickListener = object : TickListener {
-        override fun onTick(isEmphasis: Boolean) {
+        private var isBeatBallOnTop = true
 
+        override fun onTick(isEmphasis: Boolean, duration: Int) {
 
+            val pathLength = vLine.height - vBall.height
+
+            val positionAnimator: ValueAnimator
+            if (isBeatBallOnTop) {
+                positionAnimator = ValueAnimator.ofInt(0, pathLength)
+            } else {
+                positionAnimator = ValueAnimator.ofInt(pathLength, 0)
+            }
+
+            isBeatBallOnTop = !isBeatBallOnTop
+            positionAnimator.duration = duration.toLong()
+            positionAnimator.interpolator = LinearInterpolator()
+            positionAnimator.addUpdateListener { animation ->
+                val x = animation.animatedValue as Int
+                (vBall.layoutParams as FrameLayout.LayoutParams).topMargin = x
+                vBall.requestLayout()
+            }
+
+            val colorAnimator = ValueAnimator.ofInt(0, 255)
+            colorAnimator.interpolator = DecelerateInterpolator()
+            colorAnimator.addUpdateListener { animation ->
+
+                val animatorValue = (animation.animatedValue as Int)
+                val colorStr = Color.rgb(animatorValue, animatorValue, animatorValue)
+                val blackFilter = PorterDuffColorFilter(colorStr, PorterDuff.Mode.MULTIPLY)
+                vBall.background.setColorFilter(blackFilter)
+            }
+
+            Log.d("qwe", "onTick, thread:" + Thread.currentThread().name)
+
+            positionAnimator.start()
+            colorAnimator.start()
         }
     }
 
@@ -38,20 +79,32 @@ class MainActivity : AppCompatActivity() {
 
         npBeatsPerBar.maxValue = 16
         npBeatsPerBar.minValue = 1
-        npBeatsPerBar.value = 4
         npBeatsPerBar.wrapSelectorWheel = false
+        npBeatsPerBar.value = model.beatsPerBar
 
-        npValueOfBeat.maxValue = 6
-        npValueOfBeat.minValue = 0
+        npValueOfBeat.maxValue = 7
+        npValueOfBeat.minValue = 1
         npValueOfBeat.displayedValues = arrayOf("1", "2", "4", "8", "16", "32", "64")
-        npValueOfBeat.value = 2
         npValueOfBeat.wrapSelectorWheel = false
+        npValueOfBeat.value = model.valueOfBeats
 
         model.bpmLiveData.observe(this, Observer {
             bpmTextView.text = "BPM\n$it"
+            if(it != null) {
+                tickService?.setBpm(it)
+                //tickService?.bpm = it
+            }
         })
 
-        clickPlayer = ClickPlayer(this)
+        model.accentSoundLiveData.observe(this, Observer {
+            tickService?.setAccentSound(it)
+        })
+
+        model.beatSoundLiveData.observe(this, Observer {
+            tickService?.setBeatSound(it)
+        })
+
+        tickServiceIntent = Intent(this, TickService::class.java)
 
         sConn = object : ServiceConnection {
 
@@ -59,7 +112,7 @@ class MainActivity : AppCompatActivity() {
                 tickService = (binder as TickService.ServiceBinder).service
                 Log.d("qwe", "onServiceConnected, thread:" + Thread.currentThread().name)
 
-                tickService.setTickListener(tickListener)
+                tickService?.setTickListener(tickListener)
                 isBound = true
             }
 
@@ -70,33 +123,35 @@ class MainActivity : AppCompatActivity() {
         }
 
         playButton.setOnClickListener {
-            if(!clickPlayer.isPlaying){
-            //if (clickPlayerTask.status != AsyncTask.Status.RUNNING) {
-            //    clickPlayerTask = ClickPlayerTask(this)
+            val service = tickService
+            if (service != null) {
+                if (service.isPlaying) {
+                    service.stop()
+                    playButton.setImageResource(R.drawable.ic_play_circle_outline_black_24dp)
+                } else {
+                    service.play()
+                    playButton.setImageResource(R.drawable.ic_pause_circle_outline_black_24dp)
+                }
+                /*if(!clickPlayer.isPlaying){
                 t = Thread(clickPlayer)
                 Log.d("asd", "play")
 
-                playButton.setImageResource(R.drawable.ic_pause_circle_outline_black_24dp)
-                //clickPlayerTask.execute()
                 t.start()
-                //clickPlayer.run()
             } else {
-                playButton.setImageResource(R.drawable.ic_play_circle_outline_black_24dp)
                 Log.d("asd", "stop")
-
-                //clickPlayerTask.stop()
-                //clickPlayer.stop()
-                //t.interrupt()
             }
-            clickPlayer.isPlaying = !clickPlayer.isPlaying
+            clickPlayer.isPlaying = !clickPlayer.isPlaying*/
+            }
         }
 
         npBeatsPerBar.setOnValueChangedListener { _, _, value ->
-            clickPlayer.setBeatSize(value)
+            tickService?.setBeatSize(value)
+            model.beatsPerBar = value
         }
 
         npValueOfBeat.setOnValueChangedListener { _, _, value ->
             //todo смена длительности ноты
+            model.valueOfBeats = value
         }
 
         bSettings.setOnClickListener {
@@ -145,12 +200,22 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    override fun onStart() {
+        super.onStart()
+        bindService(tickServiceIntent, sConn, 0)
+        startService(tickServiceIntent)
+    }
+
     override fun onStop() {
         super.onStop()
         model.saveToPrefs()
+        if (!isBound) return
+        unbindService(sConn)
+        isBound = false
+        stopService(tickServiceIntent)
     }
 
     interface TickListener {
-        fun onTick(isEmphasis: Boolean)
+        fun onTick(isEmphasis: Boolean, duration: Int)
     }
 }

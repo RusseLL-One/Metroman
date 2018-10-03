@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_settings.*
+import kotlinx.android.synthetic.main.item_settings_param.view.*
 import kotlin.properties.Delegates
 
 class SettingsFragment : Fragment() {
@@ -25,38 +26,57 @@ class SettingsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        accentValue.tvValue.text = model.accentSoundLiveData.value.toString()
+        beatValue.tvValue.text = model.beatSoundLiveData.value.toString()
 
-        //tvAccentSoundValue.text = model.prefs.getAccentSoundId().toString()
-        //tvBeatSoundValue.text = model.prefs.getBeatSoundId().toString()
-        tvAccentSoundValue.text = model.accentSoundLiveData.value.toString()
-        tvBeatSoundValue.text = model.beatSoundLiveData.value.toString()
-
-        tvAccentSoundValue.setOnClickListener {
+        accentValue.ivIncrease.setOnClickListener {
             try {
-                var accentSoundId = tvAccentSoundValue.text.toString().toInt()
+                var accentSoundId = accentValue.tvValue.text.toString().toInt()
                 accentSoundId++
 
-                if(accentSoundId > 3) {
-                    accentSoundId = 1
+                if(accentSoundId <= 3) {
+                    accentValue.tvValue.text = accentSoundId.toString()
+                    model.setAccentSoundId(accentSoundId)
                 }
-                tvAccentSoundValue.text = accentSoundId.toString()
-                model.setAccentSoundId(accentSoundId)
-
             } catch (e: NumberFormatException) {
             }
         }
 
-        tvBeatSoundValue.setOnClickListener {
+        accentValue.ivDecrease.setOnClickListener {
             try {
-                var beatSoundId = tvBeatSoundValue.text.toString().toInt()
+                var accentSoundId = accentValue.tvValue.text.toString().toInt()
+                accentSoundId--
+
+                if(accentSoundId >= 1) {
+                    accentValue.tvValue.text = accentSoundId.toString()
+                    model.setAccentSoundId(accentSoundId)
+                }
+            } catch (e: NumberFormatException) {
+            }
+        }
+
+        beatValue.ivIncrease.setOnClickListener {
+            try {
+                var beatSoundId = beatValue.tvValue.text.toString().toInt()
                 beatSoundId++
 
-                if(beatSoundId > 3) {
-                    beatSoundId = 1
+                if(beatSoundId <= 3) {
+                    beatValue.tvValue.text = beatSoundId.toString()
+                    model.setBeatSoundId(beatSoundId)
                 }
-                tvBeatSoundValue.text = beatSoundId.toString()
-                model.setBeatSoundId(beatSoundId)
+            } catch (e: NumberFormatException) {
+            }
+        }
 
+        beatValue.ivDecrease.setOnClickListener {
+            try {
+                var beatSoundId = beatValue.tvValue.text.toString().toInt()
+                beatSoundId--
+
+                if(beatSoundId >= 1) {
+                    beatValue.tvValue.text = beatSoundId.toString()
+                    model.setBeatSoundId(beatSoundId)
+                }
             } catch (e: NumberFormatException) {
             }
         }

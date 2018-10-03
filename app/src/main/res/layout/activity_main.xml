@@ -39,7 +39,7 @@
             app:layout_constraintStart_toEndOf="@id/bSettings"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.one.russell.metronomekotlin.RotaryKnob
+        <com.one.russell.metronomekotlin.RotaryKnobView
             android:id="@+id/rotaryKnob"
             android:layout_width="200dp"
             android:layout_height="200dp"

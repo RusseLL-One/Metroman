@@ -13,51 +13,69 @@ import java.io.IOException
 import android.util.Log
 import android.view.animation.*
 import android.widget.FrameLayout
-import com.github.piasy.rxandroidaudio.StreamAudioPlayer
 import kotlin.properties.Delegates
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
-
-
+import android.media.SoundPool
 
 
 private const val SAMPLE_RATE = 44100
 private const val BUFFER_SIZE = 28800
 
-class ClickPlayer(activity: FragmentActivity): Runnable {
-    private var initSoundArray: ByteArray
-    private var initAccentSoundArray: ByteArray
-    private var beatLine: View
-    private var beatBall: View
+class ClickPlayer(/*activity: FragmentActivity*/): Runnable {
+    //private var initSoundArray: ByteArray
+    //private var initAccentSoundArray: ByteArray
+    private var clickSoundId: Int
+    private var accentSoundId: Int
+
     private var soundLength: Int = 0
-    private var bpm = 0
+    var bpm = 20
     private var beat = 0
     private var beatsPerBar = 4
     private var isBeatBallOnTop = true
+    private var listener = object : ParamsListener {
+        override fun onBeatSoundChange(soundId: Int) {
+            clickSoundId = soundId
+        }
+
+        override fun onAccentSoundChange(soundId: Int) {
+            accentSoundId = soundId
+        }
+
+        override fun onBpmChange(bpm: Int) {
+            this@ClickPlayer.bpm = bpm
+        }
+    }
     //private val mStreamAudioPlayer: StreamAudioPlayer
-    private val audioTrack: AudioTrack
+    //private val audioTrack: AudioTrack
+
+    private val clicker: SoundPool
     private var model: MainViewModel by Delegates.notNull()
     var isPlaying = false
 
     init {
-        initSoundArray = ByteArray(BUFFER_SIZE)
-        initAccentSoundArray = ByteArray(BUFFER_SIZE)
+        //initSoundArray = ByteArray(BUFFER_SIZE)
+        //initAccentSoundArray = ByteArray(BUFFER_SIZE)
 
-        beatLine = activity.findViewById(R.id.vLine)
-        beatBall = activity.findViewById(R.id.vBall)
+        //beatLine = activity.findViewById(R.id.vLine)
+        //beatBall = activity.findViewById(R.id.vBall)
 
         //mStreamAudioPlayer = StreamAudioPlayer.getInstance()
         //mStreamAudioPlayer.init(StreamAudioPlayer.DEFAULT_SAMPLE_RATE, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT, BUFFER_SIZE)
 
-        audioTrack = AudioTrack(AudioManager.STREAM_MUSIC,
+        /*audioTrack = AudioTrack(AudioManager.STREAM_MUSIC,
                 SAMPLE_RATE,
                 AudioFormat.CHANNEL_OUT_MONO,
                 AudioFormat.ENCODING_PCM_16BIT,
                 BUFFER_SIZE,
                 AudioTrack.MODE_STREAM)
-        audioTrack.play()
+        audioTrack.play()*/
+        clicker = SoundPool(2, AudioManager.STREAM_MUSIC, 0)
+        clickSoundId = clicker.load(App.getAppInstance(), R.raw.click, 1)
+        accentSoundId = clicker.load(App.getAppInstance(), R.raw.clave, 1)
 
-        model = ViewModelProviders.of(activity).get(MainViewModel::class.java)
+
+        /*model = ViewModelProviders.of(activity).get(MainViewModel::class.java)
 
         model.accentSoundLiveData.observe(activity, Observer {
             setAccentSound(it)
@@ -70,61 +88,58 @@ class ClickPlayer(activity: FragmentActivity): Runnable {
             if(it != null) {
                 bpm = it
             }
-        })
+        })*/
     }
 
-    fun setAccentSound(id: Int?) {
-        val soundResourceId = when (id) {
-            1 -> R.raw.drum_1
-            2 -> R.raw.wave_1
-            3 -> R.raw.wave_2
-            else -> R.raw.drum_1
+    fun setAccentSound(id: Int) {
+        val resId = when (id) {
+            1 -> R.raw.clave
+            2 -> R.raw.click
+            3 -> R.raw.rotate_click
+            else -> R.raw.clave
         }
-        try {
-            val inputStream = App.getAppInstance().resources.openRawResource(soundResourceId)
-            inputStream.read(initAccentSoundArray, 0, initAccentSoundArray.size)
-        } catch (e: IOException) {
-        }
+        accentSoundId = clicker.load(App.getAppInstance(), resId, 1)
     }
 
-    fun setBeatSound(id: Int?) {
-        val soundResourceId = when (id) {
-            1 -> R.raw.crisp_1
-            2 -> R.raw.crisp_2
-            3 -> R.raw.drum_2
-            else -> R.raw.crisp_1
+    fun setBeatSound(id: Int) {
+        val resId = when (id) {
+            1 -> R.raw.clave
+            2 -> R.raw.click
+            3 -> R.raw.rotate_click
+            else -> R.raw.clave
         }
-        try {
-            val inputStream = App.getAppInstance().resources.openRawResource(soundResourceId)
-            soundLength = inputStream.read(initSoundArray, 0, initSoundArray.size)
-        } catch (e: IOException) {
-        }
+        clickSoundId = clicker.load(App.getAppInstance(), resId, 1)
     }
 
     fun play() {
-        val silenceLength = (60f / bpm * StreamAudioPlayer.DEFAULT_SAMPLE_RATE.toFloat() * 2f - soundLength).toInt()
+        val silenceLength = (60f / bpm * SAMPLE_RATE * 2f - soundLength).toInt()
         Log.d("qwe", "play(), silenceLength=" + silenceLength)
 
-        val beatSound: ByteArray
+        //val beatSound: ByteArray
+        val beatSoundId: Int
             if (beat % beatsPerBar == 0) {
-                beatSound = initAccentSoundArray
+                //beatSound = initAccentSoundArray
+                beatSoundId = accentSoundId
                 beat = 0
             } else {
-                beatSound = initSoundArray
+                //beatSound = initSoundArray
+                beatSoundId = clickSoundId
             }
 
-            animateBeatBall ((beatSound.size + silenceLength) * 1000 / (2 * StreamAudioPlayer.DEFAULT_SAMPLE_RATE))
+            //animateBeatBall ((beatSound.size + silenceLength) * 1000 / (2 * StreamAudioPlayer.DEFAULT_SAMPLE_RATE))
 
-            if (silenceLength < 0) {
+            /*if (silenceLength < 0) {
                 audioTrack.write(beatSound, 0, beatSound.size + silenceLength)
                 //mStreamAudioPlayer.play(beatSound, beatSound.size + silenceLength)
             } else {
                 audioTrack.write(beatSound, 0, beatSound.size)
                 audioTrack.write(ByteArray(silenceLength), 0, silenceLength)
+
                 //mStreamAudioPlayer.play(beatSound, beatSound.size)
                 //mStreamAudioPlayer.play(ByteArray(silenceLength), silenceLength)
-            }
+            }*/
 
+        clicker.play(beatSoundId, 1f, 1f, 0, 0, 1f)
 
         beat++
     }
@@ -137,44 +152,6 @@ class ClickPlayer(activity: FragmentActivity): Runnable {
         //release()
     }
 
-    //todo перенести в MainActivity
-    private fun animateBeatBall(duration: Int) {
-        val pathLength = beatLine.height - beatBall.height
-
-        val positionAnimator: ValueAnimator
-        if (isBeatBallOnTop) {
-            positionAnimator = ValueAnimator.ofInt(0, pathLength)
-        } else {
-            positionAnimator = ValueAnimator.ofInt(pathLength, 0)
-        }
-
-        isBeatBallOnTop = !isBeatBallOnTop
-        positionAnimator.duration = duration.toLong()
-        positionAnimator.interpolator = LinearInterpolator()
-        positionAnimator.addUpdateListener { animation ->
-            val x = animation.animatedValue as Int
-            (beatBall.layoutParams as FrameLayout.LayoutParams).topMargin = x
-            beatBall.requestLayout()
-        }
-
-        val colorAnimator = ValueAnimator.ofInt(0, 255)
-        colorAnimator.interpolator = DecelerateInterpolator()
-        colorAnimator.addUpdateListener { animation ->
-
-            val animatorValue = (animation.animatedValue as Int)
-            val colorStr = Color.rgb(animatorValue,animatorValue,animatorValue)
-            val blackFilter = PorterDuffColorFilter(colorStr, PorterDuff.Mode.MULTIPLY)
-            beatBall.background.setColorFilter(blackFilter)
-        }
-
-        Log.d("qwe", "onTick, thread:" + Thread.currentThread().name)
-        beatBall.post {
-            positionAnimator.start()
-            colorAnimator.start()
-        }
-
-    }
-
     fun setBeatSize(size: Int) {
         beatsPerBar = size
     }
@@ -185,7 +162,13 @@ class ClickPlayer(activity: FragmentActivity): Runnable {
 
     fun release() {
         //audioTrack.stop()
-        audioTrack.release()
+        //audioTrack.release()
         //mStreamAudioPlayer.release()
+    }
+
+    interface ParamsListener {
+        fun onBeatSoundChange(soundId: Int)
+        fun onAccentSoundChange(soundId: Int)
+        fun onBpmChange(bpm: Int)
     }
 }
