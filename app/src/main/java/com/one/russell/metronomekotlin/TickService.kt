@@ -22,6 +22,7 @@ class TickService : Service() {
     private var clickPlayer: ClickPlayer = ClickPlayer()
     var isPlaying = false
     private var bpm: Int = 100
+    private var prevBpm:Int = 0
 
     val clickObservable: PublishSubject<Long> = PublishSubject.create()
     var clickDisposable: Disposable? = null
@@ -57,8 +58,11 @@ class TickService : Service() {
 
     fun click() {
         Log.d("qwe", "click method, thread:" + Thread.currentThread().name)
-        clickObservable.onNext((60000 / bpm).toLong())
         listener?.onTick(true, 60000 / bpm)
+        if(prevBpm != bpm) {
+            clickObservable.onNext((60000 / bpm).toLong())
+            prevBpm = bpm
+        }
         clickPlayer.play()
     }
 
@@ -78,7 +82,7 @@ class TickService : Service() {
                     .doOnNext { click() }
         }.subscribe()
 
-        clickObservable.onNext((60000 / bpm).toLong())
+        clickObservable.onNext(0L)
         isPlaying = true
     }
 

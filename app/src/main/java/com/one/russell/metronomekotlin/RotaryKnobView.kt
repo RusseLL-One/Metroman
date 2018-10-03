@@ -105,7 +105,9 @@ open class RotaryKnobView @JvmOverloads constructor(
 
         //Делим ширину и высоту пополам, чтобы вращать вью вокруг середины
         rotateMatrix.setRotate(degrees, (this.width / 2).toFloat(), (this.height / 2).toFloat())
-        canvas?.drawBitmap(knobImage, rotateMatrix, paint)
+        if(knobImage != null) {
+            canvas?.drawBitmap(knobImage, rotateMatrix, paint)
+        }
     }
 
     private fun cartesianToPolar(x: Float, y: Float): Float {

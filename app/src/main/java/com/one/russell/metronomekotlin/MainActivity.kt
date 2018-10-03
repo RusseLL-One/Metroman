@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
                 vBall.requestLayout()
             }
 
-            val colorAnimator = ValueAnimator.ofInt(0, 255)
+            /*val colorAnimator = ValueAnimator.ofInt(0, 255)
             colorAnimator.interpolator = DecelerateInterpolator()
             colorAnimator.addUpdateListener { animation ->
 
@@ -61,12 +61,12 @@ class MainActivity : AppCompatActivity() {
                 val colorStr = Color.rgb(animatorValue, animatorValue, animatorValue)
                 val blackFilter = PorterDuffColorFilter(colorStr, PorterDuff.Mode.MULTIPLY)
                 vBall.background.setColorFilter(blackFilter)
-            }
+            }*/
 
             Log.d("qwe", "onTick, thread:" + Thread.currentThread().name)
 
             positionAnimator.start()
-            colorAnimator.start()
+            //colorAnimator.start()
         }
     }
 
