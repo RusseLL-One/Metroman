@@ -11,17 +11,30 @@
         </shape>
     </item>
     <item
-        android:bottom="8dp"
-        android:left="8dp"
-        android:right="8dp"
-        android:top="8dp">
+        android:bottom="5dp"
+        android:left="5dp"
+        android:right="5dp"
+        android:top="5dp">
         <shape xmlns:android="http://schemas.android.com/apk/res/android"
             android:shape="rectangle">
             <solid android:color="#ffffff" />
             <corners android:radius="1000dp" />
             <stroke
                 android:width="2dp"
-                android:color="#000000" />
+                android:color="#f57c00" />
+        </shape>
+    </item>
+    <item
+        android:width="90dp"
+        android:height="90dp"
+        android:gravity="center">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android"
+            android:shape="rectangle">
+            <solid android:color="#ffffff" />
+            <corners android:radius="1000dp" />
+            <stroke
+                android:width="2dp"
+                android:color="#f57c00" />
         </shape>
     </item>
     <item

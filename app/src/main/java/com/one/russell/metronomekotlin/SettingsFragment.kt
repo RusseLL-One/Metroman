@@ -80,5 +80,39 @@ class SettingsFragment : Fragment() {
             } catch (e: NumberFormatException) {
             }
         }
+
+        pickerValue.ivIncrease.setOnClickListener {
+            try {
+                var pickerId = pickerValue.tvValue.text.toString().toInt()
+                pickerId++
+
+                if(pickerId <= 2) {
+                    pickerValue.tvValue.text = pickerId.toString()
+                    val knob = activity?.findViewById<RotaryKnobView>(R.id.rotaryKnob)
+                    knob?.visibility = View.GONE
+
+                    val scale = activity?.findViewById<ScaleView>(R.id.scaleKnob)
+                    scale?.visibility = View.VISIBLE
+                }
+            } catch (e: NumberFormatException) {
+            }
+        }
+
+        pickerValue.ivDecrease.setOnClickListener {
+            try {
+                var pickerId = pickerValue.tvValue.text.toString().toInt()
+                pickerId--
+
+                if(pickerId >= 1) {
+                    pickerValue.tvValue.text = pickerId.toString()
+                    val knob = activity?.findViewById<RotaryKnobView>(R.id.rotaryKnob)
+                    knob?.visibility = View.VISIBLE
+
+                    val scale = activity?.findViewById<ScaleView>(R.id.scaleKnob)
+                    scale?.visibility = View.GONE
+                }
+            } catch (e: NumberFormatException) {
+            }
+        }
     }
 }

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/tvStartBpm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start tempo (BPM)"
+        android:textSize="24sp"
+        android:layout_margin="16dp"
+        android:textColor="@color/colorText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <include
+        android:id="@+id/startValue"
+        layout="@layout/item_settings_param"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvEndBpm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="End tempo (BPM)"
+        android:textSize="24sp"
+        android:layout_margin="16dp"
+        android:textColor="@color/colorText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvStartBpm"/>
+
+    <include
+        android:id="@+id/endValue"
+        layout="@layout/item_settings_param"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/startValue" />
+
+    <TextView
+        android:id="@+id/tvBars"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Through each (bars)"
+        android:textSize="24sp"
+        android:layout_margin="16dp"
+        android:textColor="@color/colorText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvEndBpm"/>
+
+    <include
+        android:id="@+id/barsValue"
+        layout="@layout/item_settings_param"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/endValue" />
+
+    <TextView
+        android:id="@+id/tvIncrease"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Increase on (BPM)"
+        android:textSize="24sp"
+        android:layout_margin="16dp"
+        android:textColor="@color/colorText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvBars"/>
+
+    <include
+        android:id="@+id/increaseValue"
+        layout="@layout/item_settings_param"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvBars" />
+
+    <Button
+        android:id="@+id/btStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/buttons"
+        app:layout_constraintTop_toBottomOf="@id/tvIncrease"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+</android.support.constraint.ConstraintLayout>

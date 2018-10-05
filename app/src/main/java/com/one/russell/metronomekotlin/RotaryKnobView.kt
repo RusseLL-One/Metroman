@@ -29,6 +29,7 @@ open class RotaryKnobView @JvmOverloads constructor(
     private var rotateClickId: Int = 0
     private var model: MainViewModel by Delegates.notNull()
     val paint: Paint
+    private var isBlocked = false
 
     init {
         rotateMatrix = Matrix()
@@ -41,7 +42,7 @@ open class RotaryKnobView @JvmOverloads constructor(
         rotateClickId = rotateClickPlayer.load(activity, R.raw.rotate_click, 1)
 
         model.bpmLiveData.observe(activity, Observer {
-            if(it != null) {
+            if (it != null) {
                 bpm = it
             }
         })
@@ -50,43 +51,46 @@ open class RotaryKnobView @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                val startX = event.x / this.width.toFloat()
-                val startY = event.y / this.height.toFloat()
-                deltaDegrees = cartesianToPolar(startX, startY)
-                //Вычисляем начальные градусы с учётом предыдущего поворота
-                startDegrees = deltaDegrees - startDegrees
-            }
-            MotionEvent.ACTION_MOVE -> {
-                val newDegrees: Float
-                val x = event.x / this.width.toFloat()
-                val y = event.y / this.height.toFloat()
-                newDegrees = cartesianToPolar(x, y)
-                //bpm увеличивается каждые 10 градусов. 10 градусов - это наш шаг
-                var step = (newDegrees / BPM_STEP_DEGREES).toInt() - (deltaDegrees / BPM_STEP_DEGREES).toInt()
-                if (Math.abs(step) >= 1) {
-                    //Если шаг слишком большой (например, при переходе от 0 к 360), то уменьшаем его
-                    if (Math.abs(step) >= 30) step = -((if (step > 0) 1 else -1) * 36 - step)
-
-                    if (bpm + step in MIN_BPM..MAX_BPM) {
-                        bpm += step
-                        model.setBpmLiveData(bpm)
-                    }
-
-                    rotateClickPlayer.play(rotateClickId, 0.75f, 0.75f, 0, 0, 1f)
+        if (!isBlocked) {
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    val startX = event.x / this.width.toFloat()
+                    val startY = event.y / this.height.toFloat()
+                    deltaDegrees = cartesianToPolar(startX, startY)
+                    //Вычисляем начальные градусы с учётом предыдущего поворота
+                    startDegrees = deltaDegrees - startDegrees
                 }
-                deltaDegrees = newDegrees
-                degrees = deltaDegrees - startDegrees
-                invalidate()
+                MotionEvent.ACTION_MOVE -> {
+                    val newDegrees: Float
+                    val x = event.x / this.width.toFloat()
+                    val y = event.y / this.height.toFloat()
+                    newDegrees = cartesianToPolar(x, y)
+                    //bpm увеличивается каждые 10 градусов. 10 градусов - это наш шаг
+                    var step = (newDegrees / BPM_STEP_DEGREES).toInt() - (deltaDegrees / BPM_STEP_DEGREES).toInt()
+                    if (Math.abs(step) >= 1) {
+                        //Если шаг слишком большой (например, при переходе от 0 к 360), то уменьшаем его
+                        if (Math.abs(step) >= 30) step = -((if (step > 0) 1 else -1) * 36 - step)
+
+                        if (bpm + step in MIN_BPM..MAX_BPM) {
+                            bpm += step
+                            model.setBpmLiveData(bpm)
+                        }
+
+                        rotateClickPlayer.play(rotateClickId, 0.75f, 0.75f, 0, 0, 1f)
+                    }
+                    deltaDegrees = newDegrees
+                    degrees = deltaDegrees - startDegrees
+                    invalidate()
+                }
+                MotionEvent.ACTION_UP -> {
+                    startDegrees = deltaDegrees - startDegrees
+                    //Теперь startDegrees содержит градусы, на которые повёрнута ручка
+                    performClick()
+                }
             }
-            MotionEvent.ACTION_UP -> {
-                startDegrees = deltaDegrees - startDegrees
-                //Теперь startDegrees содержит градусы, на которые повёрнута ручка
-                performClick()
-            }
+            return true
         }
-        return true
+        return false
     }
 
     fun setKnobImage(context: Context) {
@@ -97,6 +101,7 @@ open class RotaryKnobView @JvmOverloads constructor(
             val canvas = Canvas(knobImage)
             drawable.setBounds(0, 0, this.measuredWidth, this.measuredHeight)
             drawable.draw(canvas)
+            invalidate()
         }
     }
 
@@ -105,9 +110,13 @@ open class RotaryKnobView @JvmOverloads constructor(
 
         //Делим ширину и высоту пополам, чтобы вращать вью вокруг середины
         rotateMatrix.setRotate(degrees, (this.width / 2).toFloat(), (this.height / 2).toFloat())
-        if(knobImage != null) {
+        if (knobImage != null) {
             canvas?.drawBitmap(knobImage, rotateMatrix, paint)
         }
+    }
+
+    fun block(block: Boolean) {
+        isBlocked = block
     }
 
     private fun cartesianToPolar(x: Float, y: Float): Float {

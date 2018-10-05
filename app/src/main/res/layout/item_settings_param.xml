@@ -8,8 +8,7 @@
         android:id="@+id/ivDecrease"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:padding="5dp"
-        android:src="@drawable/ic_minus_vector"
+        android:src="@drawable/ic_arrow_back_black_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/tvValue"
         app:layout_constraintTop_toTopOf="parent" />
@@ -41,8 +40,7 @@
         android:id="@+id/ivIncrease"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:padding="5dp"
-        android:src="@drawable/ic_plus_vector"
+        android:src="@drawable/ic_arrow_forward_black_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
