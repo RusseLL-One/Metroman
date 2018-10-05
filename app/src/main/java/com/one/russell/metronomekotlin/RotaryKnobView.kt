@@ -110,6 +110,7 @@ open class RotaryKnobView @JvmOverloads constructor(
 
         //Делим ширину и высоту пополам, чтобы вращать вью вокруг середины
         rotateMatrix.setRotate(degrees, (this.width / 2).toFloat(), (this.height / 2).toFloat())
+
         if (knobImage != null) {
             canvas?.drawBitmap(knobImage, rotateMatrix, paint)
         }

@@ -5,3 +5,9 @@ enum class BeatType {
     SUBACCENT,
     ACCENT
 }
+
+enum class TrainingType {
+    TEMPO_INCREASING,
+    BAR_DROPPING,
+    BEAT_DROPPING
+}

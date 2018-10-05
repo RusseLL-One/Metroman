@@ -51,12 +51,7 @@ class MainViewModel : ViewModel() {
         valueOfBeats = value
     }*/
 
-    fun startTraining(startBpm: Int, endBpm: Int, bars: Int, increment: Int) {
-        val params = Bundle()
-        params.putInt("startBpm", startBpm)
-        params.putInt("endBpm", endBpm)
-        params.putInt("bars", bars)
-        params.putInt("increment", increment)
+    fun startTraining(params: Bundle) {
         trainingLiveData.postValue(params)
     }
 

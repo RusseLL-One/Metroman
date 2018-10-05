@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Metronome</string>
+    <string name="app_name">Metroman</string>
     <string name="buttonPlay">Play</string>
     <string name="buttonStop">Stop</string>
 </resources>

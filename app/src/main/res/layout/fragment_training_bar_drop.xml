@@ -1,6 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <TextView
+        android:id="@+id/tvMuteChance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bar mute chance (%)"
+        android:textSize="24sp"
+        android:layout_margin="16dp"
+        android:textColor="@color/colorText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <include
+        android:id="@+id/chanceValue"
+        layout="@layout/item_settings_param"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvNormalBars"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Normal bars"
+        android:textSize="24sp"
+        android:layout_margin="16dp"
+        android:textColor="@color/colorText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvMuteChance"/>
+
+    <include
+        android:id="@+id/normalValue"
+        layout="@layout/item_settings_param"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chanceValue" />
+
+    <TextView
+        android:id="@+id/tvMutedBars"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Muted bars"
+        android:textSize="24sp"
+        android:layout_margin="16dp"
+        android:textColor="@color/colorText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvNormalBars"/>
+
+    <include
+        android:id="@+id/mutedValue"
+        layout="@layout/item_settings_param"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/normalValue" />
+
+    <Button
+        android:id="@+id/btStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/buttons"
+        app:layout_constraintTop_toBottomOf="@id/tvMutedBars"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 </android.support.constraint.ConstraintLayout>

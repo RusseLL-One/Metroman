@@ -1,13 +1,12 @@
 package com.one.russell.metronomekotlin
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.Build
+import android.os.Bundle
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
 import android.util.Log
@@ -18,7 +17,12 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
 import java.util.concurrent.TimeUnit
 import io.reactivex.subjects.PublishSubject
+import com.one.russell.metronomekotlin.R.mipmap.ic_launcher
 
+
+
+const val ACTION_STOP_CLICKING = "stop_clicking"
+const val NOTIFICATION_ID = 21
 
 class TickService : Service() {
 
@@ -32,13 +36,42 @@ class TickService : Service() {
     private var beatsPerBar = 4
     private var beat = -1
     private var beatSequence = ArrayList<BeatView>()
+    var notificationManager: NotificationManager? = null
 
     val clickObservable: PublishSubject<Long> = PublishSubject.create()
     var clickDisposable: Disposable? = null
     var clickConsumer = Consumer<Long> { click() }
 
+    override fun onCreate() {
+        super.onCreate()
+        notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent?.action == ACTION_STOP_CLICKING) {
+            stop()
+        }
+        return super.onStartCommand(intent, flags, startId)
+    }
+
     override fun onBind(p0: Intent?): IBinder? {
         return binder
+    }
+
+    private fun createNotification() {
+        val builder = NotificationCompat.Builder(this)
+        builder.setContentTitle("Metroman is playing")
+        builder.setContentText("Press button below to stop")
+        builder.priority = NotificationCompat.PRIORITY_DEFAULT
+        builder.setSmallIcon(R.drawable.ic_launcher_background)
+
+        val stopSelf = Intent(this, TickService::class.java)
+        stopSelf.action = ACTION_STOP_CLICKING
+        val pStopSelf = PendingIntent.getService(this, 0, stopSelf, PendingIntent.FLAG_NO_CREATE)
+        builder.addAction(R.drawable.ic_launcher_background, "Stop", pStopSelf)
+        builder.setAutoCancel(true)
+
+        notificationManager?.notify(NOTIFICATION_ID, builder.build())
     }
 
     fun setTickListener(listener: MainActivity.TickListener) {
@@ -86,15 +119,19 @@ class TickService : Service() {
         return isNextBar
     }
 
-    fun setBpm(bpm: Int) {
-        this.bpm = bpm
+    fun setBpm(bpm: Int?) {
+        if (bpm != null) {
+            this.bpm = bpm
+        }
     }
 
-    override fun onCreate() {
-        super.onCreate()
-    }
+    fun startTraining(params: Bundle) {
+        val trainingType = params.getString("trainingType", "TEMPO_INCREASING")
+        val startBpm = params.getInt("startBpm", MIN_BPM)
+        val endBpm = params.getInt("endBpm", MAX_BPM)
+        val bars = params.getInt("bars", 1)
+        val increment = params.getInt("increment", 10)
 
-    fun startTraining(startBpm: Int, endBpm: Int, bars: Int, increment: Int) {
         if (isPlaying) {
             stop()
         }
@@ -109,6 +146,7 @@ class TickService : Service() {
             }
             if (barCount >= bars) {
                 bpm += increment
+                if(bpm >= endBpm) bpm = endBpm
                 listener?.onBpmChange(bpm)
                 barCount = 0
             }
@@ -142,6 +180,9 @@ class TickService : Service() {
         clickObservable.onNext(0L)
         isPlaying = true
 
+        listener?.onStartClicking()
+        createNotification()
+
 
         /*val intent = Intent(this, TickService::class.java)
         intent.action = "pause naverno"
@@ -165,9 +206,12 @@ class TickService : Service() {
     }
 
     fun stop() {
+        stopSelf()
         clickConsumer = Consumer { click() }
         listener?.onControlsBlock(false)
+        listener?.onStopClicking()
         clickDisposable?.dispose()
+        notificationManager?.cancel(NOTIFICATION_ID)
         isPlaying = false
         beat = -1
     }

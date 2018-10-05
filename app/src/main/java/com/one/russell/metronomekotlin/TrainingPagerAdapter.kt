@@ -11,8 +11,8 @@ class TrainingPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
     override fun getItem(position: Int): Fragment {
         return when(position) {
             0 -> TempoIncreasingFragment()
-            1 -> BeatDropFragment()
-            2 -> BarDropFragment()
+            1 -> BarDropFragment()
+            2 -> BeatDropFragment()
             else -> Fragment()
         }
     }

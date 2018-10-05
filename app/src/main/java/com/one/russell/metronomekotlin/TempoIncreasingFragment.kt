@@ -14,6 +14,9 @@ import kotlin.properties.Delegates
 class TempoIncreasingFragment : Fragment() {
 
     private var model: MainViewModel by Delegates.notNull()
+    private val clickListener = View.OnClickListener {
+
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -29,6 +32,8 @@ class TempoIncreasingFragment : Fragment() {
 
         startValue.tvValue.text = "90"
         endValue.tvValue.text = "160"
+        barsValue.tvValue.text = "1"
+        increaseValue.tvValue.text = "5"
 
         startValue.ivIncrease.setOnClickListener {
             try {
@@ -38,7 +43,6 @@ class TempoIncreasingFragment : Fragment() {
                 val endBpm = endValue.tvValue.text.toString().toInt()
                 if(startBpm <= endBpm) {
                     startValue.tvValue.text = startBpm.toString()
-                    //model.setAccentSoundId(accentSoundId)
                 }
             } catch (e: NumberFormatException) {
             }
@@ -51,7 +55,6 @@ class TempoIncreasingFragment : Fragment() {
 
                 if(startBpm >= MIN_BPM) {
                     startValue.tvValue.text = startBpm.toString()
-                    //model.setAccentSoundId(accentSoundId)
                 }
             } catch (e: NumberFormatException) {
             }
@@ -64,7 +67,6 @@ class TempoIncreasingFragment : Fragment() {
 
                 if(endBpm <= MAX_BPM) {
                     endValue.tvValue.text = endBpm.toString()
-                    //model.setBeatSoundId(endBpm)
                 }
             } catch (e: NumberFormatException) {
             }
@@ -78,7 +80,6 @@ class TempoIncreasingFragment : Fragment() {
                 var startBpm = startValue.tvValue.text.toString().toInt()
                 if (endBpm >= startBpm) {
                     endValue.tvValue.text = endBpm.toString()
-                    //model.setBeatSoundId(endBpm)
                 }
             } catch (e: NumberFormatException) {
             }
@@ -91,7 +92,6 @@ class TempoIncreasingFragment : Fragment() {
 
                 if(bars <= 100) {
                     barsValue.tvValue.text = bars.toString()
-                    //model.setBeatSoundId(endBpm)
                 }
             } catch (e: NumberFormatException) {
             }
@@ -104,7 +104,6 @@ class TempoIncreasingFragment : Fragment() {
 
                 if (bars >= 1) {
                     barsValue.tvValue.text = bars.toString()
-                    //model.setBeatSoundId(endBpm)
                 }
             } catch (e: NumberFormatException) {
             }
@@ -117,7 +116,6 @@ class TempoIncreasingFragment : Fragment() {
 
                 if(increment <= 200) {
                     increaseValue.tvValue.text = increment.toString()
-                    //model.setBeatSoundId(endBpm)
                 }
             } catch (e: NumberFormatException) {
             }
@@ -130,7 +128,6 @@ class TempoIncreasingFragment : Fragment() {
 
                 if (increment >= 1) {
                     increaseValue.tvValue.text = increment.toString()
-                    //model.setBeatSoundId(endBpm)
                 }
             } catch (e: NumberFormatException) {
             }
@@ -138,13 +135,20 @@ class TempoIncreasingFragment : Fragment() {
 
         btStart.setOnClickListener {
             try {
+                val trainingType = TrainingType.TEMPO_INCREASING
                 val startBpm = startValue.tvValue.text.toString().toInt()
                 val endBpm = endValue.tvValue.text.toString().toInt()
                 val bars = barsValue.tvValue.text.toString().toInt()
                 val increment = increaseValue.tvValue.text.toString().toInt()
 
-                model.startTraining(startBpm, endBpm, bars, increment)
-                activity?.findViewById<ImageView>(R.id.playButton)?.setImageResource(R.drawable.ic_pause_circle_outline_black_24dp)
+                val params = Bundle()
+                params.putString("trainingType", trainingType.name)
+                params.putInt("startBpm", startBpm)
+                params.putInt("endBpm", endBpm)
+                params.putInt("bars", bars)
+                params.putInt("increment", increment)
+
+                model.startTraining(params)
                 activity?.supportFragmentManager?.popBackStack();
             } catch (e: NumberFormatException) {
             }

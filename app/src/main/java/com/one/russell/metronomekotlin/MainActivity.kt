@@ -17,6 +17,8 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.media.AudioManager
+import android.media.SoundPool
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
@@ -68,7 +70,7 @@ class MainActivity : AppCompatActivity() {
                 val blueColor = Color.rgb(animatorValue, animatorValue, 255)
                 val greenColor = Color.rgb(animatorValue, 255, animatorValue)
                 val filter: PorterDuffColorFilter
-                when(beatType) {
+                when (beatType) {
                     BeatType.ACCENT -> filter = PorterDuffColorFilter(redColor, PorterDuff.Mode.MULTIPLY)
                     BeatType.SUBACCENT -> filter = PorterDuffColorFilter(greenColor, PorterDuff.Mode.MULTIPLY)
                     else -> filter = PorterDuffColorFilter(blueColor, PorterDuff.Mode.MULTIPLY)
@@ -77,7 +79,7 @@ class MainActivity : AppCompatActivity() {
                 for (view in beatsViewList) {
                     view.background.colorFilter = null
                 }
-                if(beat < beatsViewList.size) {
+                if (beat < beatsViewList.size) {
                     beatsViewList[beat].background.colorFilter = filter
                 }
             }
@@ -92,6 +94,14 @@ class MainActivity : AppCompatActivity() {
 
         override fun onControlsBlock(block: Boolean) {
             rotaryKnob.block(block)
+        }
+
+        override fun onStartClicking() {
+            playButton.setImageResource(R.drawable.ic_pause_circle_outline_black_24dp)
+        }
+
+        override fun onStopClicking() {
+            playButton.setImageResource(R.drawable.ic_play_circle_outline_black_24dp)
         }
     }
 
@@ -114,7 +124,36 @@ class MainActivity : AppCompatActivity() {
         npValueOfBeat.minValue = 1
         npValueOfBeat.displayedValues = arrayOf("1", "2", "4", "8", "16", "32", "64")
         npValueOfBeat.wrapSelectorWheel = false
-        npValueOfBeat.value = model.valueOfBeatsLiveData.value ?: 4
+        npValueOfBeat.value = model.valueOfBeatsLiveData.value ?: 3
+
+        val beatsPerBarSubject = PublishSubject.create<Int>()
+
+        beatsPerBarSubject.debounce(500, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { beatsPerBar ->
+                    model.beatsPerBarLiveData.postValue(beatsPerBar)
+                }
+
+        tickServiceIntent = Intent(this, TickService::class.java)
+
+        sConn = object : ServiceConnection {
+            override fun onServiceConnected(name: ComponentName, binder: IBinder) {
+                tickService = (binder as TickService.ServiceBinder).service
+                Log.d("qwe", "onServiceConnected, thread:" + Thread.currentThread().name)
+
+                tickService?.setTickListener(tickListener)
+                tickService?.setBeatsSequence(beatsViewList)
+                tickService?.setAccentSound(model.accentSoundLiveData.value)
+                tickService?.setBeatSound(model.beatSoundLiveData.value)
+                tickService?.setBpm(model.bpmLiveData.value)
+                isBound = true
+            }
+
+            override fun onServiceDisconnected(name: ComponentName) {
+                Log.d("qwe", "MainActivity onServiceDisconnected")
+                isBound = false
+            }
+        }
 
         model.bpmLiveData.observe(this, Observer {
             bpmTextView.text = "BPM\n$it"
@@ -133,12 +172,9 @@ class MainActivity : AppCompatActivity() {
         })
 
         model.trainingLiveData.observe(this, Observer {
-            val startBpm = it?.getInt("startBpm") ?: MIN_BPM
-            val endBpm = it?.getInt("endBpm") ?: MAX_BPM
-            val bars = it?.getInt("bars") ?: 1
-            val increment = it?.getInt("increment") ?: 10
-
-            tickService?.startTraining(startBpm, endBpm, bars, increment)
+            if(it != null) {
+                tickService?.startTraining(it)
+            }
         })
 
         model.beatsPerBarLiveData.observe(this, Observer {
@@ -147,7 +183,7 @@ class MainActivity : AppCompatActivity() {
                 val newItemsCount = it - beatsViewList.size
                 if (newItemsCount > 0) {
                     for (i in beatsViewList.size until it) {
-                        val view = if(i == 0) BeatView(this, BeatType.ACCENT)
+                        val view = if (i == 0) BeatView(this, BeatType.ACCENT)
                         else BeatView(this, BeatType.BEAT)
                         beatsViewList.add(view)
                         val params = LinearLayout.LayoutParams(
@@ -171,48 +207,19 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        tickServiceIntent = Intent(this, TickService::class.java)
-
-        sConn = object : ServiceConnection {
-
-            override fun onServiceConnected(name: ComponentName, binder: IBinder) {
-                tickService = (binder as TickService.ServiceBinder).service
-                Log.d("qwe", "onServiceConnected, thread:" + Thread.currentThread().name)
-
-                tickService?.setTickListener(tickListener)
-                tickService?.setBeatsSequence(beatsViewList)
-                isBound = true
-            }
-
-            override fun onServiceDisconnected(name: ComponentName) {
-                Log.d("qwe", "MainActivity onServiceDisconnected")
-                isBound = false
-            }
-        }
-
         playButton.setOnClickListener {
             val service = tickService
             if (service != null) {
                 if (service.isPlaying) {
                     service.stop()
-                    playButton.setImageResource(R.drawable.ic_play_circle_outline_black_24dp)
                 } else {
                     service.play()
-                    playButton.setImageResource(R.drawable.ic_pause_circle_outline_black_24dp)
                 }
             }
         }
 
-        val subject = PublishSubject.create<Int>()
-
-        subject.debounce(500, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { beatsPerBar ->
-                    model.beatsPerBarLiveData.postValue(beatsPerBar)
-                }
-
-        npBeatsPerBar.setOnValueChangedListener { _, oldValue, newValue ->
-            subject.onNext(newValue)
+        npBeatsPerBar.setOnValueChangedListener { _, _, newValue ->
+            beatsPerBarSubject.onNext(newValue)
         }
 
         npValueOfBeat.setOnValueChangedListener { _, _, value ->
@@ -236,8 +243,12 @@ class MainActivity : AppCompatActivity() {
             var prevTouchTime = 0L
             var prevTouchInterval = 0L
             var isFirstClick = true
+            val tapClickPlayer = SoundPool(2, AudioManager.STREAM_MUSIC, 0)
+            val tapClickId = tapClickPlayer.load(this@MainActivity, R.raw.rotate_click, 1)
 
             override fun onClick(p0: View?) {
+                tapClickPlayer.play(tapClickId, 0.75f, 0.75f, 0, 0, 1f)
+
                 if (prevTouchTime > 0) {
                     val interval = System.currentTimeMillis() - prevTouchTime
 
@@ -285,5 +296,7 @@ class MainActivity : AppCompatActivity() {
         fun onTick(beatType: BeatType, beat: Int, duration: Int)
         fun onBpmChange(bpm: Int)
         fun onControlsBlock(block: Boolean)
+        fun onStartClicking()
+        fun onStopClicking()
     }
 }
