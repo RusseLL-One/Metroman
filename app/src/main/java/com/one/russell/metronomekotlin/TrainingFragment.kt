@@ -17,5 +17,7 @@ class TrainingFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         vpTraining.adapter = TrainingPagerAdapter(childFragmentManager)
+
+        tablayout.setupWithViewPager(vpTraining)
     }
 }

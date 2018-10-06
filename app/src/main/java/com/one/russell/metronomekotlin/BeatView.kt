@@ -2,29 +2,23 @@ package com.one.russell.metronomekotlin
 
 import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.RectF
+import android.graphics.*
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewTreeObserver
-import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
-import android.view.animation.LinearInterpolator
-import android.widget.LinearLayout
-
 
 
 class BeatView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    val paint = Paint()
+    val greyPaint = Paint()
+    val whitePaint = Paint()
     var accentBoxHeight = 0f
     var beatType = BeatType.BEAT
+    var bordersImage: Bitmap? = null
 
     constructor(context: Context, beatType: BeatType) : this(context) {
         this.beatType = beatType
@@ -32,6 +26,8 @@ class BeatView @JvmOverloads constructor(
 
     init {
         setBackgroundResource(R.drawable.buttons)
+
+
 
         viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
             override fun onPreDraw(): Boolean {
@@ -41,9 +37,18 @@ class BeatView @JvmOverloads constructor(
                     BeatType.SUBACCENT -> (measuredHeight / 2).toFloat()
                     else -> measuredHeight.toFloat()
                 }
+
+                val drawable = context.resources.getDrawable(R.drawable.beats)
+
+                bordersImage = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888)
+                val canvas = Canvas(bordersImage)
+                drawable.setBounds(0, 0, measuredWidth, measuredHeight)
+                drawable.draw(canvas)
                 return true
             }
         })
+        greyPaint.color = Color.GRAY
+        whitePaint.color = Color.WHITE
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -72,9 +77,15 @@ class BeatView @JvmOverloads constructor(
     }
 
     override fun onDraw(canvas: Canvas?) {
-
-        canvas?.drawRoundRect(RectF(0f, accentBoxHeight, measuredWidth.toFloat(), measuredHeight.toFloat()), Utils.getPixelsFromDp(5).toFloat(), Utils.getPixelsFromDp(5).toFloat(), paint)
-        //canvas?.drawRect(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), paint)
+        greyPaint.colorFilter = background.colorFilter
+        whitePaint.colorFilter = background.colorFilter
+        //todo всё ломается при изменении количества ударов в такте
+        canvas?.drawRoundRect(RectF(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat()), Utils.getPixelsFromDp(5).toFloat(), Utils.getPixelsFromDp(5).toFloat(), whitePaint)
+        canvas?.drawRoundRect(RectF(0f, accentBoxHeight, measuredWidth.toFloat(), measuredHeight.toFloat()), Utils.getPixelsFromDp(5).toFloat(), Utils.getPixelsFromDp(5).toFloat(), greyPaint)
+        if(bordersImage != null) {
+            canvas?.drawBitmap(bordersImage, 0f, 0f, Paint())
+        }
+        //canvas?.drawRect(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), greyPaint)
 
         super.onDraw(canvas)
     }

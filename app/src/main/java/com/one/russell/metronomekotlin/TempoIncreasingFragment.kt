@@ -30,10 +30,10 @@ class TempoIncreasingFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        startValue.tvValue.text = "90"
-        endValue.tvValue.text = "160"
-        barsValue.tvValue.text = "1"
-        increaseValue.tvValue.text = "5"
+        startValue.tvValue.setText("90")
+        endValue.tvValue.setText("160")
+        barsValue.tvValue.setText("1")
+        increaseValue.tvValue.setText("5")
 
         startValue.ivIncrease.setOnClickListener {
             try {
@@ -42,7 +42,7 @@ class TempoIncreasingFragment : Fragment() {
 
                 val endBpm = endValue.tvValue.text.toString().toInt()
                 if(startBpm <= endBpm) {
-                    startValue.tvValue.text = startBpm.toString()
+                    startValue.tvValue.setText(startBpm.toString())
                 }
             } catch (e: NumberFormatException) {
             }
@@ -54,7 +54,7 @@ class TempoIncreasingFragment : Fragment() {
                 startBpm--
 
                 if(startBpm >= MIN_BPM) {
-                    startValue.tvValue.text = startBpm.toString()
+                    startValue.tvValue.setText(startBpm.toString())
                 }
             } catch (e: NumberFormatException) {
             }
@@ -66,7 +66,7 @@ class TempoIncreasingFragment : Fragment() {
                 endBpm++
 
                 if(endBpm <= MAX_BPM) {
-                    endValue.tvValue.text = endBpm.toString()
+                    endValue.tvValue.setText(endBpm.toString())
                 }
             } catch (e: NumberFormatException) {
             }
@@ -79,7 +79,7 @@ class TempoIncreasingFragment : Fragment() {
 
                 var startBpm = startValue.tvValue.text.toString().toInt()
                 if (endBpm >= startBpm) {
-                    endValue.tvValue.text = endBpm.toString()
+                    endValue.tvValue.setText(endBpm.toString())
                 }
             } catch (e: NumberFormatException) {
             }
@@ -91,7 +91,7 @@ class TempoIncreasingFragment : Fragment() {
                 bars++
 
                 if(bars <= 100) {
-                    barsValue.tvValue.text = bars.toString()
+                    barsValue.tvValue.setText(bars.toString())
                 }
             } catch (e: NumberFormatException) {
             }
@@ -103,7 +103,7 @@ class TempoIncreasingFragment : Fragment() {
                 bars--
 
                 if (bars >= 1) {
-                    barsValue.tvValue.text = bars.toString()
+                    barsValue.tvValue.setText(bars.toString())
                 }
             } catch (e: NumberFormatException) {
             }
@@ -115,7 +115,7 @@ class TempoIncreasingFragment : Fragment() {
                 increment++
 
                 if(increment <= 200) {
-                    increaseValue.tvValue.text = increment.toString()
+                    increaseValue.tvValue.setText(increment.toString())
                 }
             } catch (e: NumberFormatException) {
             }
@@ -127,7 +127,7 @@ class TempoIncreasingFragment : Fragment() {
                 increment--
 
                 if (increment >= 1) {
-                    increaseValue.tvValue.text = increment.toString()
+                    increaseValue.tvValue.setText(increment.toString())
                 }
             } catch (e: NumberFormatException) {
             }

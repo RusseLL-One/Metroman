@@ -26,8 +26,8 @@ class SettingsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        accentValue.tvValue.text = model.accentSoundLiveData.value.toString()
-        beatValue.tvValue.text = model.beatSoundLiveData.value.toString()
+        accentValue.tvValue.setText(model.accentSoundLiveData.value.toString())
+        beatValue.tvValue.setText(model.beatSoundLiveData.value.toString())
 
         accentValue.ivIncrease.setOnClickListener {
             try {
@@ -35,7 +35,7 @@ class SettingsFragment : Fragment() {
                 accentSoundId++
 
                 if(accentSoundId <= 3) {
-                    accentValue.tvValue.text = accentSoundId.toString()
+                    accentValue.tvValue.setText(accentSoundId.toString())
                     model.setAccentSoundId(accentSoundId)
                 }
             } catch (e: NumberFormatException) {
@@ -48,7 +48,7 @@ class SettingsFragment : Fragment() {
                 accentSoundId--
 
                 if(accentSoundId >= 1) {
-                    accentValue.tvValue.text = accentSoundId.toString()
+                    accentValue.tvValue.setText(accentSoundId.toString())
                     model.setAccentSoundId(accentSoundId)
                 }
             } catch (e: NumberFormatException) {
@@ -61,7 +61,7 @@ class SettingsFragment : Fragment() {
                 beatSoundId++
 
                 if(beatSoundId <= 3) {
-                    beatValue.tvValue.text = beatSoundId.toString()
+                    beatValue.tvValue.setText(beatSoundId.toString())
                     model.setBeatSoundId(beatSoundId)
                 }
             } catch (e: NumberFormatException) {
@@ -74,7 +74,7 @@ class SettingsFragment : Fragment() {
                 beatSoundId--
 
                 if(beatSoundId >= 1) {
-                    beatValue.tvValue.text = beatSoundId.toString()
+                    beatValue.tvValue.setText(beatSoundId.toString())
                     model.setBeatSoundId(beatSoundId)
                 }
             } catch (e: NumberFormatException) {
@@ -87,7 +87,7 @@ class SettingsFragment : Fragment() {
                 pickerId++
 
                 if(pickerId <= 2) {
-                    pickerValue.tvValue.text = pickerId.toString()
+                    pickerValue.tvValue.setText(pickerId.toString())
                     val knob = activity?.findViewById<RotaryKnobView>(R.id.rotaryKnob)
                     knob?.visibility = View.GONE
 
@@ -104,7 +104,7 @@ class SettingsFragment : Fragment() {
                 pickerId--
 
                 if(pickerId >= 1) {
-                    pickerValue.tvValue.text = pickerId.toString()
+                    pickerValue.tvValue.setText(pickerId.toString())
                     val knob = activity?.findViewById<RotaryKnobView>(R.id.rotaryKnob)
                     knob?.visibility = View.VISIBLE
 

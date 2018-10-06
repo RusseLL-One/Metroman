@@ -18,7 +18,7 @@ import io.reactivex.functions.Consumer
 import java.util.concurrent.TimeUnit
 import io.reactivex.subjects.PublishSubject
 import com.one.russell.metronomekotlin.R.mipmap.ic_launcher
-
+import java.util.*
 
 
 const val ACTION_STOP_CLICKING = "stop_clicking"
@@ -36,6 +36,7 @@ class TickService : Service() {
     private var beatsPerBar = 4
     private var beat = -1
     private var beatSequence = ArrayList<BeatView>()
+    private var isMuted = false
     var notificationManager: NotificationManager? = null
 
     val clickObservable: PublishSubject<Long> = PublishSubject.create()
@@ -102,20 +103,17 @@ class TickService : Service() {
     }
 
     fun click(): Boolean {
-        //todo сделать определение акцента здесь
         beat++
-        val isNextBar = if (beat >= beatsPerBar) {
-            beat = 0
-            true
-        } else {
-            false
-        }
+        val isNextBar = beat + 1 == beatsPerBar
+        if (beat >= beatsPerBar) beat = 0
         listener?.onTick(beatSequence[beat].beatType, beat, 60000 / bpm)
         if (prevBpm != bpm) {
             clickObservable.onNext((60000 / bpm).toLong())
             prevBpm = bpm
         }
-        clickPlayer.click(beatSequence[beat].beatType)
+        if(!isMuted) {
+            clickPlayer.click(beatSequence[beat].beatType)
+        }
         return isNextBar
     }
 
@@ -127,32 +125,73 @@ class TickService : Service() {
 
     fun startTraining(params: Bundle) {
         val trainingType = params.getString("trainingType", "TEMPO_INCREASING")
-        val startBpm = params.getInt("startBpm", MIN_BPM)
-        val endBpm = params.getInt("endBpm", MAX_BPM)
-        val bars = params.getInt("bars", 1)
-        val increment = params.getInt("increment", 10)
 
         if (isPlaying) {
             stop()
         }
-        bpm = startBpm
-        listener?.onControlsBlock(true)
-        listener?.onBpmChange(bpm)
-        clickConsumer = Consumer { _ ->
-            val isNextBar = click()
+        isMuted = false
+        when (TrainingType.valueOf(trainingType)) {
+            TrainingType.TEMPO_INCREASING -> {
+                val startBpm = params.getInt("startBpm", MIN_BPM)
+                val endBpm = params.getInt("endBpm", MAX_BPM)
+                val bars = params.getInt("bars", 1)
+                val increment = params.getInt("increment", 10)
 
-            if(isNextBar) {
-                barCount++
-            }
-            if (barCount >= bars) {
-                bpm += increment
-                if(bpm >= endBpm) bpm = endBpm
+                bpm = startBpm
+                listener?.onControlsBlock(true)
                 listener?.onBpmChange(bpm)
-                barCount = 0
+                clickConsumer = Consumer { _ ->
+                    val isNextBar = click()
+
+                    if (isNextBar) {
+                        barCount++
+                    }
+                    if (barCount >= bars) {
+                        bpm += increment
+                        if (bpm >= endBpm) bpm = endBpm
+                        listener?.onBpmChange(bpm)
+                        barCount = 0
+                    }
+                    if (bpm >= endBpm) {
+                        clickConsumer = Consumer { click() }
+                        listener?.onControlsBlock(false)
+                    }
+                }
             }
-            if(bpm >= endBpm) {
-                clickConsumer = Consumer { click() }
-                listener?.onControlsBlock(false)
+            TrainingType.BAR_DROPPING -> {
+                val chance = params.getInt("chance", 30)
+                val normalBars = params.getInt("normalBars", 3)
+                val mutedBars = params.getInt("mutedBars", 1)
+
+                clickConsumer = Consumer { _ ->
+                    val isNextBar = click()
+
+                    if (isNextBar) {
+                        val percentage = Random(System.currentTimeMillis())
+                        isMuted = percentage.nextInt(100) < chance
+                        //barCount++
+                    }
+                    /*if (barCount >= bars) {
+                        bpm += increment
+                        if (bpm >= endBpm) bpm = endBpm
+                        listener?.onBpmChange(bpm)
+                        barCount = 0
+                    }
+                    if (bpm >= endBpm) {
+                        clickConsumer = Consumer { click() }
+                        listener?.onControlsBlock(false)
+                    }*/
+                }
+            }
+            TrainingType.BEAT_DROPPING -> {
+                val chance = params.getInt("chance", 30)
+
+                clickConsumer = Consumer { _ ->
+                    click()
+
+                    val percentage = Random(System.currentTimeMillis())
+                    isMuted = percentage.nextInt(100) < chance
+                }
             }
         }
         play()

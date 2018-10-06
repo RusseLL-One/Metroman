@@ -26,7 +26,7 @@ class BarDropFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        //startValue.tvValue.text = "90"
+        chanceValue.tvValue.setText("50")
         //endValue.tvValue.text = "160"
 
         chanceValue.ivIncrease.setOnClickListener {
@@ -35,7 +35,7 @@ class BarDropFragment : Fragment() {
                 chance++
 
                 if(chance <= 100) {
-                    chanceValue.tvValue.text = chance.toString()
+                    chanceValue.tvValue.setText(chance.toString())
                 }
             } catch (e: NumberFormatException) {
             }
@@ -47,7 +47,7 @@ class BarDropFragment : Fragment() {
                 chance--
 
                 if(chance >= 0) {
-                    chanceValue.tvValue.text = chance.toString()
+                    chanceValue.tvValue.setText(chance.toString())
                 }
             } catch (e: NumberFormatException) {
             }
@@ -59,7 +59,7 @@ class BarDropFragment : Fragment() {
                 normal++
 
                 if(normal <= 50) {
-                    normalValue.tvValue.text = normal.toString()
+                    normalValue.tvValue.setText(normal.toString())
                 }
             } catch (e: NumberFormatException) {
             }
@@ -71,7 +71,7 @@ class BarDropFragment : Fragment() {
                 normal--
 
                 if (normal >= 1) {
-                    normalValue.tvValue.text = normal.toString()
+                    normalValue.tvValue.setText(normal.toString())
                 }
             } catch (e: NumberFormatException) {
             }
@@ -83,7 +83,7 @@ class BarDropFragment : Fragment() {
                 muted++
 
                 if(muted <= 100) {
-                    mutedValue.tvValue.text = muted.toString()
+                    mutedValue.tvValue.setText(muted.toString())
                 }
             } catch (e: NumberFormatException) {
             }
@@ -95,7 +95,7 @@ class BarDropFragment : Fragment() {
                 muted--
 
                 if (muted >= 1) {
-                    mutedValue.tvValue.text = muted.toString()
+                    mutedValue.tvValue.setText(muted.toString())
                 }
             } catch (e: NumberFormatException) {
             }

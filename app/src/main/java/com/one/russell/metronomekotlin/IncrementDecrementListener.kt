@@ -12,13 +12,13 @@ class IncrementDecrementListener(private val isIncreasing : Boolean, private val
             if(isIncreasing) {
                 value++
                 if(value <= bound) {
-                    view.tvValue.text = value.toString()
+                    view.tvValue.setText(value.toString())
                 }
             }
             else {
                 value--
                 if(value >= bound) {
-                    view.tvValue.text = value.toString()
+                    view.tvValue.setText(value.toString())
                 }
             }
         } catch (e: NumberFormatException) {
