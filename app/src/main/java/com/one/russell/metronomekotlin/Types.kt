@@ -3,7 +3,8 @@ package com.one.russell.metronomekotlin
 enum class BeatType {
     BEAT,
     SUBACCENT,
-    ACCENT
+    ACCENT,
+    MUTE
 }
 
 enum class TrainingType {

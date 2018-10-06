@@ -51,6 +51,8 @@ class ClickPlayer {
         val beatSoundId = if (beatType == BeatType.ACCENT || beatType == BeatType.SUBACCENT) {
             beat = 0
             accentSoundId
+        } else if (beatType == BeatType.MUTE) {
+            0
         } else {
             clickSoundId
         }

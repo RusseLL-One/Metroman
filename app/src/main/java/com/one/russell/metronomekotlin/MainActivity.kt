@@ -60,32 +60,9 @@ class MainActivity : AppCompatActivity() {
                 (vBall.layoutParams as FrameLayout.LayoutParams).topMargin = x
                 vBall.requestLayout()
             }
-
-            val colorAnimator = ValueAnimator.ofInt(0, 255)
-            colorAnimator.interpolator = DecelerateInterpolator()
-            colorAnimator.addUpdateListener { animation ->
-
-                val animatorValue = (animation.animatedValue as Int)
-                val redColor = Color.rgb(255, animatorValue, animatorValue)
-                val blueColor = Color.rgb(animatorValue, animatorValue, 255)
-                val greenColor = Color.rgb(animatorValue, 255, animatorValue)
-                val filter: PorterDuffColorFilter
-                when (beatType) {
-                    BeatType.ACCENT -> filter = PorterDuffColorFilter(redColor, PorterDuff.Mode.MULTIPLY)
-                    BeatType.SUBACCENT -> filter = PorterDuffColorFilter(greenColor, PorterDuff.Mode.MULTIPLY)
-                    else -> filter = PorterDuffColorFilter(blueColor, PorterDuff.Mode.MULTIPLY)
-                }
-                //vLine.background.colorFilter = redFilter
-                for (view in beatsViewList) {
-                    view.background.colorFilter = null
-                }
-                if (beat < beatsViewList.size) {
-                    beatsViewList[beat].background.colorFilter = filter
-                }
-            }
-
             positionAnimator.start()
-            colorAnimator.start()
+
+            beatsViewList[beat].startColorAnimation()
         }
 
         override fun onBpmChange(bpm: Int) {

@@ -19,6 +19,9 @@ class BeatView @JvmOverloads constructor(
     var accentBoxHeight = 0f
     var beatType = BeatType.BEAT
     var bordersImage: Bitmap? = null
+    var colorFilter = ColorFilter()
+    var borderWidth = Utils.getPixelsFromDp(2).toFloat()
+    var fillRectangle = RectF()
 
     constructor(context: Context, beatType: BeatType) : this(context) {
         this.beatType = beatType
@@ -35,15 +38,17 @@ class BeatView @JvmOverloads constructor(
                 accentBoxHeight = when(beatType) {
                     BeatType.ACCENT -> 0f
                     BeatType.SUBACCENT -> (measuredHeight / 2).toFloat()
-                    else -> measuredHeight.toFloat()
+                    BeatType.BEAT -> measuredHeight.toFloat() - borderWidth*2
+                    else -> (measuredHeight / 4).toFloat()
                 }
+                fillRectangle = RectF(borderWidth, accentBoxHeight + borderWidth, measuredWidth.toFloat() - borderWidth, measuredHeight.toFloat() - borderWidth)
 
                 val drawable = context.resources.getDrawable(R.drawable.beats)
 
-                bordersImage = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888)
+                /*bordersImage = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888)
                 val canvas = Canvas(bordersImage)
                 drawable.setBounds(0, 0, measuredWidth, measuredHeight)
-                drawable.draw(canvas)
+                drawable.draw(canvas)*/
                 return true
             }
         })
@@ -55,19 +60,22 @@ class BeatView @JvmOverloads constructor(
         beatType = when(beatType) {
             BeatType.BEAT -> BeatType.SUBACCENT
             BeatType.SUBACCENT -> BeatType.ACCENT
-            BeatType.ACCENT -> BeatType.BEAT
+            BeatType.ACCENT -> BeatType.MUTE
+            BeatType.MUTE -> BeatType.BEAT
         }
 
         val positionAnimator = when(beatType) {
             BeatType.ACCENT -> ValueAnimator.ofFloat((measuredHeight / 2).toFloat(), 0f)
             BeatType.SUBACCENT -> ValueAnimator.ofFloat(measuredHeight.toFloat(), (measuredHeight / 2).toFloat())
-            else -> ValueAnimator.ofFloat(0f, measuredHeight.toFloat())
+            BeatType.BEAT -> ValueAnimator.ofFloat((measuredHeight / 4).toFloat(), (measuredHeight - borderWidth*2).toFloat())
+            else -> ValueAnimator.ofFloat(0f, (measuredHeight / 4).toFloat())
         }
 
         //positionAnimator.duration = duration.toLong()
         positionAnimator.interpolator = DecelerateInterpolator()
         positionAnimator.addUpdateListener { animation ->
             accentBoxHeight = animation.animatedValue as Float
+            fillRectangle = RectF(borderWidth, accentBoxHeight + borderWidth, measuredWidth.toFloat() - borderWidth, measuredHeight.toFloat() - borderWidth)
             invalidate()
         }
 
@@ -76,15 +84,45 @@ class BeatView @JvmOverloads constructor(
         return super.onTouchEvent(event)
     }
 
-    override fun onDraw(canvas: Canvas?) {
-        greyPaint.colorFilter = background.colorFilter
-        whitePaint.colorFilter = background.colorFilter
-        //todo всё ломается при изменении количества ударов в такте
-        canvas?.drawRoundRect(RectF(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat()), Utils.getPixelsFromDp(5).toFloat(), Utils.getPixelsFromDp(5).toFloat(), whitePaint)
-        canvas?.drawRoundRect(RectF(0f, accentBoxHeight, measuredWidth.toFloat(), measuredHeight.toFloat()), Utils.getPixelsFromDp(5).toFloat(), Utils.getPixelsFromDp(5).toFloat(), greyPaint)
-        if(bordersImage != null) {
-            canvas?.drawBitmap(bordersImage, 0f, 0f, Paint())
+    fun startColorAnimation() {
+        val colorAnimator = ValueAnimator.ofInt(0, 255)
+        colorAnimator.interpolator = DecelerateInterpolator()
+        colorAnimator.addUpdateListener { animation ->
+            val animatorValue = (animation.animatedValue as Int)
+            colorFilter = when (beatType) {
+                BeatType.ACCENT -> {
+                    val redColor = Color.rgb(255, animatorValue, animatorValue)
+                    PorterDuffColorFilter(redColor, PorterDuff.Mode.MULTIPLY)
+                }
+                BeatType.SUBACCENT -> {
+                    val greenColor = Color.rgb(animatorValue, 255, animatorValue)
+                    PorterDuffColorFilter(greenColor, PorterDuff.Mode.MULTIPLY)
+                }
+                BeatType.BEAT -> {
+                    val blueColor = Color.rgb(animatorValue, animatorValue, 255)
+                    PorterDuffColorFilter(blueColor, PorterDuff.Mode.MULTIPLY)
+                }
+                else -> {
+                    colorAnimator.setIntValues(122, 255)
+                    val grayColor = Color.rgb(animatorValue, animatorValue, animatorValue)
+                    PorterDuffColorFilter(grayColor, PorterDuff.Mode.MULTIPLY)
+                }
+            }
+            background.colorFilter = colorFilter
         }
+
+        colorAnimator.start()
+    }
+
+    override fun onDraw(canvas: Canvas?) {
+        greyPaint.colorFilter = colorFilter
+        whitePaint.colorFilter = colorFilter
+        //todo всё ломается при изменении количества ударов в такте
+        //canvas?.drawRoundRect(RectF(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat()), Utils.getPixelsFromDp(5).toFloat(), Utils.getPixelsFromDp(5).toFloat(), whitePaint)
+        canvas?.drawRoundRect(fillRectangle, Utils.getPixelsFromDp(5).toFloat(), Utils.getPixelsFromDp(5).toFloat(), greyPaint)
+        /*if(bordersImage != null) {
+            canvas?.drawBitmap(bordersImage, 0f, 0f, Paint())
+        }*/
         //canvas?.drawRect(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), greyPaint)
 
         super.onDraw(canvas)

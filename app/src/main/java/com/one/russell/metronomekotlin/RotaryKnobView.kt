@@ -35,6 +35,7 @@ open class RotaryKnobView @JvmOverloads constructor(
         rotateMatrix = Matrix()
 
         setKnobImage(activity)
+        setBackgroundResource(R.drawable.knob)
 
         model = ViewModelProviders.of(activity as FragmentActivity).get(MainViewModel::class.java)
 
@@ -95,7 +96,7 @@ open class RotaryKnobView @JvmOverloads constructor(
 
     fun setKnobImage(context: Context) {
         this.post {
-            val drawable = context.resources.getDrawable(R.drawable.knob_drawable)
+            val drawable = context.resources.getDrawable(R.drawable.knob_dot)
 
             knobImage = Bitmap.createBitmap(this.measuredWidth, this.measuredHeight, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(knobImage)
