@@ -11,12 +11,13 @@ import android.view.MotionEvent
 import android.view.View
 import kotlin.properties.Delegates
 import android.util.AttributeSet
+import android.widget.ImageView
 
 const val BPM_STEP_DEGREES = 10
 
-open class RotaryKnobView @JvmOverloads constructor(
-        activity: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : View(activity, attrs, defStyleAttr) {
+class RotaryKnobView @JvmOverloads constructor(
+        context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+) : ImageView(context, attrs, defStyleAttr) {
 
 
     var bpm = 10
@@ -34,15 +35,14 @@ open class RotaryKnobView @JvmOverloads constructor(
     init {
         rotateMatrix = Matrix()
 
-        setKnobImage(activity)
-        setBackgroundResource(R.drawable.knob)
+        setKnobImage(context)
 
-        model = ViewModelProviders.of(activity as FragmentActivity).get(MainViewModel::class.java)
+        model = ViewModelProviders.of(context as FragmentActivity).get(MainViewModel::class.java)
 
         rotateClickPlayer = SoundPool(2, AudioManager.STREAM_MUSIC, 0)
-        rotateClickId = rotateClickPlayer.load(activity, R.raw.rotate_click, 1)
+        rotateClickId = rotateClickPlayer.load(context, R.raw.rotate_click, 1)
 
-        model.bpmLiveData.observe(activity, Observer {
+        model.bpmLiveData.observe(context, Observer {
             if (it != null) {
                 bpm = it
             }
@@ -94,7 +94,7 @@ open class RotaryKnobView @JvmOverloads constructor(
         return false
     }
 
-    fun setKnobImage(context: Context) {
+    private fun setKnobImage(context: Context) {
         this.post {
             val drawable = context.resources.getDrawable(R.drawable.knob_dot)
 

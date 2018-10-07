@@ -24,6 +24,7 @@ import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import com.bumptech.glide.Glide
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
@@ -62,6 +63,34 @@ class MainActivity : AppCompatActivity() {
             }
             positionAnimator.start()
 
+
+            val borderAnimator = ValueAnimator.ofInt(0, 5)
+
+            borderAnimator.interpolator = DecelerateInterpolator()
+            borderAnimator.addUpdateListener { animation ->
+                val x = animation.animatedValue as Int
+                when (x) {
+                    0 -> Glide.with(this@MainActivity)
+                            .load(R.drawable.borders0000)
+                            .into(border)
+                    1 -> Glide.with(this@MainActivity)
+                            .load(R.drawable.borders0001)
+                            .into(border)
+                    2 -> Glide.with(this@MainActivity)
+                            .load(R.drawable.borders0002)
+                            .into(border)
+                    3 -> Glide.with(this@MainActivity)
+                            .load(R.drawable.borders0003)
+                            .into(border)
+                    4 -> Glide.with(this@MainActivity)
+                            .load(R.drawable.borders0004)
+                            .into(border)
+                }
+
+            }
+            borderAnimator.start()
+
+
             beatsViewList[beat].startColorAnimation()
         }
 
@@ -74,11 +103,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onStartClicking() {
-            playButton.setImageResource(R.drawable.ic_pause_circle_outline_black_24dp)
+            Glide.with(this@MainActivity)
+                    .load(R.drawable.pause)
+                    .into(playButton)
         }
 
         override fun onStopClicking() {
-            playButton.setImageResource(R.drawable.ic_play_circle_outline_black_24dp)
+            Glide.with(this@MainActivity)
+                    .load(R.drawable.play)
+                    .into(playButton)
         }
     }
 
@@ -89,6 +122,26 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        Glide.with(this)
+                .load(R.drawable.background)
+                .into(background)
+
+        Glide.with(this)
+                .load(R.drawable.tap)
+                .into(tapButton)
+
+        Glide.with(this)
+                .load(R.drawable.play)
+                .into(playButton)
+
+        Glide.with(this)
+                .load(R.drawable.knob)
+                .into(rotaryKnob)
+
+        Glide.with(this)
+                .load(R.drawable.borders0004)
+                .into(border)
 
         model = ViewModelProviders.of(this).get(MainViewModel::class.java)
         model.initPrefs(this)
