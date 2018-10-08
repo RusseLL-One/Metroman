@@ -2,6 +2,7 @@ package com.one.russell.metronomekotlin
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,175 +14,86 @@ import kotlin.properties.Delegates
 
 class TempoIncreasingFragment : Fragment() {
 
-    private var model: MainViewModel by Delegates.notNull()
     private val clickListener = View.OnClickListener {
 
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val activity = activity
-        if(activity != null) {
-            model = ViewModelProviders.of(activity).get(MainViewModel::class.java)
-        }
         return inflater.inflate(R.layout.fragment_training_tempo_increasing, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        startValue.tvValue.setText("90")
-        endValue.tvValue.setText("160")
-        barsValue.tvValue.setText("1")
-        increaseValue.tvValue.setText("5")
+        tempoIncTabLayout.addTab(tempoIncTabLayout.newTab().setText("By bars"))
+        tempoIncTabLayout.addTab(tempoIncTabLayout.newTab().setText("By time"))
 
-        startValue.ivIncrease.setOnClickListener {
-            try {
-                var startBpm = startValue.tvValue.text.toString().toInt()
-                startBpm++
+        tempoIncTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(p0: TabLayout.Tab?) {
+                when (tempoIncTabLayout.selectedTabPosition) {
+                    0 -> {
+                        tvTime.visibility = View.INVISIBLE
+                        timeValue.visibility = View.INVISIBLE
+                        timeFrame.visibility = View.INVISIBLE
 
-                val endBpm = endValue.tvValue.text.toString().toInt()
-                if(startBpm <= endBpm) {
-                    startValue.tvValue.setText(startBpm.toString())
-                }
-            } catch (e: NumberFormatException) {
-            }
-        }
-
-        startValue.ivDecrease.setOnClickListener {
-            try {
-                var startBpm = startValue.tvValue.text.toString().toInt()
-                startBpm--
-
-                if(startBpm >= MIN_BPM) {
-                    startValue.tvValue.setText(startBpm.toString())
-                }
-            } catch (e: NumberFormatException) {
-            }
-        }
-
-        endValue.ivIncrease.setOnClickListener {
-            try {
-                var endBpm = endValue.tvValue.text.toString().toInt()
-                endBpm++
-
-                if(endBpm <= MAX_BPM) {
-                    endValue.tvValue.setText(endBpm.toString())
-                }
-            } catch (e: NumberFormatException) {
-            }
-        }
-
-        endValue.ivDecrease.setOnClickListener {
-            try {
-                var endBpm = endValue.tvValue.text.toString().toInt()
-                endBpm--
-
-                var startBpm = startValue.tvValue.text.toString().toInt()
-                if (endBpm >= startBpm) {
-                    endValue.tvValue.setText(endBpm.toString())
-                }
-            } catch (e: NumberFormatException) {
-            }
-        }
-
-        barsValue.ivIncrease.setOnClickListener {
-            try {
-                var bars = barsValue.tvValue.text.toString().toInt()
-                bars++
-
-                if(bars <= 100) {
-                    barsValue.tvValue.setText(bars.toString())
-                }
-            } catch (e: NumberFormatException) {
-            }
-        }
-
-        barsValue.ivDecrease.setOnClickListener {
-            try {
-                var bars = barsValue.tvValue.text.toString().toInt()
-                bars--
-
-                if (bars >= 1) {
-                    barsValue.tvValue.setText(bars.toString())
-                }
-            } catch (e: NumberFormatException) {
-            }
-        }
-
-        increaseValue.ivIncrease.setOnClickListener {
-            try {
-                var increment = increaseValue.tvValue.text.toString().toInt()
-                increment++
-
-                if(increment <= 200) {
-                    increaseValue.tvValue.setText(increment.toString())
-                }
-            } catch (e: NumberFormatException) {
-            }
-        }
-
-        increaseValue.ivDecrease.setOnClickListener {
-            try {
-                var increment = increaseValue.tvValue.text.toString().toInt()
-                increment--
-
-                if (increment >= 1) {
-                    increaseValue.tvValue.setText(increment.toString())
-                }
-            } catch (e: NumberFormatException) {
-            }
-        }
-
-        btStart.setOnClickListener {
-            try {
-                val trainingType = TrainingType.TEMPO_INCREASING
-                val startBpm = startValue.tvValue.text.toString().toInt()
-                val endBpm = endValue.tvValue.text.toString().toInt()
-                val bars = barsValue.tvValue.text.toString().toInt()
-                val increment = increaseValue.tvValue.text.toString().toInt()
-
-                val params = Bundle()
-                params.putString("trainingType", trainingType.name)
-                params.putInt("startBpm", startBpm)
-                params.putInt("endBpm", endBpm)
-                params.putInt("bars", bars)
-                params.putInt("increment", increment)
-
-                model.startTraining(params)
-                activity?.supportFragmentManager?.popBackStack();
-            } catch (e: NumberFormatException) {
-            }
-        }
-
-        /*startValue.setOnTouchListener(object : View.OnTouchListener {
-            var startX = 0f
-            var handler = Handler()
-            override fun onTouch(view: View?, event: MotionEvent): Boolean {
-                when (event.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        startX = event.x
+                        tvBars.visibility = View.VISIBLE
+                        tvIncrease.visibility = View.VISIBLE
+                        barsValue.visibility = View.VISIBLE
+                        increaseValue.visibility = View.VISIBLE
+                        barsFrame.visibility = View.VISIBLE
                     }
-                    MotionEvent.ACTION_MOVE -> {
-                        val x = event.x
+                    1 -> {
+                        tvBars.visibility = View.INVISIBLE
+                        tvIncrease.visibility = View.INVISIBLE
+                        barsValue.visibility = View.INVISIBLE
+                        increaseValue.visibility = View.INVISIBLE
+                        barsFrame.visibility = View.INVISIBLE
 
-                        if(x - startX > 10) {
-                            Log.d("qwe", "MOVE, x= " + x + " startX=" + startX)
-                            //handler.postDelayed() {  }
-
-                            clickDisposable = clickObservable.switchMap { interval ->
-                                Observable.interval(interval, TimeUnit.MILLISECONDS)
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .doOnNext { click() }
-                            }.subscribe()
-
-
-
-                        }
+                        tvTime.visibility = View.VISIBLE
+                        timeValue.visibility = View.VISIBLE
+                        timeFrame.visibility = View.VISIBLE
                     }
                 }
-                return true
             }
-        })*/
+
+            override fun onTabReselected(p0: TabLayout.Tab?) {
+            }
+
+            override fun onTabUnselected(p0: TabLayout.Tab?) {
+            }
+        })
+
+        startValue.minValue = MIN_BPM
+        startValue.maxValue = 160
+        startValue.value = 90
+
+        endValue.minValue = startValue.value
+        endValue.maxValue = MAX_BPM
+        endValue.value = 160
+
+        endValue.minValue = startValue.value
+        endValue.maxValue = MAX_BPM
+        endValue.value = 160
+
+        endValue.minValue = startValue.value
+        endValue.maxValue = MAX_BPM
+        endValue.value = 160
+
+        barsValue.minValue = 1
+        barsValue.maxValue = 16
+        barsValue.value = 1
+
+        increaseValue.minValue = 1
+        increaseValue.maxValue = MAX_BPM
+        increaseValue.value = 5
+
+        startValue.setOnValueChangedListener { _, _, value ->
+            endValue.minValue = value
+        }
+
+        endValue.setOnValueChangedListener { _, _, value ->
+            startValue.maxValue = value
+        }
     }
 }

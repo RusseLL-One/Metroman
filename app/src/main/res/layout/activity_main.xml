@@ -27,6 +27,7 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:text="Tempo training"
+            android:textColor="@color/colorText"
             app:layout_constraintEnd_toStartOf="@id/bSettings"
             app:layout_constraintStart_toEndOf="@id/vLine"
             app:layout_constraintTop_toTopOf="parent" />
@@ -40,6 +41,7 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:text="Settings"
+            android:textColor="@color/colorText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/bTempoTrain"
             app:layout_constraintTop_toTopOf="parent" />
@@ -53,7 +55,7 @@
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/vLine"
-            app:layout_constraintTop_toBottomOf="@id/bSettings"/>
+            app:layout_constraintTop_toBottomOf="@id/bSettings" />
 
         <com.one.russell.metronomekotlin.RotaryKnobView
             android:id="@+id/rotaryKnob"
@@ -126,7 +128,7 @@
         <View
             android:layout_width="0dp"
             android:layout_height="40dp"
-            android:background="@drawable/buttons"
+            android:background="@drawable/frame"
             app:layout_constraintBottom_toBottomOf="@id/npBeatsPerBar"
             app:layout_constraintEnd_toEndOf="@id/npValueOfBeat"
             app:layout_constraintStart_toStartOf="@id/npBeatsPerBar"
@@ -183,16 +185,25 @@
         </FrameLayout>
 
         <ImageView
-            android:id="@+id/border"
+            android:id="@+id/bottomBorder"
             android:layout_width="60dp"
             android:layout_height="0dp"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintStart_toStartOf="@id/vLine"
-            app:layout_constraintEnd_toEndOf="@id/vLine"
-            app:layout_constraintTop_toBottomOf="@id/vLine"
             app:layout_constraintBottom_toBottomOf="@id/vLine"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="@id/vLine"
+            app:layout_constraintStart_toStartOf="@id/vLine"
+            app:layout_constraintTop_toBottomOf="@id/vLine" />
 
-            />
+        <ImageView
+            android:id="@+id/topBorder"
+            android:layout_width="60dp"
+            android:layout_height="0dp"
+            android:scaleY="-1"
+            app:layout_constraintBottom_toTopOf="@id/vLine"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="@id/vLine"
+            app:layout_constraintStart_toStartOf="@id/vLine"
+            app:layout_constraintTop_toTopOf="@id/vLine" />
 
 
     </android.support.constraint.ConstraintLayout>

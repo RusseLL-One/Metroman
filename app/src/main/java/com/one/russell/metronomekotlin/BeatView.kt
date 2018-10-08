@@ -2,24 +2,27 @@ package com.one.russell.metronomekotlin
 
 import android.animation.ValueAnimator
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.*
+import android.graphics.drawable.NinePatchDrawable
 import android.util.AttributeSet
 import android.view.MotionEvent
-import android.view.View
 import android.view.ViewTreeObserver
 import android.view.animation.DecelerateInterpolator
+import android.widget.ImageView
+import com.bumptech.glide.Glide
 
 
 class BeatView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : View(context, attrs, defStyleAttr) {
+) : ImageView(context, attrs, defStyleAttr) {
 
     val greyPaint = Paint()
     val whitePaint = Paint()
     var accentBoxHeight = 0f
     var beatType = BeatType.BEAT
     var bordersImage: Bitmap? = null
-    var colorFilter = ColorFilter()
+    var filter = ColorFilter()
     var borderWidth = Utils.getPixelsFromDp(2).toFloat()
     var fillRectangle = RectF()
 
@@ -28,8 +31,17 @@ class BeatView @JvmOverloads constructor(
     }
 
     init {
-        setBackgroundResource(R.drawable.buttons)
+        /*Glide.with(this)
+                .asDrawable()
+                .load(R.drawable.buttons_img)
+                .into(this@BeatView)
+        val bordersImage = Bitmap.createBitmap(this.measuredWidth, this.measuredHeight, Bitmap.Config.ARGB_8888)
+        val chunk = bordersImage.ninePatchChunk
 
+        NinePatchDrawable.createFromStream()
+        NinePatchBitmapFactory.*/
+        //var ninePatch = NinePatchDrawable()
+        setBackgroundResource(R.drawable.buttons_img)
 
 
         viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
@@ -43,12 +55,26 @@ class BeatView @JvmOverloads constructor(
                 }
                 fillRectangle = RectF(borderWidth, accentBoxHeight + borderWidth, measuredWidth.toFloat() - borderWidth, measuredHeight.toFloat() - borderWidth)
 
-                val drawable = context.resources.getDrawable(R.drawable.beats)
+                /*val drawable = context.resources.getDrawable(R.drawable.frame)
 
-                /*bordersImage = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888)
+                bordersImage = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888)
                 val canvas = Canvas(bordersImage)
                 drawable.setBounds(0, 0, measuredWidth, measuredHeight)
                 drawable.draw(canvas)*/
+
+                /*Glide.with(this@BeatView)
+                        .asDrawable()
+                        .load(R.drawable.buttons_img)
+                        .into(bordersImage)*/
+                //val bordersImage = BitmapFactory.decodeResource(context.resources, R.drawable.buttons_img)
+                //val bordersImage = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888)
+
+                //val qwe = NinePatchBitmapFactory.createNinePatchDrawable(Resources.getSystem(), bordersImage)
+
+                //setImageBitmap(bordersImage)
+
+
+
                 return true
             }
         })
@@ -89,7 +115,7 @@ class BeatView @JvmOverloads constructor(
         colorAnimator.interpolator = DecelerateInterpolator()
         colorAnimator.addUpdateListener { animation ->
             val animatorValue = (animation.animatedValue as Int)
-            colorFilter = when (beatType) {
+            filter = when (beatType) {
                 BeatType.ACCENT -> {
                     val redColor = Color.rgb(255, animatorValue, animatorValue)
                     PorterDuffColorFilter(redColor, PorterDuff.Mode.MULTIPLY)
@@ -108,15 +134,15 @@ class BeatView @JvmOverloads constructor(
                     PorterDuffColorFilter(grayColor, PorterDuff.Mode.MULTIPLY)
                 }
             }
-            background.colorFilter = colorFilter
+            background.colorFilter = filter
         }
 
         colorAnimator.start()
     }
 
     override fun onDraw(canvas: Canvas?) {
-        greyPaint.colorFilter = colorFilter
-        whitePaint.colorFilter = colorFilter
+        greyPaint.colorFilter = filter
+        whitePaint.colorFilter = filter
         //todo всё ломается при изменении количества ударов в такте
         //canvas?.drawRoundRect(RectF(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat()), Utils.getPixelsFromDp(5).toFloat(), Utils.getPixelsFromDp(5).toFloat(), whitePaint)
         canvas?.drawRoundRect(fillRectangle, Utils.getPixelsFromDp(5).toFloat(), Utils.getPixelsFromDp(5).toFloat(), greyPaint)

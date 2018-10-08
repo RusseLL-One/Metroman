@@ -64,11 +64,15 @@ class MainActivity : AppCompatActivity() {
             positionAnimator.start()
 
 
+            val border = if(!isBeatBallOnTop) topBorder else bottomBorder
             val borderAnimator = ValueAnimator.ofInt(0, 5)
-
-            borderAnimator.interpolator = DecelerateInterpolator()
+            borderAnimator.duration = 2000L
+            borderAnimator.repeatCount = 0
+            //borderAnimator.interpolator = DecelerateInterpolator()
             borderAnimator.addUpdateListener { animation ->
+
                 val x = animation.animatedValue as Int
+                Log.d("qwe", "borderAnimator = " + x)
                 when (x) {
                     0 -> Glide.with(this@MainActivity)
                             .load(R.drawable.borders0000)
@@ -141,7 +145,11 @@ class MainActivity : AppCompatActivity() {
 
         Glide.with(this)
                 .load(R.drawable.borders0004)
-                .into(border)
+                .into(bottomBorder)
+
+        Glide.with(this)
+                .load(R.drawable.borders0004)
+                .into(topBorder)
 
         model = ViewModelProviders.of(this).get(MainViewModel::class.java)
         model.initPrefs(this)
@@ -319,7 +327,6 @@ class MainActivity : AppCompatActivity() {
         if (!isBound) return
         unbindService(sConn)
         isBound = false
-        stopService(tickServiceIntent)
     }
 
     interface TickListener {

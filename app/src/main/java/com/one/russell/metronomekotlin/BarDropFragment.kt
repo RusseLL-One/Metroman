@@ -2,13 +2,13 @@ package com.one.russell.metronomekotlin
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlin.properties.Delegates
 import kotlinx.android.synthetic.main.fragment_training_bar_drop.*
-import kotlinx.android.synthetic.main.item_settings_param.view.*
 
 class BarDropFragment : Fragment() {
 
@@ -26,98 +26,46 @@ class BarDropFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        chanceValue.tvValue.setText("50")
+        barMuteChanceValue.value = 50
+
         //endValue.tvValue.text = "160"
 
-        chanceValue.ivIncrease.setOnClickListener {
-            try {
-                var chance = chanceValue.tvValue.text.toString().toInt()
-                chance++
+        barDropTabLayout.addTab(barDropTabLayout.newTab().setText("By random"))
+        barDropTabLayout.addTab(barDropTabLayout.newTab().setText("By count"))
 
-                if(chance <= 100) {
-                    chanceValue.tvValue.setText(chance.toString())
+        barDropTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(p0: TabLayout.Tab?) {
+                when (barDropTabLayout.selectedTabPosition) {
+                    0 -> {
+                        tvNormalBars.visibility = View.INVISIBLE
+                        normalValue.visibility = View.INVISIBLE
+                        tvMutedBars.visibility = View.INVISIBLE
+                        mutedValue.visibility = View.INVISIBLE
+                        barCountFrame.visibility = View.INVISIBLE
+
+                        barMuteChanceValue.visibility = View.VISIBLE
+                        tvMuteChance.visibility = View.VISIBLE
+                        barMuteChanceFrame.visibility = View.VISIBLE
+                    }
+                    1 -> {
+                        barMuteChanceValue.visibility = View.INVISIBLE
+                        tvMuteChance.visibility = View.INVISIBLE
+                        barMuteChanceFrame.visibility = View.INVISIBLE
+
+                        tvNormalBars.visibility = View.VISIBLE
+                        normalValue.visibility = View.VISIBLE
+                        tvMutedBars.visibility = View.VISIBLE
+                        mutedValue.visibility = View.VISIBLE
+                        barCountFrame.visibility = View.VISIBLE
+                    }
                 }
-            } catch (e: NumberFormatException) {
             }
-        }
 
-        chanceValue.ivDecrease.setOnClickListener {
-            try {
-                var chance = chanceValue.tvValue.text.toString().toInt()
-                chance--
-
-                if(chance >= 0) {
-                    chanceValue.tvValue.setText(chance.toString())
-                }
-            } catch (e: NumberFormatException) {
+            override fun onTabReselected(p0: TabLayout.Tab?) {
             }
-        }
 
-        normalValue.ivIncrease.setOnClickListener {
-            try {
-                var normal = normalValue.tvValue.text.toString().toInt()
-                normal++
-
-                if(normal <= 50) {
-                    normalValue.tvValue.setText(normal.toString())
-                }
-            } catch (e: NumberFormatException) {
+            override fun onTabUnselected(p0: TabLayout.Tab?) {
             }
-        }
-
-        normalValue.ivDecrease.setOnClickListener {
-            try {
-                var normal = normalValue.tvValue.text.toString().toInt()
-                normal--
-
-                if (normal >= 1) {
-                    normalValue.tvValue.setText(normal.toString())
-                }
-            } catch (e: NumberFormatException) {
-            }
-        }
-
-        mutedValue.ivIncrease.setOnClickListener {
-            try {
-                var muted = mutedValue.tvValue.text.toString().toInt()
-                muted++
-
-                if(muted <= 100) {
-                    mutedValue.tvValue.setText(muted.toString())
-                }
-            } catch (e: NumberFormatException) {
-            }
-        }
-
-        mutedValue.ivDecrease.setOnClickListener {
-            try {
-                var muted = mutedValue.tvValue.text.toString().toInt()
-                muted--
-
-                if (muted >= 1) {
-                    mutedValue.tvValue.setText(muted.toString())
-                }
-            } catch (e: NumberFormatException) {
-            }
-        }
-
-        btStart.setOnClickListener {
-            try {
-                val trainingType = TrainingType.BAR_DROPPING
-                val chance = chanceValue.tvValue.text.toString().toInt()
-                val normalBars = normalValue.tvValue.text.toString().toInt()
-                val mutedBars = mutedValue.tvValue.text.toString().toInt()
-
-                val params = Bundle()
-                params.putString("trainingType", trainingType.name)
-                params.putInt("chance", chance)
-                params.putInt("normalBars", normalBars)
-                params.putInt("mutedBars", mutedBars)
-
-                model.startTraining(params)
-                activity?.supportFragmentManager?.popBackStack();
-            } catch (e: NumberFormatException) {
-            }
-        }
+        })
     }
 }
