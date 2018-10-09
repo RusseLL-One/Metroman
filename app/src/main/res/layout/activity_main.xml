@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -16,6 +17,7 @@
         android:id="@+id/clMainActivity"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
         tools:context=".MainActivity">
 
         <Button
@@ -23,12 +25,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:background="@drawable/buttons"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:text="Tempo training"
-            android:textColor="@color/colorText"
             app:layout_constraintEnd_toStartOf="@id/bSettings"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@id/vLine"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -37,11 +41,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:background="@drawable/buttons"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:text="Settings"
-            android:textColor="@color/colorText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/bTempoTrain"
             app:layout_constraintTop_toTopOf="parent" />
@@ -57,7 +61,32 @@
             app:layout_constraintStart_toEndOf="@id/vLine"
             app:layout_constraintTop_toBottomOf="@id/bSettings" />
 
-        <com.one.russell.metronomekotlin.RotaryKnobView
+        <TextView
+            android:id="@+id/tvTrainigTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:text="Training is in progress"
+            android:textSize="14sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/pbTrainingTime"
+            app:layout_constraintEnd_toEndOf="@id/rotaryKnob"
+            app:layout_constraintStart_toStartOf="@id/rotaryKnob" />
+
+        <com.one.russell.metronomekotlin.Views.CircularProgressBar
+            android:id="@+id/pbTrainingTime"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/bpmTextView"
+            app:layout_constraintEnd_toEndOf="@id/rotaryKnob"
+            app:layout_constraintStart_toStartOf="@id/rotaryKnob"
+            app:layout_constraintTop_toBottomOf="@id/llBeats"
+            app:layout_constraintVertical_bias="1" />
+
+        <com.one.russell.metronomekotlin.Views.RotaryKnobView
             android:id="@+id/rotaryKnob"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -72,7 +101,7 @@
             app:layout_constraintTop_toBottomOf="@id/llBeats"
             app:layout_constraintVertical_bias="1" />
 
-        <com.one.russell.metronomekotlin.ScaleView
+        <com.one.russell.metronomekotlin.Views.ScaleView
             android:id="@+id/scaleKnob"
             android:layout_width="200dp"
             android:layout_height="200dp"
@@ -95,7 +124,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="TAP"
-            android:textColor="@color/colorText"
             app:layout_constraintBottom_toTopOf="@id/tapButton"
             app:layout_constraintEnd_toEndOf="@id/tapButton"
             app:layout_constraintStart_toStartOf="@id/tapButton" />
@@ -118,7 +146,6 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="BPM"
-            android:textColor="@color/colorText"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@id/rotaryKnob"
@@ -148,7 +175,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="/"
-            android:textColor="@color/colorText"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/npValueOfBeat"
@@ -165,7 +191,7 @@
             app:layout_constraintBottom_toTopOf="@id/tapButton"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <FrameLayout
+        <!--FrameLayout
             android:id="@+id/vLine"
             android:layout_width="50dp"
             android:layout_height="0dp"
@@ -182,29 +208,16 @@
                 android:layout_gravity="top"
                 android:background="@drawable/visual_beat_ball" />
 
-        </FrameLayout>
-
-        <ImageView
-            android:id="@+id/bottomBorder"
-            android:layout_width="60dp"
+        </FrameLayout-->
+        <com.one.russell.metronomekotlin.Views.BeatLineView
+            android:id="@+id/vLine"
+            android:layout_width="50dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="@id/vLine"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toEndOf="@id/vLine"
-            app:layout_constraintStart_toStartOf="@id/vLine"
-            app:layout_constraintTop_toBottomOf="@id/vLine" />
-
-        <ImageView
-            android:id="@+id/topBorder"
-            android:layout_width="60dp"
-            android:layout_height="0dp"
-            android:scaleY="-1"
-            app:layout_constraintBottom_toTopOf="@id/vLine"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toEndOf="@id/vLine"
-            app:layout_constraintStart_toStartOf="@id/vLine"
-            app:layout_constraintTop_toTopOf="@id/vLine" />
-
+            android:layout_margin="8dp"
+            android:background="@drawable/visual_beat_line"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
 

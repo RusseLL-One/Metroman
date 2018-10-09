@@ -1,16 +1,15 @@
-package com.one.russell.metronomekotlin
+package com.one.russell.metronomekotlin.Fragments
 
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import com.one.russell.metronomekotlin.MAX_BPM
+import com.one.russell.metronomekotlin.MIN_BPM
+import com.one.russell.metronomekotlin.R
 import kotlinx.android.synthetic.main.fragment_training_tempo_increasing.*
-import kotlinx.android.synthetic.main.item_settings_param.view.*
-import kotlin.properties.Delegates
 
 class TempoIncreasingFragment : Fragment() {
 

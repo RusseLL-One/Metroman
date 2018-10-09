@@ -8,6 +8,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:fontFamily">@font/plaint_text_font</item>
+        <item name="android:textColor">@color/colorAccent</item>
     </style>
     <style name="DefaultNumberPickerTheme" parent="AppTheme">
         <item name="colorControlNormal">@android:color/transparent</item>

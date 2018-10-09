@@ -30,7 +30,6 @@
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:text="1"
-        android:textColor="@color/colorText"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/ivIncrease"

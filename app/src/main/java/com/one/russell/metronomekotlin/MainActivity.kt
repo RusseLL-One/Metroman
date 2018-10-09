@@ -1,6 +1,5 @@
 package com.one.russell.metronomekotlin
 
-import android.animation.ValueAnimator
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.ComponentName
@@ -14,17 +13,16 @@ import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.properties.Delegates
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
+import android.content.res.Resources
+import android.graphics.Typeface
 import android.media.AudioManager
 import android.media.SoundPool
-import android.view.animation.AccelerateInterpolator
-import android.view.animation.DecelerateInterpolator
-import android.view.animation.LinearInterpolator
-import android.widget.FrameLayout
+import android.widget.EditText
 import android.widget.LinearLayout
 import com.bumptech.glide.Glide
+import com.one.russell.metronomekotlin.Fragments.SettingsFragment
+import com.one.russell.metronomekotlin.Fragments.TrainingFragment
+import com.one.russell.metronomekotlin.Views.BeatView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
@@ -40,60 +38,10 @@ class MainActivity : AppCompatActivity() {
     private var model: MainViewModel by Delegates.notNull()
 
     private var tickListener = object : TickListener {
-        private var isBeatBallOnTop = true
-
         override fun onTick(beatType: BeatType, beat: Int, duration: Int) {
 
-            val pathLength = vLine.height - vBall.height
-
-            val positionAnimator: ValueAnimator
-            if (isBeatBallOnTop) {
-                positionAnimator = ValueAnimator.ofInt(0, pathLength)
-            } else {
-                positionAnimator = ValueAnimator.ofInt(pathLength, 0)
-            }
-
-            isBeatBallOnTop = !isBeatBallOnTop
-            positionAnimator.duration = duration.toLong()
-            positionAnimator.interpolator = LinearInterpolator()
-            positionAnimator.addUpdateListener { animation ->
-                val x = animation.animatedValue as Int
-                (vBall.layoutParams as FrameLayout.LayoutParams).topMargin = x
-                vBall.requestLayout()
-            }
-            positionAnimator.start()
-
-
-            val border = if(!isBeatBallOnTop) topBorder else bottomBorder
-            val borderAnimator = ValueAnimator.ofInt(0, 5)
-            borderAnimator.duration = 2000L
-            borderAnimator.repeatCount = 0
-            //borderAnimator.interpolator = DecelerateInterpolator()
-            borderAnimator.addUpdateListener { animation ->
-
-                val x = animation.animatedValue as Int
-                Log.d("qwe", "borderAnimator = " + x)
-                when (x) {
-                    0 -> Glide.with(this@MainActivity)
-                            .load(R.drawable.borders0000)
-                            .into(border)
-                    1 -> Glide.with(this@MainActivity)
-                            .load(R.drawable.borders0001)
-                            .into(border)
-                    2 -> Glide.with(this@MainActivity)
-                            .load(R.drawable.borders0002)
-                            .into(border)
-                    3 -> Glide.with(this@MainActivity)
-                            .load(R.drawable.borders0003)
-                            .into(border)
-                    4 -> Glide.with(this@MainActivity)
-                            .load(R.drawable.borders0004)
-                            .into(border)
-                }
-
-            }
-            borderAnimator.start()
-
+            vLine.animateBall(duration)
+            vLine.animateBorder()
 
             beatsViewList[beat].startColorAnimation()
         }
@@ -117,10 +65,22 @@ class MainActivity : AppCompatActivity() {
                     .load(R.drawable.play)
                     .into(playButton)
         }
-    }
 
-    fun beatBallAnimation() {
+        override fun onTrainingToggle(text: String, isGoing: Boolean) {
+            if(isGoing) {
+                tvTrainigTitle.text = text
+                tvTrainigTitle.visibility = View.VISIBLE
+                pbTrainingTime.visibility = View.VISIBLE
+                pbTrainingTime.setProgress(0)
+            } else {
+                tvTrainigTitle.visibility = View.GONE
+                pbTrainingTime.visibility = View.GONE
+            }
+        }
 
+        override fun onTrainingUpdate(percent: Float) {
+                pbTrainingTime.setProgress((percent * 100).toInt())
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -143,13 +103,13 @@ class MainActivity : AppCompatActivity() {
                 .load(R.drawable.knob)
                 .into(rotaryKnob)
 
-        Glide.with(this)
+        /*Glide.with(this)
                 .load(R.drawable.borders0004)
                 .into(bottomBorder)
 
         Glide.with(this)
                 .load(R.drawable.borders0004)
-                .into(topBorder)
+                .into(topBorder)*/
 
         model = ViewModelProviders.of(this).get(MainViewModel::class.java)
         model.initPrefs(this)
@@ -157,12 +117,17 @@ class MainActivity : AppCompatActivity() {
         npBeatsPerBar.maxValue = MAX_BEATS_PER_BAR
         npBeatsPerBar.minValue = 1
         npBeatsPerBar.wrapSelectorWheel = false
+        //(npBeatsPerBar as EditText).typeface = Typeface.SERIF
 
         npValueOfBeat.maxValue = MAX_VALUES_OF_BEAT
         npValueOfBeat.minValue = 1
         npValueOfBeat.displayedValues = arrayOf("1", "2", "4", "8", "16", "32", "64")
         npValueOfBeat.wrapSelectorWheel = false
         npValueOfBeat.value = model.valueOfBeatsLiveData.value ?: 3
+
+        //pbTrainingTime.setProgress(40)
+        pbTrainingTime.setProgressColor(resources.getColor(R.color.colorAccent))
+        pbTrainingTime.setTextColor(resources.getColor(R.color.colorAccent))
 
         val beatsPerBarSubject = PublishSubject.create<Int>()
 
@@ -184,6 +149,9 @@ class MainActivity : AppCompatActivity() {
                 tickService?.setAccentSound(model.accentSoundLiveData.value)
                 tickService?.setBeatSound(model.beatSoundLiveData.value)
                 tickService?.setBpm(model.bpmLiveData.value)
+                if(tickService?.isPlaying == true) {
+                    tickListener.onStartClicking()
+                }
                 isBound = true
             }
 
@@ -225,9 +193,10 @@ class MainActivity : AppCompatActivity() {
                         else BeatView(this, BeatType.BEAT)
                         beatsViewList.add(view)
                         val params = LinearLayout.LayoutParams(
-                                Utils.getPixelsFromDp(50),
-                                Utils.getPixelsFromDp(50),
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                Utils.getPixelsFromDp(60),
                                 1f)
+                        view.minimumWidth = 500
                         llBeats.addView(view, params)
                     }
                 } else if (newItemsCount < 0) {
@@ -335,5 +304,7 @@ class MainActivity : AppCompatActivity() {
         fun onControlsBlock(block: Boolean)
         fun onStartClicking()
         fun onStopClicking()
+        fun onTrainingToggle(text: String, isGoing: Boolean)
+        fun onTrainingUpdate(percent: Float)
     }
 }

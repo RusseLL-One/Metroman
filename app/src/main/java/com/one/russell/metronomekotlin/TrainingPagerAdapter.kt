@@ -3,6 +3,9 @@ package com.one.russell.metronomekotlin
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import com.one.russell.metronomekotlin.Fragments.BarDropFragment
+import com.one.russell.metronomekotlin.Fragments.BeatDropFragment
+import com.one.russell.metronomekotlin.Fragments.TempoIncreasingFragment
 
 class TrainingPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 

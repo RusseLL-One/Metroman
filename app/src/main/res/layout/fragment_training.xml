@@ -42,7 +42,6 @@
             android:paddingTop="24dp"
             android:paddingBottom="24dp"
             android:textSize="16sp"
-            android:textColor="@color/colorText"
             android:text="Start\ntraining"
             android:background="@drawable/buttons"
             app:layout_constraintStart_toStartOf="parent"

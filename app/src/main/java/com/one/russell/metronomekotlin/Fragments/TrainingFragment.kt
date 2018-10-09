@@ -1,13 +1,16 @@
-package com.one.russell.metronomekotlin
+package com.one.russell.metronomekotlin.Fragments
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
+import com.one.russell.metronomekotlin.MainViewModel
+import com.one.russell.metronomekotlin.R
+import com.one.russell.metronomekotlin.TrainingPagerAdapter
+import com.one.russell.metronomekotlin.TrainingType
 import kotlinx.android.synthetic.main.fragment_training.*
 import kotlinx.android.synthetic.main.fragment_training_bar_drop.*
 import kotlinx.android.synthetic.main.fragment_training_beat_drop.*

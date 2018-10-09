@@ -1,4 +1,4 @@
-package com.one.russell.metronomekotlin
+package com.one.russell.metronomekotlin.Fragments
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -6,6 +6,11 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
+import com.one.russell.metronomekotlin.MainViewModel
+import com.one.russell.metronomekotlin.R
+import com.one.russell.metronomekotlin.Views.RotaryKnobView
+import com.one.russell.metronomekotlin.Views.ScaleView
 import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.android.synthetic.main.item_settings_param.view.*
 import kotlin.properties.Delegates
@@ -26,62 +31,20 @@ class SettingsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        accentValue.tvValue.setText(model.accentSoundLiveData.value.toString())
-        beatValue.tvValue.setText(model.beatSoundLiveData.value.toString())
+        Glide.with(this)
+                .asDrawable()
+                .load(R.drawable.background)
+                .into(background)
 
-        accentValue.ivIncrease.setOnClickListener {
-            try {
-                var accentSoundId = accentValue.tvValue.text.toString().toInt()
-                accentSoundId++
+        accentValue.value = model.accentSoundLiveData.value ?: 1
+        accentValue.minValue = 1
+        accentValue.maxValue = 3
 
-                if(accentSoundId <= 3) {
-                    accentValue.tvValue.setText(accentSoundId.toString())
-                    model.setAccentSoundId(accentSoundId)
-                }
-            } catch (e: NumberFormatException) {
-            }
+        accentValue.setOnValueChangedListener { _, _, value ->
+            model.setAccentSoundId(value)
         }
 
-        accentValue.ivDecrease.setOnClickListener {
-            try {
-                var accentSoundId = accentValue.tvValue.text.toString().toInt()
-                accentSoundId--
-
-                if(accentSoundId >= 1) {
-                    accentValue.tvValue.setText(accentSoundId.toString())
-                    model.setAccentSoundId(accentSoundId)
-                }
-            } catch (e: NumberFormatException) {
-            }
-        }
-
-        beatValue.ivIncrease.setOnClickListener {
-            try {
-                var beatSoundId = beatValue.tvValue.text.toString().toInt()
-                beatSoundId++
-
-                if(beatSoundId <= 3) {
-                    beatValue.tvValue.setText(beatSoundId.toString())
-                    model.setBeatSoundId(beatSoundId)
-                }
-            } catch (e: NumberFormatException) {
-            }
-        }
-
-        beatValue.ivDecrease.setOnClickListener {
-            try {
-                var beatSoundId = beatValue.tvValue.text.toString().toInt()
-                beatSoundId--
-
-                if(beatSoundId >= 1) {
-                    beatValue.tvValue.setText(beatSoundId.toString())
-                    model.setBeatSoundId(beatSoundId)
-                }
-            } catch (e: NumberFormatException) {
-            }
-        }
-
-        pickerValue.ivIncrease.setOnClickListener {
+        /*pickerValue.ivIncrease.setOnClickListener {
             try {
                 var pickerId = pickerValue.tvValue.text.toString().toInt()
                 pickerId++
@@ -113,6 +76,6 @@ class SettingsFragment : Fragment() {
                 }
             } catch (e: NumberFormatException) {
             }
-        }
+        }*/
     }
 }

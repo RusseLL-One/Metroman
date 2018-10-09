@@ -15,6 +15,10 @@ import io.reactivex.functions.Consumer
 import java.util.concurrent.TimeUnit
 import io.reactivex.subjects.PublishSubject
 import java.util.*
+import android.widget.Toast
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraManager
+import com.one.russell.metronomekotlin.Views.BeatView
 
 
 const val ACTION_STOP_CLICKING = "stop_clicking"
@@ -99,6 +103,7 @@ class TickService : Service() {
     }
 
     fun click(): Boolean {
+        //toggleFlashLight()
         beat++
         val isNextBar = beat + 1 == beatsPerBar
         if (beat >= beatsPerBar) beat = 0
@@ -110,6 +115,7 @@ class TickService : Service() {
         if (!isMuted) {
             clickPlayer.click(beatSequence[beat].beatType)
         }
+        //toggleFlashLight()
         return isNextBar
     }
 
@@ -138,11 +144,34 @@ class TickService : Service() {
     fun stop() {
         stopForeground(true)
         clickConsumer = Consumer { click() }
+        listener?.onTrainingToggle("", false)
         listener?.onControlsBlock(false)
         listener?.onStopClicking()
         clickDisposable?.dispose()
         isPlaying = false
         beat = -1
+    }
+
+    var toggle = false
+    fun toggleFlashLight() {
+        toggle = !toggle
+        try {
+            val cameraManager = applicationContext.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                for (id in cameraManager.cameraIdList) {
+
+                    if (cameraManager.getCameraCharacteristics(id).get(CameraCharacteristics.FLASH_INFO_AVAILABLE)!!) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            cameraManager.setTorchMode(id, toggle)
+                        }
+                    }
+                }
+            }
+        } catch (e2: Exception) {
+            Toast.makeText(applicationContext, "Torch Failed: " + e2.message, Toast.LENGTH_SHORT).show()
+        }
+
+
     }
 
     fun startTraining(params: Bundle) {
@@ -169,6 +198,7 @@ class TickService : Service() {
                 bpm = startBpm
                 listener?.onControlsBlock(true)
                 listener?.onBpmChange(bpm)
+                listener?.onTrainingToggle("Tempo increasing training is in progress.\nRotary knob is blocked", true)
                 clickConsumer = object : Consumer<Long> {
                     var barCount = 0
 
@@ -182,10 +212,14 @@ class TickService : Service() {
                             bpm += increment
                             if (bpm >= endBpm) bpm = endBpm
                             listener?.onBpmChange(bpm)
+                            val completionPercentage = (bpm.toFloat() - startBpm.toFloat()) /
+                                    (endBpm.toFloat() - startBpm.toFloat())
+                            listener?.onTrainingUpdate(completionPercentage)
                             barCount = 0
                         }
                         if (bpm >= endBpm) {
                             clickConsumer = Consumer { click() }
+                            listener?.onTrainingToggle("", false)
                             listener?.onControlsBlock(false)
                         }
                     }
@@ -203,6 +237,7 @@ class TickService : Service() {
                 bpm = startBpm
                 listener?.onControlsBlock(true)
                 listener?.onBpmChange(bpm)
+                listener?.onTrainingToggle("Tempo increasing training is in progress.\nRotary knob is blocked", true)
                 clickConsumer = Consumer { _ ->
                     click()
 
@@ -210,15 +245,20 @@ class TickService : Service() {
                     val timePercentage = (currentTime - startTime).toFloat() / timeInterval.toFloat()
                     bpm = (startBpm + (bpmInterval * timePercentage)).toInt()
                     listener?.onBpmChange(bpm)
+                    listener?.onTrainingUpdate(timePercentage)
 
                     if (currentTime >= endTime) {
                         clickConsumer = Consumer { click() }
+                        listener?.onTrainingToggle("", false)
                         listener?.onControlsBlock(false)
                     }
                 }
             }
             TrainingType.BAR_DROPPING_RANDOM -> {
                 val chance = params.getInt("chance", 30)
+
+                listener?.onTrainingToggle("Random bar dropping training is in progress.\nPress pause button to abort", true)
+                listener?.onTrainingUpdate(1f)
 
                 clickConsumer = Consumer { _ ->
                     val isNextBar = click()
@@ -232,6 +272,9 @@ class TickService : Service() {
             TrainingType.BAR_DROPPING_BY_COUNT -> {
                 val normalBars = params.getInt("normalBars", 3)
                 val mutedBars = params.getInt("mutedBars", 1)
+
+                listener?.onTrainingToggle("Bar dropping training is in progress.\nPress pause button to abort", true)
+                listener?.onTrainingUpdate(1f)
 
                 clickConsumer = object : Consumer<Long> {
                     var barCount = 0
@@ -255,6 +298,9 @@ class TickService : Service() {
             }
             TrainingType.BEAT_DROPPING -> {
                 val chance = params.getInt("chance", 30)
+
+                listener?.onTrainingToggle("Random beat dropping training is in progress.\nPress pause button to abort", true)
+                listener?.onTrainingUpdate(1f)
 
                 clickConsumer = Consumer { _ ->
                     val percentage = Random(System.currentTimeMillis())

@@ -1,4 +1,4 @@
-package com.one.russell.metronomekotlin
+package com.one.russell.metronomekotlin.Views
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
@@ -10,6 +10,10 @@ import android.support.v4.app.FragmentActivity
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import com.one.russell.metronomekotlin.MAX_BPM
+import com.one.russell.metronomekotlin.MIN_BPM
+import com.one.russell.metronomekotlin.MainViewModel
+import com.one.russell.metronomekotlin.R
 import kotlin.properties.Delegates
 
 class ScaleView @JvmOverloads constructor(
