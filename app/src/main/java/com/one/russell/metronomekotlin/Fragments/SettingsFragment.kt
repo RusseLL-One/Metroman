@@ -12,7 +12,6 @@ import com.one.russell.metronomekotlin.R
 import com.one.russell.metronomekotlin.Views.RotaryKnobView
 import com.one.russell.metronomekotlin.Views.ScaleView
 import kotlinx.android.synthetic.main.fragment_settings.*
-import kotlinx.android.synthetic.main.item_settings_param.view.*
 import kotlin.properties.Delegates
 
 class SettingsFragment : Fragment() {

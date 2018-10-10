@@ -22,9 +22,9 @@ class TrainingPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
     override fun getPageTitle(position: Int): CharSequence? {
         return when (position) {
-            0 -> "Tempo increasing"
-            1 -> "Bar drop"
-            2 -> "Beat drop"
+            0 -> App.getAppInstance().resources.getString(R.string.tempo_increasing)
+            1 -> App.getAppInstance().resources.getString(R.string.bar_drop)
+            2 -> App.getAppInstance().resources.getString(R.string.beat_drop)
             else -> null
         }
     }

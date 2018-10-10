@@ -99,10 +99,6 @@ class MainActivity : AppCompatActivity() {
                 .load(R.drawable.play)
                 .into(playButton)
 
-        Glide.with(this)
-                .load(R.drawable.knob)
-                .into(rotaryKnob)
-
         /*Glide.with(this)
                 .load(R.drawable.borders0004)
                 .into(bottomBorder)

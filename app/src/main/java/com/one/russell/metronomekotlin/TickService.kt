@@ -69,7 +69,8 @@ class TickService : Service() {
         builder.setContentTitle("Metroman is playing")
                 .setContentText("Press here to stop")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setSmallIcon(R.drawable.icon_240)
+                .setColor(getResources().getColor(R.color.colorAccent))
                 .setContentIntent(PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_ONE_SHOT))
 
         startForeground(530, builder.build())
@@ -198,7 +199,8 @@ class TickService : Service() {
                 bpm = startBpm
                 listener?.onControlsBlock(true)
                 listener?.onBpmChange(bpm)
-                listener?.onTrainingToggle("Tempo increasing training is in progress.\nRotary knob is blocked", true)
+                val message = App.getAppInstance().resources.getString(R.string.tempo_increasing_in_progress)
+                listener?.onTrainingToggle(message, true)
                 clickConsumer = object : Consumer<Long> {
                     var barCount = 0
 
@@ -237,7 +239,8 @@ class TickService : Service() {
                 bpm = startBpm
                 listener?.onControlsBlock(true)
                 listener?.onBpmChange(bpm)
-                listener?.onTrainingToggle("Tempo increasing training is in progress.\nRotary knob is blocked", true)
+                val message = App.getAppInstance().resources.getString(R.string.tempo_increasing_in_progress)
+                listener?.onTrainingToggle(message, true)
                 clickConsumer = Consumer { _ ->
                     click()
 
@@ -257,7 +260,8 @@ class TickService : Service() {
             TrainingType.BAR_DROPPING_RANDOM -> {
                 val chance = params.getInt("chance", 30)
 
-                listener?.onTrainingToggle("Random bar dropping training is in progress.\nPress pause button to abort", true)
+                val message = App.getAppInstance().resources.getString(R.string.random_bar_drop_in_progress)
+                listener?.onTrainingToggle(message, true)
                 listener?.onTrainingUpdate(1f)
 
                 clickConsumer = Consumer { _ ->
@@ -273,7 +277,8 @@ class TickService : Service() {
                 val normalBars = params.getInt("normalBars", 3)
                 val mutedBars = params.getInt("mutedBars", 1)
 
-                listener?.onTrainingToggle("Bar dropping training is in progress.\nPress pause button to abort", true)
+                val message = App.getAppInstance().resources.getString(R.string.bar_drop_in_progress)
+                listener?.onTrainingToggle(message, true)
                 listener?.onTrainingUpdate(1f)
 
                 clickConsumer = object : Consumer<Long> {
@@ -299,7 +304,8 @@ class TickService : Service() {
             TrainingType.BEAT_DROPPING -> {
                 val chance = params.getInt("chance", 30)
 
-                listener?.onTrainingToggle("Random beat dropping training is in progress.\nPress pause button to abort", true)
+                val message = App.getAppInstance().resources.getString(R.string.random_beat_drop_in_progress)
+                listener?.onTrainingToggle(message, true)
                 listener?.onTrainingUpdate(1f)
 
                 clickConsumer = Consumer { _ ->

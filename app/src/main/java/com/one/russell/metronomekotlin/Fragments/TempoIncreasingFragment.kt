@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.one.russell.metronomekotlin.App
 import com.one.russell.metronomekotlin.MAX_BPM
 import com.one.russell.metronomekotlin.MIN_BPM
 import com.one.russell.metronomekotlin.R
@@ -25,8 +26,10 @@ class TempoIncreasingFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        tempoIncTabLayout.addTab(tempoIncTabLayout.newTab().setText("By bars"))
-        tempoIncTabLayout.addTab(tempoIncTabLayout.newTab().setText("By time"))
+        val byBarsStr = App.getAppInstance().resources.getString(R.string.by_bars)
+        val byTimeStr = App.getAppInstance().resources.getString(R.string.by_time)
+        tempoIncTabLayout.addTab(tempoIncTabLayout.newTab().setText(byBarsStr ?: "By bars"))
+        tempoIncTabLayout.addTab(tempoIncTabLayout.newTab().setText(byTimeStr ?: "By time"))
 
         tempoIncTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(p0: TabLayout.Tab?) {

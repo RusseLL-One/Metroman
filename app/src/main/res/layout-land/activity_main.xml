@@ -67,13 +67,14 @@
             android:id="@+id/tvTrainigTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_margin="16dp"
             android:gravity="center"
             android:textSize="14sp"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/pbTrainingTime"
-            app:layout_constraintEnd_toEndOf="@id/rotaryKnob"
-            app:layout_constraintStart_toStartOf="@id/rotaryKnob" />
+            app:layout_constraintTop_toBottomOf="@id/llBeats"
+            app:layout_constraintEnd_toStartOf="@id/npBeatsPerBar"
+            app:layout_constraintStart_toEndOf="@id/vLine" />
 
         <com.one.russell.metronomekotlin.Views.CircularProgressBar
             android:id="@+id/pbTrainingTime"
@@ -81,26 +82,27 @@
             android:layout_height="100dp"
             android:layout_marginBottom="16dp"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@id/bpmTextView"
-            app:layout_constraintEnd_toEndOf="@id/rotaryKnob"
-            app:layout_constraintStart_toStartOf="@id/rotaryKnob"
-            app:layout_constraintTop_toBottomOf="@id/llBeats"
-            app:layout_constraintVertical_bias="1" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/vLine"
+            app:layout_constraintEnd_toStartOf="@id/npBeatsPerBar"
+            app:layout_constraintTop_toBottomOf="@id/tvTrainigTitle" />
 
         <com.one.russell.metronomekotlin.Views.RotaryKnobView
             android:id="@+id/rotaryKnob"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toStartOf="@id/npBeatsPerBar"
+            app:layout_constraintEnd_toStartOf="@id/bpmTextView"
             app:layout_constraintStart_toEndOf="@id/vLine"
             app:layout_constraintTop_toBottomOf="@id/llBeats"
-            app:layout_constraintVertical_bias="1" />
+            app:layout_constraintVertical_bias="1"
+            app:layout_constraintHorizontal_bias="1"
+            />
 
         <com.one.russell.metronomekotlin.Views.ScaleView
             android:id="@+id/scaleKnob"
@@ -136,23 +138,22 @@
             android:layout_height="0dp"
             android:layout_marginTop="16dp"
             android:contentDescription="@string/tap_img"
-            app:layout_constraintBottom_toBottomOf="@id/rotaryKnob"
             app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toEndOf="@id/npValueOfBeat"
-            app:layout_constraintStart_toStartOf="@id/npBeatsPerBar"
-            app:layout_constraintTop_toBottomOf="@id/npBeatsPerBar" />
+            app:layout_constraintBottom_toBottomOf="@id/rotaryKnob"
+            app:layout_constraintEnd_toEndOf="@id/bpmTextView"
+            app:layout_constraintStart_toStartOf="@id/bpmTextView"/>
 
         <TextView
             android:id="@+id/bpmTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:layout_marginEnd="16dp"
             android:text="@string/bpm"
             android:textSize="24sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@id/rotaryKnob"
-            app:layout_constraintEnd_toEndOf="@id/rotaryKnob"
-            app:layout_constraintStart_toStartOf="@id/rotaryKnob" />
+            app:layout_constraintTop_toTopOf="@id/rotaryKnob"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <View
             android:layout_width="0dp"
@@ -165,11 +166,12 @@
 
         <NumberPicker
             android:id="@+id/npBeatsPerBar"
-            android:layout_width="30dp"
-            android:layout_height="120dp"
+            android:layout_width="25dp"
+            android:layout_height="0dp"
             android:descendantFocusability="blocksDescendants"
             android:theme="@style/DefaultNumberPickerTheme"
             app:layout_constraintEnd_toStartOf="@id/tvSeparator"
+            app:layout_constraintBottom_toBottomOf="@id/npValueOfBeat"
             app:layout_constraintTop_toTopOf="@+id/npValueOfBeat" />
 
         <TextView
@@ -185,15 +187,35 @@
 
         <NumberPicker
             android:id="@+id/npValueOfBeat"
-            android:layout_width="30dp"
+            android:layout_width="25dp"
             android:layout_height="120dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+
             android:descendantFocusability="blocksDescendants"
             android:theme="@style/DefaultNumberPickerTheme"
-            app:layout_constraintBottom_toTopOf="@id/tapButton"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintBottom_toBottomOf="@id/rotaryKnob"
+            app:layout_constraintEnd_toStartOf="@id/rotaryKnob" />
 
+        <!--FrameLayout
+            android:id="@+id/vLine"
+            android:layout_width="50dp"
+            android:layout_height="0dp"
+            android:layout_margin="16dp"
+            android:background="@drawable/visual_beat_line"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <View
+                android:id="@+id/vBall"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="top"
+                android:background="@drawable/visual_beat_ball" />
+
+        </FrameLayout-->
         <com.one.russell.metronomekotlin.Views.BeatLineView
             android:id="@+id/vLine"
             android:layout_width="50dp"

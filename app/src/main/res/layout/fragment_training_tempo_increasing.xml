@@ -7,23 +7,22 @@
 
     <TextView
         android:id="@+id/tvStartBpm"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="Start tempo (BPM)"
+        android:text="@string/start_tempo_bpm"
         android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@id/startValue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.shawnlin.numberpicker.NumberPicker
         android:id="@+id/startValue"
-        android:layout_width="0dp"
+        android:layout_width="120dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="@id/tvStartBpm"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/barrier"
         app:layout_constraintTop_toTopOf="@id/tvStartBpm"
         app:np_dividerThickness="0dp"
         app:np_orientation="horizontal"
@@ -35,23 +34,22 @@
 
     <TextView
         android:id="@+id/tvEndBpm"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="End tempo (BPM)"
+        android:text="@string/end_tempo_bpm"
         android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@id/endValue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvStartBpm" />
 
     <com.shawnlin.numberpicker.NumberPicker
         android:id="@+id/endValue"
-        android:layout_width="0dp"
+        android:layout_width="120dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="@id/tvEndBpm"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/barrier"
         app:layout_constraintTop_toTopOf="@id/tvEndBpm"
         app:np_dividerThickness="0dp"
         app:np_orientation="horizontal"
@@ -74,23 +72,22 @@
 
     <TextView
         android:id="@+id/tvBars"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="Through each (bars)"
+        android:text="@string/through_each_bars"
         android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@id/barsValue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tempoIncTabLayout" />
 
     <com.shawnlin.numberpicker.NumberPicker
         android:id="@+id/barsValue"
-        android:layout_width="0dp"
+        android:layout_width="120dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="@id/tvBars"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/barrier"
         app:layout_constraintTop_toTopOf="@id/tvBars"
         app:np_dividerThickness="0dp"
         app:np_orientation="horizontal"
@@ -102,23 +99,22 @@
 
     <TextView
         android:id="@+id/tvIncrease"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="Increase on (BPM)"
+        android:text="@string/increase_on_bpm"
         android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@id/increaseValue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvBars" />
 
     <com.shawnlin.numberpicker.NumberPicker
         android:id="@+id/increaseValue"
-        android:layout_width="0dp"
+        android:layout_width="120dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="@id/tvIncrease"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/barrier"
         app:layout_constraintTop_toTopOf="@id/tvIncrease"
         app:np_dividerThickness="0dp"
         app:np_orientation="horizontal"
@@ -130,7 +126,7 @@
 
     <View
         android:id="@+id/barsFrame"
-        android:layout_width="50dp"
+        android:layout_width="40dp"
         android:layout_height="0dp"
         android:layout_marginTop="6dp"
         android:layout_marginBottom="6dp"
@@ -140,27 +136,25 @@
         app:layout_constraintStart_toStartOf="@id/barsValue"
         app:layout_constraintEnd_toEndOf="@id/barsValue"/>
 
-
     <TextView
         android:id="@+id/tvTime"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="Time"
+        android:text="@string/time"
         android:textSize="16sp"
         android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@id/timeValue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tempoIncTabLayout" />
 
     <com.shawnlin.numberpicker.NumberPicker
         android:id="@+id/timeValue"
-        android:layout_width="0dp"
+        android:layout_width="120dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="@id/tvTime"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/barrier"
         app:layout_constraintTop_toTopOf="@id/tvTime"
         app:np_dividerThickness="0dp"
         android:visibility="invisible"
@@ -173,7 +167,7 @@
 
     <View
         android:id="@+id/timeFrame"
-        android:layout_width="50dp"
+        android:layout_width="40dp"
         android:layout_height="0dp"
         android:layout_marginTop="6dp"
         android:layout_marginBottom="6dp"
@@ -186,7 +180,7 @@
 
     <View
         android:id="@+id/bpmFrame"
-        android:layout_width="50dp"
+        android:layout_width="40dp"
         android:layout_height="0dp"
         android:layout_marginTop="6dp"
         android:layout_marginBottom="6dp"
@@ -195,12 +189,5 @@
         app:layout_constraintBottom_toBottomOf="@id/endValue"
         app:layout_constraintStart_toStartOf="@id/startValue"
         app:layout_constraintEnd_toEndOf="@id/startValue"/>
-
-    <android.support.constraint.Barrier
-        android:id="@+id/barrier"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="right"
-        app:constraint_referenced_ids="tvStartBpm,tvIncrease,tvEndBpm,tvBars" />
 
 </android.support.constraint.ConstraintLayout>

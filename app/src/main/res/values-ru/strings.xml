@@ -1,0 +1,31 @@
+<resources>
+    <string name="tempo_training">Тренировка ритма</string>
+    <string name="settings">Настройки</string>
+    <string name="toggle_play">Пуск/Стоп</string>
+    <string name="tap_img">Нажимайте для установки темпа</string>
+    <string name="background">фон</string>
+    <string name="sound_preset">Набор звуков</string>
+    <string name="led_flasher">Вспышка при клике</string>
+    <string name="bpm_picker_type">BPM picker type</string>
+    <string name="start_training">Начать тренировку</string>
+    <string name="bar_mute_chance">Вероятность глушения такта (%)</string>
+    <string name="normal_bars">Обычные такты</string>
+    <string name="muted_bars">Заглушённые такты</string>
+    <string name="beat_drop_chance">Вероятность глушения клика (%)</string>
+    <string name="start_tempo_bpm">Начальный темп (BPM)</string>
+    <string name="end_tempo_bpm">Конечный темп (BPM)</string>
+    <string name="through_each_bars">Через каждые (такты)</string>
+    <string name="increase_on_bpm">Увеличивать на (BPM)</string>
+    <string name="time">Время (минуты)</string>
+    <string name="tempo_increasing">Увеличение темпа</string>
+    <string name="bar_drop">Глушение такта</string>
+    <string name="beat_drop">Глушение клика</string>
+    <string name="by_bars">По тактам</string>
+    <string name="by_time">По времени</string>
+    <string name="by_random">Случайно</string>
+    <string name="by_count">По значению</string>
+    <string name="tempo_increasing_in_progress">Тренировка с увеличением темпа в процессе.\nРучное изменение темпа заблокировано</string>
+    <string name="random_bar_drop_in_progress">Тренировка со случайным глушением такта в процессе.\nНажмите на паузу для отмены</string>
+    <string name="bar_drop_in_progress">Тренировка с глушением такта в процессе.\nНажмите на паузу для отмены</string>
+    <string name="random_beat_drop_in_progress">Тренировка со случайным глушением клика в процессе.\nНажмите на паузу для отмены</string>
+</resources>

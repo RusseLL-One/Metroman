@@ -10,11 +10,14 @@ import android.support.v4.app.FragmentActivity
 import android.view.MotionEvent
 import kotlin.properties.Delegates
 import android.util.AttributeSet
+import android.view.ViewTreeObserver
 import android.widget.ImageView
-import com.one.russell.metronomekotlin.MAX_BPM
-import com.one.russell.metronomekotlin.MIN_BPM
-import com.one.russell.metronomekotlin.MainViewModel
-import com.one.russell.metronomekotlin.R
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
+import com.one.russell.metronomekotlin.*
+import kotlin.math.cos
+import kotlin.math.sin
 
 const val BPM_STEP_DEGREES = 10
 
@@ -22,23 +25,44 @@ class RotaryKnobView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ImageView(context, attrs, defStyleAttr) {
 
-
     var bpm = 10
-    var knobImage: Bitmap? = null
-    var startDegrees = 0f
+    var dotImage: Bitmap = Bitmap.createBitmap(1,1,Bitmap.Config.ARGB_8888)
+    var startDegrees = 270f
     var deltaDegrees = 0f
-    var degrees = 0f
+    var degrees = 270f
     var rotateMatrix = Matrix()
     private var rotateClickPlayer: SoundPool
     private var rotateClickId: Int = 0
     private var model: MainViewModel by Delegates.notNull()
     val paint: Paint
     private var isBlocked = false
+    private var dotDistance = 0
 
     init {
         rotateMatrix = Matrix()
 
-        setKnobImage(context)
+        Glide.with(this)
+                .load(R.drawable.knob)
+                .into(this)
+
+        viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+            override fun onPreDraw(): Boolean {
+                viewTreeObserver.removeOnPreDrawListener(this)
+
+                Glide.with(getContext())
+                        .asBitmap()
+                        .load(R.drawable.dot_130)
+                        .into(object : SimpleTarget<Bitmap>(Utils.getPixelsFromDp(15), Utils.getPixelsFromDp(15)) {
+                            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                dotImage = resource
+                                invalidate()
+                            }
+                        })
+
+                dotDistance = measuredHeight/2 - Utils.getPixelsFromDp(25)
+                return true
+            }
+        })
 
         model = ViewModelProviders.of(context as FragmentActivity).get(MainViewModel::class.java)
 
@@ -97,27 +121,16 @@ class RotaryKnobView @JvmOverloads constructor(
         return false
     }
 
-    private fun setKnobImage(context: Context) {
-        this.post {
-            val drawable = context.resources.getDrawable(R.drawable.knob_dot)
-
-            knobImage = Bitmap.createBitmap(this.measuredWidth, this.measuredHeight, Bitmap.Config.ARGB_8888)
-            val canvas = Canvas(knobImage)
-            drawable.setBounds(0, 0, this.measuredWidth, this.measuredHeight)
-            drawable.draw(canvas)
-            invalidate()
-        }
+    private fun degreesToRadians(degrees: Float) : Double {
+        return degrees * (Math.PI / 180)
     }
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
-        //Делим ширину и высоту пополам, чтобы вращать вью вокруг середины
-        rotateMatrix.setRotate(degrees, (this.width / 2).toFloat(), (this.height / 2).toFloat())
-
-        if (knobImage != null) {
-            canvas?.drawBitmap(knobImage, rotateMatrix, paint)
-        }
+        val stopX = width.toDouble()/2 + cos(degreesToRadians(degrees)) * dotDistance - dotImage.width.toDouble()/2
+        val stopY = height.toDouble()/2 + sin(degreesToRadians(degrees)) * dotDistance - dotImage.height.toDouble()/2
+        canvas?.drawBitmap(dotImage, stopX.toFloat(), stopY.toFloat(), paint)
     }
 
     fun block(block: Boolean) {

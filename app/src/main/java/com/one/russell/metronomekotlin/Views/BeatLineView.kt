@@ -32,6 +32,7 @@ class BeatLineView @JvmOverloads constructor(
     private var topBorder: Bitmap
     private var bottomBorder: Bitmap
     private var emptyImage: Bitmap
+   // private val glide: Glide
 
     init {
         emptyImage = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
@@ -49,6 +50,7 @@ class BeatLineView @JvmOverloads constructor(
         viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
             override fun onPreDraw(): Boolean {
                 viewTreeObserver.removeOnPreDrawListener(this)
+
 
                 Glide.with(getContext())
                         .asBitmap()

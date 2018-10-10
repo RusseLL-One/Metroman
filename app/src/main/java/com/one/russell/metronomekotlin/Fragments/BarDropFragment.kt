@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.one.russell.metronomekotlin.App
 import com.one.russell.metronomekotlin.MainViewModel
 import com.one.russell.metronomekotlin.R
 import kotlin.properties.Delegates
@@ -32,8 +33,10 @@ class BarDropFragment : Fragment() {
 
         //endValue.tvValue.text = "160"
 
-        barDropTabLayout.addTab(barDropTabLayout.newTab().setText("By random"))
-        barDropTabLayout.addTab(barDropTabLayout.newTab().setText("By count"))
+        val byRandomStr = App.getAppInstance().resources.getString(R.string.by_random)
+        val byCountStr = App.getAppInstance().resources.getString(R.string.by_count)
+        barDropTabLayout.addTab(barDropTabLayout.newTab().setText(byRandomStr ?: "By random"))
+        barDropTabLayout.addTab(barDropTabLayout.newTab().setText(byCountStr ?: "By count"))
 
         barDropTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(p0: TabLayout.Tab?) {

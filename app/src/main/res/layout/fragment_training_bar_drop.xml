@@ -19,23 +19,22 @@
 
     <TextView
         android:id="@+id/tvMuteChance"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="Bar mute chance (%)"
+        android:text="@string/bar_mute_chance"
         android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@id/barMuteChanceValue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/barDropTabLayout" />
 
     <com.shawnlin.numberpicker.NumberPicker
         android:id="@+id/barMuteChanceValue"
-        android:layout_width="0dp"
+        android:layout_width="120dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="@id/tvMuteChance"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/barrier"
         app:layout_constraintTop_toTopOf="@id/tvMuteChance"
         app:np_dividerThickness="0dp"
         app:np_orientation="horizontal"
@@ -47,7 +46,7 @@
 
     <View
         android:id="@+id/barMuteChanceFrame"
-        android:layout_width="50dp"
+        android:layout_width="40dp"
         android:layout_height="0dp"
         android:layout_marginTop="6dp"
         android:layout_marginBottom="6dp"
@@ -59,25 +58,24 @@
 
     <TextView
         android:id="@+id/tvNormalBars"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="Normal bars"
+        android:text="@string/normal_bars"
         android:textSize="16sp"
         android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@id/normalValue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/barDropTabLayout" />
 
     <com.shawnlin.numberpicker.NumberPicker
         android:id="@+id/normalValue"
-        android:layout_width="0dp"
+        android:layout_width="120dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@id/tvNormalBars"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/barrier"
         app:layout_constraintTop_toTopOf="@id/tvNormalBars"
         app:np_dividerThickness="0dp"
         app:np_orientation="horizontal"
@@ -89,25 +87,24 @@
 
     <TextView
         android:id="@+id/tvMutedBars"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="Muted bars"
+        android:text="@string/muted_bars"
         android:textSize="16sp"
         android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@id/mutedValue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvNormalBars" />
 
     <com.shawnlin.numberpicker.NumberPicker
         android:id="@+id/mutedValue"
-        android:layout_width="0dp"
+        android:layout_width="120dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@id/tvMutedBars"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/barrier"
         app:layout_constraintTop_toTopOf="@id/tvMutedBars"
         app:np_dividerThickness="0dp"
         app:np_orientation="horizontal"
@@ -119,7 +116,7 @@
 
     <View
         android:id="@+id/barCountFrame"
-        android:layout_width="50dp"
+        android:layout_width="40dp"
         android:layout_height="0dp"
         android:layout_marginTop="6dp"
         android:layout_marginBottom="6dp"
@@ -129,13 +126,5 @@
         app:layout_constraintEnd_toEndOf="@id/normalValue"
         app:layout_constraintStart_toStartOf="@id/normalValue"
         app:layout_constraintTop_toTopOf="@id/normalValue" />
-
-    <android.support.constraint.Barrier
-        android:id="@+id/barrier"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="right"
-        app:constraint_referenced_ids="tvMuteChance,tvNormalBars,tvMutedBars" />
-
 
 </android.support.constraint.ConstraintLayout>

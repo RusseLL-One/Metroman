@@ -1,5 +1,35 @@
 <resources>
-    <string name="app_name">Metroman</string>
-    <string name="buttonPlay">Play</string>
-    <string name="buttonStop">Stop</string>
+    <string name="app_name" translatable="false">Metroman</string>
+    <string name="tempo_training">Tempo training</string>
+    <string name="tempo_increasing">Tempo increasing</string>
+    <string name="bar_drop">Bar drop</string>
+    <string name="beat_drop">Beat drop</string>
+    <string name="by_bars">By bars</string>
+    <string name="by_time">By time</string>
+    <string name="by_random">By random</string>
+    <string name="by_count">By count</string>
+    <string name="settings">Settings</string>
+    <string name="tap" translatable="false">TAP</string>
+    <string name="toggle_play">Play/Pause</string>
+    <string name="tap_img">Tap to set bpm</string>
+    <string name="bpm" translatable="false">BPM</string>
+    <string name="slash" translatable="false">/</string>
+    <string name="tempo_increasing_in_progress">Tempo increasing training is in progress.\nRotary knob is blocked</string>
+    <string name="random_bar_drop_in_progress">Random bar dropping training is in progress.\nPress pause button to abort</string>
+    <string name="bar_drop_in_progress">Bar dropping training is in progress.\nPress pause button to abort</string>
+    <string name="random_beat_drop_in_progress">Random beat dropping training is in progress.\nPress pause button to abort</string>
+    <string name="background">background</string>
+    <string name="sound_preset">Sound preset</string>
+    <string name="led_flasher">LED Flasher</string>
+    <string name="bpm_picker_type">BPM picker type</string>
+    <string name="start_training">Start training</string>
+    <string name="bar_mute_chance">Bar mute chance (%)</string>
+    <string name="normal_bars">Normal bars</string>
+    <string name="muted_bars">Muted bars</string>
+    <string name="beat_drop_chance">Beat drop chance (%)</string>
+    <string name="start_tempo_bpm">Start tempo (BPM)</string>
+    <string name="end_tempo_bpm">End tempo (BPM)</string>
+    <string name="through_each_bars">Through each (bars)</string>
+    <string name="increase_on_bpm">Increase on (BPM)</string>
+    <string name="time">Time (minutes)</string>
 </resources>
