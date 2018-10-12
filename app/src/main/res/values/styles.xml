@@ -12,9 +12,13 @@
         <item name="android:textColor">@color/colorAccent</item>
     </style>
     <style name="DefaultNumberPickerTheme" parent="AppTheme">
+        <item name="android:fontFamily">@font/plaint_text_font</item>
         <item name="colorControlNormal">@android:color/transparent</item>
-        <item name="android:textColorPrimary">@color/colorText</item>
-        <item name="android:textSize">24sp</item>
+
+    </style>
+
+    <style name="AppTheme.Splash">
+        <item name="android:windowBackground">@drawable/splash_screen</item>
     </style>
 
 </resources>

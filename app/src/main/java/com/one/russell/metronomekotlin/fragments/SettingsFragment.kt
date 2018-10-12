@@ -1,4 +1,4 @@
-package com.one.russell.metronomekotlin.Fragments
+package com.one.russell.metronomekotlin.fragments
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -9,8 +9,6 @@ import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.one.russell.metronomekotlin.MainViewModel
 import com.one.russell.metronomekotlin.R
-import com.one.russell.metronomekotlin.Views.RotaryKnobView
-import com.one.russell.metronomekotlin.Views.ScaleView
 import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlin.properties.Delegates
 
@@ -35,13 +33,21 @@ class SettingsFragment : Fragment() {
                 .load(R.drawable.background)
                 .into(background)
 
-        accentValue.value = model.accentSoundLiveData.value ?: 1
-        accentValue.minValue = 1
-        accentValue.maxValue = 3
+        presetValue.value = model.soundPresetLiveData.value ?: 1
+        presetValue.minValue = 1
+        presetValue.maxValue = 3
 
-        accentValue.setOnValueChangedListener { _, _, value ->
-            model.setAccentSoundId(value)
+        flasherValue.isChecked = model.flasherValueLiveData.value ?: false
+
+        vibrateValue.isChecked = model.vibrateValueLiveData.value ?: false
+
+        presetValue.setOnValueChangedListener { _, _, value ->
+            model.setSoundPresetId(value)
         }
+
+        flasherValue.setOnCheckedChangeListener { _, checked -> model.setFlasherValue(checked) }
+
+        vibrateValue.setOnCheckedChangeListener { _, checked -> model.setVibrateValue(checked) }
 
         /*pickerValue.ivIncrease.setOnClickListener {
             try {

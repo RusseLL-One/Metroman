@@ -7,226 +7,226 @@
 
     <ImageView
         android:id="@+id/background"
-        android:contentDescription="@string/background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contentDescription="@string/background"
         android:scaleType="centerCrop" />
 
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/clMainActivity"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:animateLayoutChanges="true"
-        tools:context=".MainActivity">
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/bTempoTrain"
-            android:layout_width="0dp"
+        <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/adView"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:background="@drawable/buttons"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:text="@string/tempo_training"
-            app:layout_constraintEnd_toStartOf="@id/bSettings"
-            app:layout_constraintHorizontal_bias="1"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toEndOf="@id/vLine"
-            app:layout_constraintTop_toTopOf="parent" />
+            ads:adSize="SMART_BANNER"
+            ads:adUnitId="ca-app-pub-3940256099942544/6300978111"
+            ads:layout_constraintBottom_toBottomOf="parent"
+            ads:layout_constraintEnd_toEndOf="parent"
+            ads:layout_constraintStart_toStartOf="parent" />
+        <!--ads:adUnitId="ca-app-pub-4449968809046813/5702536714"-->
 
-        <Button
-            android:id="@+id/bSettings"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/buttons"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:text="@string/settings"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/bTempoTrain"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <LinearLayout
-            android:id="@+id/llBeats"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_margin="16dp"
+        <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/clMainActivity"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:animateLayoutChanges="true"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/vLine"
-            app:layout_constraintTop_toBottomOf="@id/bSettings" />
+            tools:context=".MainActivity">
 
-        <TextView
-            android:id="@+id/tvTrainigTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:gravity="center"
-            android:textSize="14sp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@id/pbTrainingTime"
-            app:layout_constraintTop_toBottomOf="@id/llBeats"
-            app:layout_constraintEnd_toStartOf="@id/npBeatsPerBar"
-            app:layout_constraintStart_toEndOf="@id/vLine" />
+            <Button
+                android:id="@+id/bTempoTrain"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/buttons"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:text="@string/tempo_training"
+                app:layout_constraintEnd_toStartOf="@id/bSettings"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toEndOf="@id/vLine"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <com.one.russell.metronomekotlin.Views.CircularProgressBar
-            android:id="@+id/pbTrainingTime"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginBottom="16dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/vLine"
-            app:layout_constraintEnd_toStartOf="@id/npBeatsPerBar"
-            app:layout_constraintTop_toBottomOf="@id/tvTrainigTitle" />
+            <Button
+                android:id="@+id/bSettings"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/buttons"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:text="@string/settings"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/bTempoTrain"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <com.one.russell.metronomekotlin.Views.RotaryKnobView
-            android:id="@+id/rotaryKnob"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toStartOf="@id/bpmTextView"
-            app:layout_constraintStart_toEndOf="@id/vLine"
-            app:layout_constraintTop_toBottomOf="@id/llBeats"
-            app:layout_constraintVertical_bias="1"
-            app:layout_constraintHorizontal_bias="1"
-            />
+            <com.one.russell.metronomekotlin.views.BeatsContainerView
+                android:id="@+id/llBeats"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_margin="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/vLine"
+                app:layout_constraintTop_toBottomOf="@id/bSettings" />
 
-        <com.one.russell.metronomekotlin.Views.ScaleView
-            android:id="@+id/scaleKnob"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_marginBottom="20dp"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            <TextView
+                android:id="@+id/tvTrainingTitle"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/pbTrainingTime"
+                app:layout_constraintEnd_toStartOf="@id/npBeatsPerBar"
+                app:layout_constraintStart_toEndOf="@id/vLine"
+                app:layout_constraintTop_toBottomOf="@id/llBeats" />
 
-        <ImageView
-            android:id="@+id/playButton"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:contentDescription="@string/toggle_play"
-            app:layout_constraintBottom_toBottomOf="@id/rotaryKnob"
-            app:layout_constraintEnd_toEndOf="@id/rotaryKnob"
-            app:layout_constraintStart_toStartOf="@id/rotaryKnob"
-            app:layout_constraintTop_toTopOf="@id/rotaryKnob" />
+            <com.one.russell.metronomekotlin.views.CircularProgressBar
+                android:id="@+id/pbTrainingTime"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/npBeatsPerBar"
+                app:layout_constraintStart_toEndOf="@id/vLine"
+                app:layout_constraintTop_toBottomOf="@id/tvTrainingTitle" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/tap"
-            app:layout_constraintBottom_toTopOf="@id/tapButton"
-            app:layout_constraintEnd_toEndOf="@id/tapButton"
-            app:layout_constraintStart_toStartOf="@id/tapButton" />
+            <com.one.russell.metronomekotlin.views.RotaryKnobView
+                android:id="@+id/rotaryKnob"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toStartOf="@id/bpmTextView"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintStart_toEndOf="@id/vLine"
+                app:layout_constraintTop_toBottomOf="@id/llBeats"
+                app:layout_constraintVertical_bias="1" />
 
-        <ImageView
-            android:id="@+id/tapButton"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="16dp"
-            android:contentDescription="@string/tap_img"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintBottom_toBottomOf="@id/rotaryKnob"
-            app:layout_constraintEnd_toEndOf="@id/bpmTextView"
-            app:layout_constraintStart_toStartOf="@id/bpmTextView"/>
+            <ImageView
+                android:id="@+id/playButton"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:contentDescription="@string/toggle_play"
+                app:layout_constraintBottom_toBottomOf="@id/rotaryKnob"
+                app:layout_constraintEnd_toEndOf="@id/rotaryKnob"
+                app:layout_constraintStart_toStartOf="@id/rotaryKnob"
+                app:layout_constraintTop_toTopOf="@id/rotaryKnob" />
 
-        <TextView
-            android:id="@+id/bpmTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginEnd="16dp"
-            android:text="@string/bpm"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="@id/rotaryKnob"
-            app:layout_constraintEnd_toEndOf="parent" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tap"
+                app:layout_constraintBottom_toTopOf="@id/tapButton"
+                app:layout_constraintEnd_toEndOf="@id/tapButton"
+                app:layout_constraintStart_toStartOf="@id/tapButton" />
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:background="@drawable/frame"
-            app:layout_constraintBottom_toBottomOf="@id/npBeatsPerBar"
-            app:layout_constraintEnd_toEndOf="@id/npValueOfBeat"
-            app:layout_constraintStart_toStartOf="@id/npBeatsPerBar"
-            app:layout_constraintTop_toTopOf="@id/npBeatsPerBar" />
+            <ImageView
+                android:id="@+id/tapButton"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="16dp"
+                android:contentDescription="@string/tap_img"
+                app:layout_constraintBottom_toBottomOf="@id/rotaryKnob"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="@id/bpmTextView"
+                app:layout_constraintStart_toStartOf="@id/bpmTextView" />
 
-        <NumberPicker
-            android:id="@+id/npBeatsPerBar"
-            android:layout_width="25dp"
-            android:layout_height="0dp"
-            android:descendantFocusability="blocksDescendants"
-            android:theme="@style/DefaultNumberPickerTheme"
-            app:layout_constraintEnd_toStartOf="@id/tvSeparator"
-            app:layout_constraintBottom_toBottomOf="@id/npValueOfBeat"
-            app:layout_constraintTop_toTopOf="@+id/npValueOfBeat" />
-
-        <TextView
-            android:id="@+id/tvSeparator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/slash"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/npValueOfBeat"
-            app:layout_constraintEnd_toStartOf="@+id/npValueOfBeat"
-            app:layout_constraintTop_toTopOf="@+id/npValueOfBeat" />
-
-        <NumberPicker
-            android:id="@+id/npValueOfBeat"
-            android:layout_width="25dp"
-            android:layout_height="120dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:layout_marginTop="16dp"
-
-            android:descendantFocusability="blocksDescendants"
-            android:theme="@style/DefaultNumberPickerTheme"
-            app:layout_constraintBottom_toBottomOf="@id/rotaryKnob"
-            app:layout_constraintEnd_toStartOf="@id/rotaryKnob" />
-
-        <!--FrameLayout
-            android:id="@+id/vLine"
-            android:layout_width="50dp"
-            android:layout_height="0dp"
-            android:layout_margin="16dp"
-            android:background="@drawable/visual_beat_line"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            <TextView
+                android:id="@+id/bpmTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:gravity="center"
+                android:text="@string/bpm"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/rotaryKnob" />
 
             <View
-                android:id="@+id/vBall"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:background="@drawable/frame"
+                app:layout_constraintBottom_toBottomOf="@id/npBeatsPerBar"
+                app:layout_constraintEnd_toEndOf="@id/npValueOfBeat"
+                app:layout_constraintStart_toStartOf="@id/npBeatsPerBar"
+                app:layout_constraintTop_toTopOf="@id/npBeatsPerBar" />
+
+            <com.shawnlin.numberpicker.NumberPicker
+                android:id="@+id/npBeatsPerBar"
+                android:layout_width="30dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="@id/npValueOfBeat"
+                app:layout_constraintEnd_toStartOf="@id/tvSeparator"
+                app:layout_constraintTop_toTopOf="@+id/npValueOfBeat"
+                app:np_dividerThickness="0dp"
+                app:np_orientation="vertical"
+                app:np_selectedTextColor="@color/colorText"
+                app:np_selectedTextSize="18sp"
+                app:np_textColor="@color/colorText"
+                app:np_textSize="16sp"
+                app:np_wrapSelectorWheel="false" />
+
+            <TextView
+                android:id="@+id/tvSeparator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/slash"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/npValueOfBeat"
+                app:layout_constraintEnd_toStartOf="@+id/npValueOfBeat"
+                app:layout_constraintTop_toTopOf="@+id/npValueOfBeat" />
+
+            <com.shawnlin.numberpicker.NumberPicker
+                android:id="@+id/npValueOfBeat"
+                android:layout_width="30dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintBottom_toBottomOf="@id/rotaryKnob"
+                app:layout_constraintEnd_toStartOf="@id/rotaryKnob"
+                app:np_dividerThickness="0dp"
+                app:np_orientation="vertical"
+                app:np_selectedTextColor="@color/colorText"
+                app:np_selectedTextSize="18sp"
+                app:np_textColor="@color/colorText"
+                app:np_textSize="16sp"
+                app:np_wrapSelectorWheel="false" />
+
+            <com.one.russell.metronomekotlin.views.BeatLineView
+                android:id="@+id/vLine"
                 android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_gravity="top"
-                android:background="@drawable/visual_beat_ball" />
+                android:layout_height="0dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/visual_beat_line"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        </FrameLayout-->
-        <com.one.russell.metronomekotlin.Views.BeatLineView
-            android:id="@+id/vLine"
-            android:layout_width="50dp"
-            android:layout_height="0dp"
-            android:layout_margin="8dp"
-            android:background="@drawable/visual_beat_line"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        </android.support.constraint.ConstraintLayout>
 
-    </android.support.constraint.ConstraintLayout>
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/frameForFragment"

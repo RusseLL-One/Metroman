@@ -1,25 +1,27 @@
-package com.one.russell.metronomekotlin.Fragments
+package com.one.russell.metronomekotlin.fragments
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
+import android.support.v4.content.res.ResourcesCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.one.russell.metronomekotlin.App
-import com.one.russell.metronomekotlin.MAX_BPM
-import com.one.russell.metronomekotlin.MIN_BPM
-import com.one.russell.metronomekotlin.R
+import com.one.russell.metronomekotlin.*
 import kotlinx.android.synthetic.main.fragment_training_tempo_increasing.*
+import kotlin.properties.Delegates
 
 class TempoIncreasingFragment : Fragment() {
 
-    private val clickListener = View.OnClickListener {
-
-    }
+    private var model: MainViewModel by Delegates.notNull()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        val activity = activity
+        if (activity != null) {
+            model = ViewModelProviders.of(activity).get(MainViewModel::class.java)
+        }
         return inflater.inflate(R.layout.fragment_training_tempo_increasing, container, false)
     }
 
@@ -68,27 +70,32 @@ class TempoIncreasingFragment : Fragment() {
 
         startValue.minValue = MIN_BPM
         startValue.maxValue = 160
-        startValue.value = 90
+        startValue.value = model.tempoIncStartValue
 
         endValue.minValue = startValue.value
         endValue.maxValue = MAX_BPM
-        endValue.value = 160
-
-        endValue.minValue = startValue.value
-        endValue.maxValue = MAX_BPM
-        endValue.value = 160
-
-        endValue.minValue = startValue.value
-        endValue.maxValue = MAX_BPM
-        endValue.value = 160
+        endValue.value = model.tempoIncEndValue
 
         barsValue.minValue = 1
         barsValue.maxValue = 16
-        barsValue.value = 1
+        barsValue.value = model.tempoIncBarsValue
 
         increaseValue.minValue = 1
         increaseValue.maxValue = MAX_BPM
-        increaseValue.value = 5
+        increaseValue.value = model.tempoIncIncreaseValue
+
+        timeValue.minValue = 1
+        timeValue.maxValue = 180
+        timeValue.value = model.tempoIncTimeValue
+
+        val cont = context
+        if(cont != null) {
+            startValue.typeface = ResourcesCompat.getFont(cont, R.font.xolonium_regular)
+            endValue.typeface = ResourcesCompat.getFont(cont, R.font.xolonium_regular)
+            barsValue.typeface = ResourcesCompat.getFont(cont, R.font.xolonium_regular)
+            increaseValue.typeface = ResourcesCompat.getFont(cont, R.font.xolonium_regular)
+            timeValue.typeface = ResourcesCompat.getFont(cont, R.font.xolonium_regular)
+        }
 
         startValue.setOnValueChangedListener { _, _, value ->
             endValue.minValue = value

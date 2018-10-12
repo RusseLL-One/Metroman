@@ -1,9 +1,10 @@
-package com.one.russell.metronomekotlin.Fragments
+package com.one.russell.metronomekotlin.fragments
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
+import android.support.v4.content.res.ResourcesCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,9 +30,24 @@ class BarDropFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        barMuteChanceValue.value = 50
+        barMuteChanceValue.value = model.barDropChanceValue
+        barMuteChanceValue.minValue = 1
+        barMuteChanceValue.maxValue = 100
 
-        //endValue.tvValue.text = "160"
+        normalValue.value = model.barDropNormalValue
+        normalValue.minValue = 1
+        normalValue.maxValue = 100
+
+        mutedValue.value = model.barDropMutedValue
+        mutedValue.minValue = 1
+        mutedValue.maxValue = 100
+
+        val cont = context
+        if(cont != null) {
+            barMuteChanceValue.typeface = ResourcesCompat.getFont(cont, R.font.xolonium_regular)
+            normalValue.typeface = ResourcesCompat.getFont(cont, R.font.xolonium_regular)
+            mutedValue.typeface = ResourcesCompat.getFont(cont, R.font.xolonium_regular)
+        }
 
         val byRandomStr = App.getAppInstance().resources.getString(R.string.by_random)
         val byCountStr = App.getAppInstance().resources.getString(R.string.by_count)

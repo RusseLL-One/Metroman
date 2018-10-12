@@ -1,8 +1,9 @@
-package com.one.russell.metronomekotlin.Fragments
+package com.one.russell.metronomekotlin.fragments
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.content.res.ResourcesCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +28,13 @@ class BeatDropFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        beatMuteChanceValue.value = 50
+        beatMuteChanceValue.value = model.beatDropChanceValue
+        beatMuteChanceValue.minValue = 1
+        beatMuteChanceValue.maxValue = 100
+
+        val cont = context
+        if(cont != null) {
+            beatMuteChanceValue.typeface = ResourcesCompat.getFont(cont, R.font.xolonium_regular)
+        }
     }
 }

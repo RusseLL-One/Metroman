@@ -1,193 +1,200 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true">
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/tvStartBpm"
-        android:layout_width="0dp"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="@string/start_tempo_bpm"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@id/startValue"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:animateLayoutChanges="true">
 
-    <com.shawnlin.numberpicker.NumberPicker
-        android:id="@+id/startValue"
-        android:layout_width="120dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="@id/tvStartBpm"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tvStartBpm"
-        app:np_dividerThickness="0dp"
-        app:np_orientation="horizontal"
-        app:np_selectedTextColor="@color/colorText"
-        app:np_selectedTextSize="16sp"
-        app:np_textColor="@color/colorText"
-        app:np_textSize="16sp"
-        app:np_wrapSelectorWheel="false" />
+        <TextView
+            android:id="@+id/tvStartBpm"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="@string/start_tempo_bpm"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@id/startValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tvEndBpm"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="@string/end_tempo_bpm"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@id/endValue"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvStartBpm" />
+        <com.shawnlin.numberpicker.NumberPicker
+            android:id="@+id/startValue"
+            android:layout_width="120dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="@id/tvStartBpm"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvStartBpm"
+            app:np_dividerThickness="0dp"
+            app:np_orientation="horizontal"
+            app:np_selectedTextColor="@color/colorText"
+            app:np_selectedTextSize="16sp"
+            app:np_textColor="@color/colorText"
+            app:np_textSize="14sp"
+            app:np_wrapSelectorWheel="false" />
 
-    <com.shawnlin.numberpicker.NumberPicker
-        android:id="@+id/endValue"
-        android:layout_width="120dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="@id/tvEndBpm"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tvEndBpm"
-        app:np_dividerThickness="0dp"
-        app:np_orientation="horizontal"
-        app:np_selectedTextColor="@color/colorText"
-        app:np_selectedTextSize="16sp"
-        app:np_textColor="@color/colorText"
-        app:np_textSize="16sp"
-        app:np_wrapSelectorWheel="false" />
+        <TextView
+            android:id="@+id/tvEndBpm"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="@string/end_tempo_bpm"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@id/endValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvStartBpm" />
 
-    <android.support.design.widget.TabLayout
-        android:id="@+id/tempoIncTabLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvEndBpm"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:background="@color/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+        <com.shawnlin.numberpicker.NumberPicker
+            android:id="@+id/endValue"
+            android:layout_width="120dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="@id/tvEndBpm"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvEndBpm"
+            app:np_dividerThickness="0dp"
+            app:np_orientation="horizontal"
+            app:np_selectedTextColor="@color/colorText"
+            app:np_selectedTextSize="16sp"
+            app:np_textColor="@color/colorText"
+            app:np_textSize="14sp"
+            app:np_wrapSelectorWheel="false" />
 
-    <TextView
-        android:id="@+id/tvBars"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="@string/through_each_bars"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@id/barsValue"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tempoIncTabLayout" />
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tempoIncTabLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvEndBpm" />
 
-    <com.shawnlin.numberpicker.NumberPicker
-        android:id="@+id/barsValue"
-        android:layout_width="120dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="@id/tvBars"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tvBars"
-        app:np_dividerThickness="0dp"
-        app:np_orientation="horizontal"
-        app:np_selectedTextColor="@color/colorText"
-        app:np_selectedTextSize="16sp"
-        app:np_textColor="@color/colorText"
-        app:np_textSize="16sp"
-        app:np_wrapSelectorWheel="false" />
+        <TextView
+            android:id="@+id/tvBars"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="@string/through_each_bars"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@id/barsValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tempoIncTabLayout" />
 
-    <TextView
-        android:id="@+id/tvIncrease"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="@string/increase_on_bpm"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@id/increaseValue"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvBars" />
+        <com.shawnlin.numberpicker.NumberPicker
+            android:id="@+id/barsValue"
+            android:layout_width="120dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="@id/tvBars"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvBars"
+            app:np_dividerThickness="0dp"
+            app:np_orientation="horizontal"
+            app:np_selectedTextColor="@color/colorText"
+            app:np_selectedTextSize="16sp"
+            app:np_textColor="@color/colorText"
+            app:np_textSize="14sp"
+            app:np_wrapSelectorWheel="false" />
 
-    <com.shawnlin.numberpicker.NumberPicker
-        android:id="@+id/increaseValue"
-        android:layout_width="120dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="@id/tvIncrease"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tvIncrease"
-        app:np_dividerThickness="0dp"
-        app:np_orientation="horizontal"
-        app:np_selectedTextColor="@color/colorText"
-        app:np_selectedTextSize="16sp"
-        app:np_textColor="@color/colorText"
-        app:np_textSize="16sp"
-        app:np_wrapSelectorWheel="false" />
+        <TextView
+            android:id="@+id/tvIncrease"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="@string/increase_on_bpm"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@id/increaseValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvBars" />
 
-    <View
-        android:id="@+id/barsFrame"
-        android:layout_width="40dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginBottom="6dp"
-        android:background="@drawable/frame"
-        app:layout_constraintTop_toTopOf="@id/barsValue"
-        app:layout_constraintBottom_toBottomOf="@id/increaseValue"
-        app:layout_constraintStart_toStartOf="@id/barsValue"
-        app:layout_constraintEnd_toEndOf="@id/barsValue"/>
+        <com.shawnlin.numberpicker.NumberPicker
+            android:id="@+id/increaseValue"
+            android:layout_width="120dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="@id/tvIncrease"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvIncrease"
+            app:np_dividerThickness="0dp"
+            app:np_orientation="horizontal"
+            app:np_selectedTextColor="@color/colorText"
+            app:np_selectedTextSize="16sp"
+            app:np_textColor="@color/colorText"
+            app:np_textSize="14sp"
+            app:np_wrapSelectorWheel="false" />
 
-    <TextView
-        android:id="@+id/tvTime"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="@string/time"
-        android:textSize="16sp"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toStartOf="@id/timeValue"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tempoIncTabLayout" />
+        <View
+            android:id="@+id/barsFrame"
+            android:layout_width="40dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:background="@drawable/frame"
+            app:layout_constraintBottom_toBottomOf="@id/increaseValue"
+            app:layout_constraintEnd_toEndOf="@id/barsValue"
+            app:layout_constraintStart_toStartOf="@id/barsValue"
+            app:layout_constraintTop_toTopOf="@id/barsValue" />
 
-    <com.shawnlin.numberpicker.NumberPicker
-        android:id="@+id/timeValue"
-        android:layout_width="120dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="@id/tvTime"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tvTime"
-        app:np_dividerThickness="0dp"
-        android:visibility="invisible"
-        app:np_orientation="horizontal"
-        app:np_selectedTextColor="@color/colorText"
-        app:np_selectedTextSize="16sp"
-        app:np_textColor="@color/colorText"
-        app:np_textSize="16sp"
-        app:np_wrapSelectorWheel="false" />
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="@string/time"
+            android:textSize="16sp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toStartOf="@id/timeValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tempoIncTabLayout" />
 
-    <View
-        android:id="@+id/timeFrame"
-        android:layout_width="40dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginBottom="6dp"
-        android:visibility="invisible"
-        android:background="@drawable/frame"
-        app:layout_constraintTop_toTopOf="@id/timeValue"
-        app:layout_constraintBottom_toBottomOf="@id/timeValue"
-        app:layout_constraintStart_toStartOf="@id/timeValue"
-        app:layout_constraintEnd_toEndOf="@id/timeValue"/>
+        <com.shawnlin.numberpicker.NumberPicker
+            android:id="@+id/timeValue"
+            android:layout_width="120dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="16dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@id/tvTime"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvTime"
+            app:np_dividerThickness="0dp"
+            app:np_orientation="horizontal"
+            app:np_selectedTextColor="@color/colorText"
+            app:np_selectedTextSize="16sp"
+            app:np_textColor="@color/colorText"
+            app:np_textSize="14sp"
+            app:np_wrapSelectorWheel="false" />
 
-    <View
-        android:id="@+id/bpmFrame"
-        android:layout_width="40dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginBottom="6dp"
-        android:background="@drawable/frame"
-        app:layout_constraintTop_toTopOf="@id/startValue"
-        app:layout_constraintBottom_toBottomOf="@id/endValue"
-        app:layout_constraintStart_toStartOf="@id/startValue"
-        app:layout_constraintEnd_toEndOf="@id/startValue"/>
+        <View
+            android:id="@+id/timeFrame"
+            android:layout_width="40dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:background="@drawable/frame"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@id/timeValue"
+            app:layout_constraintEnd_toEndOf="@id/timeValue"
+            app:layout_constraintStart_toStartOf="@id/timeValue"
+            app:layout_constraintTop_toTopOf="@id/timeValue" />
 
-</android.support.constraint.ConstraintLayout>
+        <View
+            android:id="@+id/bpmFrame"
+            android:layout_width="40dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:background="@drawable/frame"
+            app:layout_constraintBottom_toBottomOf="@id/endValue"
+            app:layout_constraintEnd_toEndOf="@id/startValue"
+            app:layout_constraintStart_toStartOf="@id/startValue"
+            app:layout_constraintTop_toTopOf="@id/startValue" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</ScrollView>

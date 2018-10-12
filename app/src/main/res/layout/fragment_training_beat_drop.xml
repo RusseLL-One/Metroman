@@ -1,46 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/tvBeatDropChance"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/beat_drop_chance"
-        android:textSize="16sp"
-        android:padding="16dp"
-        app:layout_constraintEnd_toStartOf="@id/beatMuteChanceValue"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <com.shawnlin.numberpicker.NumberPicker
-        android:id="@+id/beatMuteChanceValue"
-        android:layout_width="120dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="@id/tvBeatDropChance"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tvBeatDropChance"
-        app:np_dividerThickness="0dp"
-        app:np_orientation="horizontal"
-        app:np_selectedTextColor="@color/colorText"
-        app:np_selectedTextSize="16sp"
-        app:np_textColor="@color/colorText"
-        app:np_textSize="16sp"
-        app:np_wrapSelectorWheel="false" />
+        <TextView
+            android:id="@+id/tvBeatDropChance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="@string/beat_drop_chance"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@id/beatMuteChanceValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <View
-        android:id="@+id/barCountFrame"
-        android:layout_width="40dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginBottom="6dp"
-        android:background="@drawable/frame"
-        app:layout_constraintBottom_toBottomOf="@id/beatMuteChanceValue"
-        app:layout_constraintEnd_toEndOf="@id/beatMuteChanceValue"
-        app:layout_constraintStart_toStartOf="@id/beatMuteChanceValue"
-        app:layout_constraintTop_toTopOf="@id/beatMuteChanceValue" />
+        <com.shawnlin.numberpicker.NumberPicker
+            android:id="@+id/beatMuteChanceValue"
+            android:layout_width="120dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="@id/tvBeatDropChance"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvBeatDropChance"
+            app:np_dividerThickness="0dp"
+            app:np_orientation="horizontal"
+            app:np_selectedTextColor="@color/colorText"
+            app:np_selectedTextSize="16sp"
+            app:np_textColor="@color/colorText"
+            app:np_textSize="14sp"
+            app:np_wrapSelectorWheel="false" />
 
-</android.support.constraint.ConstraintLayout>
+        <View
+            android:id="@+id/barCountFrame"
+            android:layout_width="40dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:background="@drawable/frame"
+            app:layout_constraintBottom_toBottomOf="@id/beatMuteChanceValue"
+            app:layout_constraintEnd_toEndOf="@id/beatMuteChanceValue"
+            app:layout_constraintStart_toStartOf="@id/beatMuteChanceValue"
+            app:layout_constraintTop_toTopOf="@id/beatMuteChanceValue" />
+
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

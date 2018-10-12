@@ -1,4 +1,4 @@
-package com.one.russell.metronomekotlin.Views;
+package com.one.russell.metronomekotlin.views;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -21,14 +21,9 @@ public class CircularProgressBar extends View {
     private int mViewWidth;
     private int mViewHeight;
 
-    private final float mStartAngle = -90;      // Always start from top (default is: "3 o'clock on a watch.")
     private float mSweepAngle = 0;              // How long to sweep from mStartAngle
     private float mMaxSweepAngle = 360;         // Max degrees to sweep = full circle
-    private int mStrokeWidth = 20;              // Width of outline
-    private int mAnimationDuration = 400;       // Animation duration for progress change
     private int mMaxProgress = 100;             // Max progress to use
-    private boolean mDrawText = true;           // Set to true if progress text should be drawn
-    private boolean mRoundedCorners = true;     // Set to true if rounded corners should be applied to outline ends
     private int mProgressColor = Color.BLACK;   // Outline color
     private int mTextColor = Color.BLACK;       // Progress text color
 
@@ -53,9 +48,8 @@ public class CircularProgressBar extends View {
         initMeasurments();
         drawOutlineArc(canvas);
 
-        if (mDrawText) {
-            drawText(canvas);
-        }
+        // Set to true if progress text should be drawn
+        drawText(canvas);
     }
 
     private void initMeasurments() {
@@ -66,14 +60,19 @@ public class CircularProgressBar extends View {
     private void drawOutlineArc(Canvas canvas) {
 
         final int diameter = Math.min(mViewWidth, mViewHeight);
+        // Width of outline
+        int mStrokeWidth = 20;
         final float pad = mStrokeWidth / 2f;
         final RectF outerOval = new RectF(pad, pad, diameter - pad, diameter - pad);
 
         mPaint.setColor(mProgressColor);
         mPaint.setStrokeWidth(mStrokeWidth);
         mPaint.setAntiAlias(true);
-        mPaint.setStrokeCap(mRoundedCorners ? Paint.Cap.ROUND : Paint.Cap.BUTT);
+        // Set to true if rounded corners should be applied to outline ends
+        mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setStyle(Paint.Style.STROKE);
+        // Always start from top (default is: "3 o'clock on a watch.")
+        float mStartAngle = -90;
         canvas.drawArc(outerOval, mStartAngle, mSweepAngle, false, mPaint);
     }
 
@@ -105,13 +104,12 @@ public class CircularProgressBar extends View {
     public void setProgress(int progress) {
         ValueAnimator animator = ValueAnimator.ofFloat(mSweepAngle, calcSweepAngleFromProgress(progress));
         animator.setInterpolator(new DecelerateInterpolator());
+        // Animation duration for progress change
+        int mAnimationDuration = 400;
         animator.setDuration(mAnimationDuration);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                mSweepAngle = (float) valueAnimator.getAnimatedValue();
-                invalidate();
-            }
+        animator.addUpdateListener(valueAnimator -> {
+            mSweepAngle = (float) valueAnimator.getAnimatedValue();
+            invalidate();
         });
         animator.start();
     }
@@ -121,28 +119,8 @@ public class CircularProgressBar extends View {
         invalidate();
     }
 
-    public void setProgressWidth(int width) {
-        mStrokeWidth = width;
-        invalidate();
-    }
-
     public void setTextColor(int color) {
         mTextColor = color;
-        invalidate();
-    }
-
-    public void showProgressText(boolean show) {
-        mDrawText = show;
-        invalidate();
-    }
-
-    /**
-     * Toggle this if you don't want rounded corners on progress bar.
-     * Default is true.
-     * @param roundedCorners true if you want rounded corners of false otherwise.
-     */
-    public void useRoundedCorners(boolean roundedCorners) {
-        mRoundedCorners = roundedCorners;
         invalidate();
     }
 }

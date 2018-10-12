@@ -18,94 +18,90 @@
 
         <TextView
             android:id="@+id/tvAccentSound"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:padding="16dp"
             android:text="@string/sound_preset"
-            android:textSize="24sp"
+            android:textSize="16sp"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintEnd_toStartOf="@id/presetValue"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tvFlasher"
+            />
 
         <com.shawnlin.numberpicker.NumberPicker
-            android:id="@+id/accentValue"
-            android:layout_width="0dp"
+            android:id="@+id/presetValue"
+            android:layout_width="120dp"
             android:layout_height="0dp"
-            android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             app:layout_constraintBottom_toBottomOf="@id/tvAccentSound"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/barrier"
             app:layout_constraintTop_toTopOf="@id/tvAccentSound"
             app:np_dividerThickness="0dp"
             app:np_orientation="horizontal"
             app:np_selectedTextColor="@color/colorText"
             app:np_selectedTextSize="16sp"
             app:np_textColor="@color/colorText"
-            app:np_textSize="16sp"
+            app:np_textSize="14sp"
             app:np_wrapSelectorWheel="false" />
+
+        <View
+            android:id="@+id/barCountFrame"
+            android:layout_width="40dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:background="@drawable/frame"
+            app:layout_constraintBottom_toBottomOf="@id/presetValue"
+            app:layout_constraintEnd_toEndOf="@id/presetValue"
+            app:layout_constraintStart_toStartOf="@id/presetValue"
+            app:layout_constraintTop_toTopOf="@id/presetValue" />
 
         <TextView
             android:id="@+id/tvFlasher"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:padding="16dp"
             android:text="@string/led_flasher"
-            android:textSize="24sp"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@id/presetValue"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvAccentSound" />
+            app:layout_constraintTop_toBottomOf="@id/tvAccentSound"
+            app:layout_constraintBottom_toTopOf="@id/tvVibrate"/>
 
-        <com.shawnlin.numberpicker.NumberPicker
+        <android.support.v7.widget.SwitchCompat
             android:id="@+id/flasherValue"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:switchMinWidth="60dp"
+            android:gravity="center_horizontal"
             app:layout_constraintBottom_toBottomOf="@id/tvFlasher"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/barrier"
-            app:layout_constraintTop_toTopOf="@id/tvFlasher"
-            app:np_dividerThickness="0dp"
-            app:np_orientation="horizontal"
-            app:np_selectedTextColor="@color/colorText"
-            app:np_selectedTextSize="16sp"
-            app:np_textColor="@color/colorText"
-            app:np_textSize="16sp"
-            app:np_wrapSelectorWheel="false" />
+            app:layout_constraintEnd_toEndOf="@id/presetValue"
+            app:layout_constraintStart_toStartOf="@id/presetValue"
+            app:layout_constraintTop_toTopOf="@id/tvFlasher"/>
 
         <TextView
-            android:id="@+id/tvBpmPicker"
-            android:layout_width="wrap_content"
+            android:id="@+id/tvVibrate"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="@string/bpm_picker_type"
-            android:textSize="24sp"
+            android:text="@string/vibrate"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@id/presetValue"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvFlasher" />
+            app:layout_constraintTop_toBottomOf="@id/tvFlasher"/>
 
-        <com.shawnlin.numberpicker.NumberPicker
-            android:id="@+id/pickerValue"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintBottom_toBottomOf="@id/tvBpmPicker"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/barrier"
-            app:layout_constraintTop_toTopOf="@id/tvBpmPicker"
-            app:np_dividerThickness="0dp"
-            app:np_orientation="horizontal"
-            app:np_selectedTextColor="@color/colorText"
-            app:np_selectedTextSize="16sp"
-            app:np_textColor="@color/colorText"
-            app:np_textSize="16sp"
-            app:np_wrapSelectorWheel="false" />
-
-        <android.support.constraint.Barrier
-            android:id="@+id/barrier"
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/vibrateValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:barrierDirection="right"
-            app:constraint_referenced_ids="tvAccentSound,tvBpmPicker" />
+            app:switchMinWidth="60dp"
+            android:gravity="center_horizontal"
+            app:layout_constraintBottom_toBottomOf="@id/tvVibrate"
+            app:layout_constraintEnd_toEndOf="@id/presetValue"
+            app:layout_constraintStart_toStartOf="@id/presetValue"
+            app:layout_constraintTop_toTopOf="@id/tvVibrate"/>
 
     </android.support.constraint.ConstraintLayout>
 </FrameLayout>

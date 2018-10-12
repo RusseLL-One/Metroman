@@ -1,4 +1,4 @@
-package com.one.russell.metronomekotlin.Views
+package com.one.russell.metronomekotlin.views
 
 import android.animation.ValueAnimator
 import android.content.Context
@@ -22,74 +22,44 @@ class BeatLineView @JvmOverloads constructor(
     val paint = Paint()
     private var ballPositionY = 0f
     private var isBeatBallOnTop = true
-    private var beatBallImage: Bitmap
     private val topBorderMatrix = Matrix()
-    private var border0: Bitmap
-    private var border1: Bitmap
-    private var border2: Bitmap
-    private var border3: Bitmap
-    private var border4: Bitmap
-    private var topBorder: Bitmap
-    private var bottomBorder: Bitmap
-    private var emptyImage: Bitmap
-   // private val glide: Glide
+    private var emptyImage = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+    private var beatBallImage = emptyImage
+    private var borderOff = emptyImage
+    private var borderMid = emptyImage
+    private var borderOn = emptyImage
+    private var topBorder = emptyImage
+    private var bottomBorder = emptyImage
 
     init {
-        emptyImage = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
-        beatBallImage = emptyImage
-        border0 = emptyImage
-        border1 = emptyImage
-        border2 = emptyImage
-        border3 = emptyImage
-        border4 = emptyImage
-        topBorder = emptyImage
-        bottomBorder = emptyImage
-
         topBorderMatrix.preScale(1f, -1f)
 
         viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
             override fun onPreDraw(): Boolean {
                 viewTreeObserver.removeOnPreDrawListener(this)
 
-
                 Glide.with(getContext())
                         .asBitmap()
-                        .load(R.drawable.borders0000)
+                        .load(R.drawable.borders_on)
                         .into(object : SimpleTarget<Bitmap>(measuredWidth, 1) {
                             override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                border0 = resource
+                                borderOn = resource
                             }
                         })
                 Glide.with(getContext())
                         .asBitmap()
-                        .load(R.drawable.borders0001)
+                        .load(R.drawable.borders_mid)
                         .into(object : SimpleTarget<Bitmap>(measuredWidth, 1) {
                             override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                border1 = resource
+                                borderMid = resource
                             }
                         })
                 Glide.with(getContext())
                         .asBitmap()
-                        .load(R.drawable.borders0002)
+                        .load(R.drawable.borders_off)
                         .into(object : SimpleTarget<Bitmap>(measuredWidth, 1) {
                             override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                border2 = resource
-                            }
-                        })
-                Glide.with(getContext())
-                        .asBitmap()
-                        .load(R.drawable.borders0003)
-                        .into(object : SimpleTarget<Bitmap>(measuredWidth, 1) {
-                            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                border3 = resource
-                            }
-                        })
-                Glide.with(getContext())
-                        .asBitmap()
-                        .load(R.drawable.borders0004)
-                        .into(object : SimpleTarget<Bitmap>(measuredWidth, 1) {
-                            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                border4 = resource
+                                borderOff = resource
                                 topBorder = resource
                                 bottomBorder = resource
                                 topBorderMatrix.postTranslate(0f, (resource.height).toFloat())
@@ -113,11 +83,10 @@ class BeatLineView @JvmOverloads constructor(
     fun animateBall(duration: Int) {
         val pathLength = height - beatBallImage.height
 
-        val positionAnimator: ValueAnimator
-        if (isBeatBallOnTop) {
-            positionAnimator = ValueAnimator.ofInt(0, pathLength)
+        val positionAnimator = if (isBeatBallOnTop) {
+            ValueAnimator.ofInt(0, pathLength)
         } else {
-            positionAnimator = ValueAnimator.ofInt(pathLength, 0)
+            ValueAnimator.ofInt(pathLength, 0)
         }
 
         isBeatBallOnTop = !isBeatBallOnTop
@@ -132,29 +101,23 @@ class BeatLineView @JvmOverloads constructor(
     }
 
     fun animateBorder() {
-        val borderAnimator = ValueAnimator.ofInt(0, 5)
+        val borderAnimator = ValueAnimator.ofInt(0, 3)
         //borderAnimator.duration = 2000L
         borderAnimator.repeatCount = 0
         borderAnimator.interpolator = DecelerateInterpolator()
         borderAnimator.addUpdateListener { animation ->
 
             val x = animation.animatedValue as Int
-            Log.d("qwe", "borderAnimator = " + x)
+            Log.d("qwe", "borderAnimator = $x")
             when (x) {
                 0 -> {
-                    if (!isBeatBallOnTop) topBorder = border0 else bottomBorder = border0
+                    if (!isBeatBallOnTop) topBorder = borderOn else bottomBorder = borderOn
                 }
                 1 -> {
-                    if (!isBeatBallOnTop) topBorder = border1 else bottomBorder = border1
+                    if (!isBeatBallOnTop) topBorder = borderMid else bottomBorder = borderMid
                 }
                 2 -> {
-                    if (!isBeatBallOnTop) topBorder = border2 else bottomBorder = border2
-                }
-                3 -> {
-                    if (!isBeatBallOnTop) topBorder = border3 else bottomBorder = border3
-                }
-                4 -> {
-                    if (!isBeatBallOnTop) topBorder = border4 else bottomBorder = border4
+                    if (!isBeatBallOnTop) topBorder = borderOff else bottomBorder = borderOff
                 }
             }
             invalidate()

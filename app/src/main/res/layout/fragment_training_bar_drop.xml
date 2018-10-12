@@ -1,130 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true">
+    android:fillViewport="true">
 
-
-    <android.support.design.widget.TabLayout
-        android:id="@+id/barDropTabLayout"
-        android:layout_width="0dp"
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:animateLayoutChanges="true">
 
-    <TextView
-        android:id="@+id/tvMuteChance"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="@string/bar_mute_chance"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@id/barMuteChanceValue"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/barDropTabLayout" />
+        <android.support.design.widget.TabLayout
+            android:id="@+id/barDropTabLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <com.shawnlin.numberpicker.NumberPicker
-        android:id="@+id/barMuteChanceValue"
-        android:layout_width="120dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="@id/tvMuteChance"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tvMuteChance"
-        app:np_dividerThickness="0dp"
-        app:np_orientation="horizontal"
-        app:np_selectedTextColor="@color/colorText"
-        app:np_selectedTextSize="16sp"
-        app:np_textColor="@color/colorText"
-        app:np_textSize="16sp"
-        app:np_wrapSelectorWheel="false" />
+        <TextView
+            android:id="@+id/tvMuteChance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="@string/bar_mute_chance"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@id/barMuteChanceValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/barDropTabLayout" />
 
-    <View
-        android:id="@+id/barMuteChanceFrame"
-        android:layout_width="40dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginBottom="6dp"
-        android:background="@drawable/frame"
-        app:layout_constraintBottom_toBottomOf="@id/barMuteChanceValue"
-        app:layout_constraintEnd_toEndOf="@id/barMuteChanceValue"
-        app:layout_constraintStart_toStartOf="@id/barMuteChanceValue"
-        app:layout_constraintTop_toTopOf="@id/barMuteChanceValue" />
+        <com.shawnlin.numberpicker.NumberPicker
+            android:id="@+id/barMuteChanceValue"
+            android:layout_width="120dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="@id/tvMuteChance"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvMuteChance"
+            app:np_dividerThickness="0dp"
+            app:np_orientation="horizontal"
+            app:np_selectedTextColor="@color/colorText"
+            app:np_selectedTextSize="16sp"
+            app:np_textColor="@color/colorText"
+            app:np_textSize="14sp"
+            app:np_wrapSelectorWheel="false" />
 
-    <TextView
-        android:id="@+id/tvNormalBars"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="@string/normal_bars"
-        android:textSize="16sp"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toStartOf="@id/normalValue"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/barDropTabLayout" />
+        <View
+            android:id="@+id/barMuteChanceFrame"
+            android:layout_width="40dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:background="@drawable/frame"
+            app:layout_constraintBottom_toBottomOf="@id/barMuteChanceValue"
+            app:layout_constraintEnd_toEndOf="@id/barMuteChanceValue"
+            app:layout_constraintStart_toStartOf="@id/barMuteChanceValue"
+            app:layout_constraintTop_toTopOf="@id/barMuteChanceValue" />
 
-    <com.shawnlin.numberpicker.NumberPicker
-        android:id="@+id/normalValue"
-        android:layout_width="120dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="16dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@id/tvNormalBars"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tvNormalBars"
-        app:np_dividerThickness="0dp"
-        app:np_orientation="horizontal"
-        app:np_selectedTextColor="@color/colorText"
-        app:np_selectedTextSize="16sp"
-        app:np_textColor="@color/colorText"
-        app:np_textSize="16sp"
-        app:np_wrapSelectorWheel="false" />
+        <TextView
+            android:id="@+id/tvNormalBars"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="@string/normal_bars"
+            android:textSize="16sp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toStartOf="@id/normalValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/barDropTabLayout" />
 
-    <TextView
-        android:id="@+id/tvMutedBars"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="@string/muted_bars"
-        android:textSize="16sp"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toStartOf="@id/mutedValue"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvNormalBars" />
+        <com.shawnlin.numberpicker.NumberPicker
+            android:id="@+id/normalValue"
+            android:layout_width="120dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="16dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@id/tvNormalBars"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvNormalBars"
+            app:np_dividerThickness="0dp"
+            app:np_orientation="horizontal"
+            app:np_selectedTextColor="@color/colorText"
+            app:np_selectedTextSize="16sp"
+            app:np_textColor="@color/colorText"
+            app:np_textSize="14sp"
+            app:np_wrapSelectorWheel="false" />
 
-    <com.shawnlin.numberpicker.NumberPicker
-        android:id="@+id/mutedValue"
-        android:layout_width="120dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="16dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@id/tvMutedBars"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tvMutedBars"
-        app:np_dividerThickness="0dp"
-        app:np_orientation="horizontal"
-        app:np_selectedTextColor="@color/colorText"
-        app:np_selectedTextSize="16sp"
-        app:np_textColor="@color/colorText"
-        app:np_textSize="16sp"
-        app:np_wrapSelectorWheel="false" />
+        <TextView
+            android:id="@+id/tvMutedBars"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="@string/muted_bars"
+            android:textSize="16sp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toStartOf="@id/mutedValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvNormalBars" />
 
-    <View
-        android:id="@+id/barCountFrame"
-        android:layout_width="40dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginBottom="6dp"
-        android:background="@drawable/frame"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@id/mutedValue"
-        app:layout_constraintEnd_toEndOf="@id/normalValue"
-        app:layout_constraintStart_toStartOf="@id/normalValue"
-        app:layout_constraintTop_toTopOf="@id/normalValue" />
+        <com.shawnlin.numberpicker.NumberPicker
+            android:id="@+id/mutedValue"
+            android:layout_width="120dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="16dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@id/tvMutedBars"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvMutedBars"
+            app:np_dividerThickness="0dp"
+            app:np_orientation="horizontal"
+            app:np_selectedTextColor="@color/colorText"
+            app:np_selectedTextSize="16sp"
+            app:np_textColor="@color/colorText"
+            app:np_textSize="14sp"
+            app:np_wrapSelectorWheel="false" />
 
-</android.support.constraint.ConstraintLayout>
+        <View
+            android:id="@+id/barCountFrame"
+            android:layout_width="40dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:background="@drawable/frame"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@id/mutedValue"
+            app:layout_constraintEnd_toEndOf="@id/normalValue"
+            app:layout_constraintStart_toStartOf="@id/normalValue"
+            app:layout_constraintTop_toTopOf="@id/normalValue" />
+
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

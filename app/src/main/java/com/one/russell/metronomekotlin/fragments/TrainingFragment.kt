@@ -1,4 +1,4 @@
-package com.one.russell.metronomekotlin.Fragments
+package com.one.russell.metronomekotlin.fragments
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -35,11 +35,10 @@ class TrainingFragment : Fragment() {
 
         Glide.with(this)
                 .asDrawable()
-                .load(R.drawable.background)
+                .load(R.drawable.background_bw)
                 .into(background)
 
         vpTraining.adapter = TrainingPagerAdapter(childFragmentManager)
-
         categoriesTabLayout.setupWithViewPager(vpTraining)
 
         btStart.setOnClickListener {
@@ -70,17 +69,17 @@ class TrainingFragment : Fragment() {
                     } else {
                         val trainingType = TrainingType.BAR_DROPPING_RANDOM
                         params.putString("trainingType", trainingType.name)
-                        params.putInt("chance", barMuteChanceValue.value)
+                        params.putInt("barChance", barMuteChanceValue.value)
                     }
                 }
                 2 -> {
                     val trainingType = TrainingType.BEAT_DROPPING
                     params.putString("trainingType", trainingType.name)
-                    params.putInt("chance", beatMuteChanceValue.value)
+                    params.putInt("beatChance", beatMuteChanceValue.value)
                 }
             }
             model.startTraining(params)
-            activity?.supportFragmentManager?.popBackStack();
+            activity?.supportFragmentManager?.popBackStack()
         }
     }
 }

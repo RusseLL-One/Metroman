@@ -1,17 +1,21 @@
-package com.one.russell.metronomekotlin.Views
+package com.one.russell.metronomekotlin.views
 
+import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
+import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.SoundPool
+import android.os.Build
 import android.support.v4.app.FragmentActivity
 import android.view.MotionEvent
 import kotlin.properties.Delegates
 import android.util.AttributeSet
+import android.view.View
 import android.view.ViewTreeObserver
-import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
@@ -23,36 +27,47 @@ const val BPM_STEP_DEGREES = 10
 
 class RotaryKnobView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : ImageView(context, attrs, defStyleAttr) {
+) : View(context, attrs, defStyleAttr) {
 
     var bpm = 10
     var dotImage: Bitmap = Bitmap.createBitmap(1,1,Bitmap.Config.ARGB_8888)
-    var startDegrees = 270f
-    var deltaDegrees = 0f
-    var degrees = 270f
-    var rotateMatrix = Matrix()
+    private var startDegrees = 270f
+    private var deltaDegrees = 0f
+    private var degrees = 270f
+    private var rotateMatrix = Matrix()
     private var rotateClickPlayer: SoundPool
     private var rotateClickId: Int = 0
     private var model: MainViewModel by Delegates.notNull()
-    val paint: Paint
+    private val paint: Paint
     private var isBlocked = false
     private var dotDistance = 0
 
     init {
         rotateMatrix = Matrix()
 
-        Glide.with(this)
+        /*Glide.with(this)
                 .load(R.drawable.knob)
-                .into(this)
+                .into(this)*/
 
         viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
             override fun onPreDraw(): Boolean {
                 viewTreeObserver.removeOnPreDrawListener(this)
 
+                Glide.get(context)
+
                 Glide.with(getContext())
                         .asBitmap()
-                        .load(R.drawable.dot_130)
-                        .into(object : SimpleTarget<Bitmap>(Utils.getPixelsFromDp(15), Utils.getPixelsFromDp(15)) {
+                        .load(R.drawable.knob)
+                        .into(object : SimpleTarget<Bitmap>(measuredWidth, measuredHeight) {
+                            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                background = BitmapDrawable(resources, resource)
+                            }
+                        })
+
+                Glide.with(getContext())
+                        .asBitmap()
+                        .load(R.drawable.dot_90)
+                        .into(object : SimpleTarget<Bitmap>(Utils.getPixelsFromDp(10), Utils.getPixelsFromDp(10)) {
                             override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                                 dotImage = resource
                                 invalidate()
@@ -66,7 +81,19 @@ class RotaryKnobView @JvmOverloads constructor(
 
         model = ViewModelProviders.of(context as FragmentActivity).get(MainViewModel::class.java)
 
-        rotateClickPlayer = SoundPool(2, AudioManager.STREAM_MUSIC, 0)
+        rotateClickPlayer = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val attributes = AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build()
+            SoundPool.Builder()
+                    .setAudioAttributes(attributes)
+                    .setMaxStreams(2)
+                    .build()
+        } else {
+            @Suppress("DEPRECATION")
+            SoundPool(2, AudioManager.STREAM_MUSIC, 0)
+        }
         rotateClickId = rotateClickPlayer.load(context, R.raw.rotate_click, 1)
 
         model.bpmLiveData.observe(context, Observer {
@@ -78,6 +105,7 @@ class RotaryKnobView @JvmOverloads constructor(
         paint = Paint(Paint.ANTI_ALIAS_FLAG)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (!isBlocked) {
             when (event.action) {
