@@ -97,8 +97,12 @@ class MainActivity : AppCompatActivity() {
         adView.loadAd(adRequest)
 
         Glide.with(this)
-                .load(R.drawable.background_bw)
+                .load(R.drawable.background)
                 .into(background)
+
+        Glide.with(this)
+                .load(R.drawable.beatline)
+                .into(vLine)
 
         Glide.with(this)
                 .load(R.drawable.tap)

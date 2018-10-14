@@ -35,7 +35,7 @@ class TrainingFragment : Fragment() {
 
         Glide.with(this)
                 .asDrawable()
-                .load(R.drawable.background_bw)
+                .load(R.drawable.background)
                 .into(background)
 
         vpTraining.adapter = TrainingPagerAdapter(childFragmentManager)
