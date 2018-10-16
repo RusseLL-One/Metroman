@@ -23,6 +23,7 @@ public class CircularProgressBar extends View {
 
     private float mSweepAngle = 0;              // How long to sweep from mStartAngle
     private float mMaxSweepAngle = 360;         // Max degrees to sweep = full circle
+    private int mStrokeWidth = 20;              // Width of outline
     private int mMaxProgress = 100;             // Max progress to use
     private int mProgressColor = Color.BLACK;   // Outline color
     private int mTextColor = Color.BLACK;       // Progress text color
@@ -60,8 +61,6 @@ public class CircularProgressBar extends View {
     private void drawOutlineArc(Canvas canvas) {
 
         final int diameter = Math.min(mViewWidth, mViewHeight);
-        // Width of outline
-        int mStrokeWidth = 20;
         final float pad = mStrokeWidth / 2f;
         final RectF outerOval = new RectF(pad, pad, diameter - pad, diameter - pad);
 
@@ -116,6 +115,11 @@ public class CircularProgressBar extends View {
 
     public void setProgressColor(int color) {
         mProgressColor = color;
+        invalidate();
+    }
+
+    public void setProgressWidth(int width) {
+        mStrokeWidth = width;
         invalidate();
     }
 

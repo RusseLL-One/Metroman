@@ -1,7 +1,12 @@
 package com.one.russell.metronomekotlin.fragments
 
+import android.Manifest
 import android.arch.lifecycle.ViewModelProviders
+import android.content.pm.PackageManager
+import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +17,8 @@ import com.one.russell.metronomekotlin.R
 import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlin.properties.Delegates
 
+const val PERMISSIONS_REQUEST_CAMERA = 168
+
 class SettingsFragment : Fragment() {
 
     private var model: MainViewModel by Delegates.notNull()
@@ -19,7 +26,7 @@ class SettingsFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val activity = activity
-        if(activity != null) {
+        if (activity != null) {
             model = ViewModelProviders.of(activity).get(MainViewModel::class.java)
         }
         return inflater.inflate(R.layout.fragment_settings, container, false)
@@ -28,14 +35,21 @@ class SettingsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        Glide.with(this)
-                .asDrawable()
-                .load(R.drawable.background)
-                .into(background)
+        val orientation = resources.configuration.orientation
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Glide.with(this)
+                    .load(R.drawable.background_land)
+                    .into(background)
+        } else {
+            Glide.with(this)
+                    .load(R.drawable.background)
+                    .into(background)
+        }
 
-        presetValue.value = model.soundPresetLiveData.value ?: 1
         presetValue.minValue = 1
-        presetValue.maxValue = 3
+        presetValue.maxValue = 12
+        presetValue.value = model.soundPresetLiveData.value ?: 1
+        presetValue.wrapSelectorWheel = false
 
         flasherValue.isChecked = model.flasherValueLiveData.value ?: false
 
@@ -45,42 +59,31 @@ class SettingsFragment : Fragment() {
             model.setSoundPresetId(value)
         }
 
-        flasherValue.setOnCheckedChangeListener { _, checked -> model.setFlasherValue(checked) }
-
-        vibrateValue.setOnCheckedChangeListener { _, checked -> model.setVibrateValue(checked) }
-
-        /*pickerValue.ivIncrease.setOnClickListener {
-            try {
-                var pickerId = pickerValue.tvValue.text.toString().toInt()
-                pickerId++
-
-                if(pickerId <= 2) {
-                    pickerValue.tvValue.setText(pickerId.toString())
-                    val knob = activity?.findViewById<RotaryKnobView>(R.id.rotaryKnob)
-                    knob?.visibility = View.GONE
-
-                    val scale = activity?.findViewById<ScaleView>(R.id.scaleKnob)
-                    scale?.visibility = View.VISIBLE
+        flasherValue.setOnCheckedChangeListener { _, checked ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                model.setFlasherValue(checked)
+            } else {
+                if (checked) {
+                    requestPermissions(arrayOf(Manifest.permission.CAMERA), PERMISSIONS_REQUEST_CAMERA)
+                } else {
+                    model.setFlasherValue(false)
                 }
-            } catch (e: NumberFormatException) {
             }
         }
 
-        pickerValue.ivDecrease.setOnClickListener {
-            try {
-                var pickerId = pickerValue.tvValue.text.toString().toInt()
-                pickerId--
+        vibrateValue.setOnCheckedChangeListener { _, checked -> model.setVibrateValue(checked) }
+    }
 
-                if(pickerId >= 1) {
-                    pickerValue.tvValue.setText(pickerId.toString())
-                    val knob = activity?.findViewById<RotaryKnobView>(R.id.rotaryKnob)
-                    knob?.visibility = View.VISIBLE
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-                    val scale = activity?.findViewById<ScaleView>(R.id.scaleKnob)
-                    scale?.visibility = View.GONE
-                }
-            } catch (e: NumberFormatException) {
+        if (requestCode == PERMISSIONS_REQUEST_CAMERA) {
+            if (grantResults.isNotEmpty()
+                    && grantResults.contains(PackageManager.PERMISSION_GRANTED)) {
+                model.setFlasherValue(true)
+            } else {
+                flasherValue.isChecked = false
             }
-        }*/
+        }
     }
 }

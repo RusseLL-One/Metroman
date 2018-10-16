@@ -30,7 +30,7 @@ class RotaryKnobView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
 
     var bpm = 10
-    var dotImage: Bitmap = Bitmap.createBitmap(1,1,Bitmap.Config.ARGB_8888)
+    var dotImage: Bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
     private var startDegrees = 270f
     private var deltaDegrees = 0f
     private var degrees = 270f
@@ -51,19 +51,6 @@ class RotaryKnobView @JvmOverloads constructor(
 
         viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
             override fun onPreDraw(): Boolean {
-                viewTreeObserver.removeOnPreDrawListener(this)
-
-                Glide.get(context)
-
-                Glide.with(getContext())
-                        .asBitmap()
-                        .load(R.drawable.knob)
-                        .into(object : SimpleTarget<Bitmap>(measuredWidth, measuredHeight) {
-                            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                background = BitmapDrawable(resources, resource)
-                            }
-                        })
-
                 Glide.with(getContext())
                         .asBitmap()
                         .load(R.drawable.dot_90)
@@ -73,8 +60,21 @@ class RotaryKnobView @JvmOverloads constructor(
                                 invalidate()
                             }
                         })
+                dotDistance = (0.75f * measuredHeight / 2).toInt()
 
-                dotDistance = measuredHeight/2 - Utils.getPixelsFromDp(25)
+                try {
+                    Glide.with(getContext())
+                            .asBitmap()
+                            .load(R.drawable.knob)
+                            .into(object : SimpleTarget<Bitmap>(measuredWidth, measuredHeight) {
+                                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                    background = BitmapDrawable(resources, resource)
+                                }
+                            })
+                    viewTreeObserver.removeOnPreDrawListener(this)
+                } catch (e: Exception) {
+                }
+
                 return true
             }
         })
@@ -149,15 +149,15 @@ class RotaryKnobView @JvmOverloads constructor(
         return false
     }
 
-    private fun degreesToRadians(degrees: Float) : Double {
+    private fun degreesToRadians(degrees: Float): Double {
         return degrees * (Math.PI / 180)
     }
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
-        val stopX = width.toDouble()/2 + cos(degreesToRadians(degrees)) * dotDistance - dotImage.width.toDouble()/2
-        val stopY = height.toDouble()/2 + sin(degreesToRadians(degrees)) * dotDistance - dotImage.height.toDouble()/2
+        val stopX = width.toDouble() / 2 + cos(degreesToRadians(degrees)) * dotDistance - dotImage.width.toDouble() / 2
+        val stopY = height.toDouble() / 2 + sin(degreesToRadians(degrees)) * dotDistance - dotImage.height.toDouble() / 2
         canvas?.drawBitmap(dotImage, stopX.toFloat(), stopY.toFloat(), paint)
     }
 

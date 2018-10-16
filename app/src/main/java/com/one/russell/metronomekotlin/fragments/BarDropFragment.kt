@@ -30,17 +30,20 @@ class BarDropFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        barMuteChanceValue.value = model.barDropChanceValue
-        barMuteChanceValue.minValue = 1
+        barMuteChanceValue.minValue = 0
         barMuteChanceValue.maxValue = 100
+        barMuteChanceValue.value = model.barDropChanceValue
+        barMuteChanceValue.wrapSelectorWheel = false
 
-        normalValue.value = model.barDropNormalValue
         normalValue.minValue = 1
         normalValue.maxValue = 100
+        normalValue.value = model.barDropNormalValue
+        normalValue.wrapSelectorWheel = false
 
-        mutedValue.value = model.barDropMutedValue
         mutedValue.minValue = 1
         mutedValue.maxValue = 100
+        mutedValue.value = model.barDropMutedValue
+        mutedValue.wrapSelectorWheel = false
 
         val cont = context
         if(cont != null) {

@@ -34,8 +34,7 @@
             app:np_selectedTextColor="@color/colorText"
             app:np_selectedTextSize="16sp"
             app:np_textColor="@color/colorText"
-            app:np_textSize="14sp"
-            app:np_wrapSelectorWheel="false" />
+            app:np_textSize="14sp"/>
 
         <TextView
             android:id="@+id/tvEndBpm"
@@ -61,8 +60,7 @@
             app:np_selectedTextColor="@color/colorText"
             app:np_selectedTextSize="16sp"
             app:np_textColor="@color/colorText"
-            app:np_textSize="14sp"
-            app:np_wrapSelectorWheel="false" />
+            app:np_textSize="14sp" />
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tempoIncTabLayout"
@@ -99,8 +97,7 @@
             app:np_selectedTextColor="@color/colorText"
             app:np_selectedTextSize="16sp"
             app:np_textColor="@color/colorText"
-            app:np_textSize="14sp"
-            app:np_wrapSelectorWheel="false" />
+            app:np_textSize="14sp"/>
 
         <TextView
             android:id="@+id/tvIncrease"
@@ -126,8 +123,7 @@
             app:np_selectedTextColor="@color/colorText"
             app:np_selectedTextSize="16sp"
             app:np_textColor="@color/colorText"
-            app:np_textSize="14sp"
-            app:np_wrapSelectorWheel="false" />
+            app:np_textSize="14sp"/>
 
         <View
             android:id="@+id/barsFrame"
@@ -167,8 +163,7 @@
             app:np_selectedTextColor="@color/colorText"
             app:np_selectedTextSize="16sp"
             app:np_textColor="@color/colorText"
-            app:np_textSize="14sp"
-            app:np_wrapSelectorWheel="false" />
+            app:np_textSize="14sp"/>
 
         <View
             android:id="@+id/timeFrame"

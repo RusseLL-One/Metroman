@@ -71,22 +71,27 @@ class TempoIncreasingFragment : Fragment() {
         startValue.minValue = MIN_BPM
         startValue.maxValue = 160
         startValue.value = model.tempoIncStartValue
+        startValue.wrapSelectorWheel = false
 
         endValue.minValue = startValue.value
         endValue.maxValue = MAX_BPM
         endValue.value = model.tempoIncEndValue
+        endValue.wrapSelectorWheel = false
 
         barsValue.minValue = 1
         barsValue.maxValue = 16
         barsValue.value = model.tempoIncBarsValue
+        barsValue.wrapSelectorWheel = false
 
         increaseValue.minValue = 1
         increaseValue.maxValue = MAX_BPM
         increaseValue.value = model.tempoIncIncreaseValue
+        increaseValue.wrapSelectorWheel = false
 
         timeValue.minValue = 1
         timeValue.maxValue = 180
         timeValue.value = model.tempoIncTimeValue
+        timeValue.wrapSelectorWheel = false
 
         val cont = context
         if(cont != null) {
@@ -99,10 +104,12 @@ class TempoIncreasingFragment : Fragment() {
 
         startValue.setOnValueChangedListener { _, _, value ->
             endValue.minValue = value
+            endValue.wrapSelectorWheel = false
         }
 
         endValue.setOnValueChangedListener { _, _, value ->
             startValue.maxValue = value
+            startValue.wrapSelectorWheel = false
         }
     }
 }

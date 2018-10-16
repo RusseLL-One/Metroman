@@ -34,8 +34,7 @@
             app:np_selectedTextColor="@color/colorText"
             app:np_selectedTextSize="16sp"
             app:np_textColor="@color/colorText"
-            app:np_textSize="14sp"
-            app:np_wrapSelectorWheel="false" />
+            app:np_textSize="14sp"/>
 
         <View
             android:id="@+id/barCountFrame"

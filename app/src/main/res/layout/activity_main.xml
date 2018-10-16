@@ -155,8 +155,11 @@
                 android:id="@+id/bpmTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:gravity="center"
                 android:text="@string/bpm"
+                android:lines="2"
+                android:ems="3"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@id/rotaryKnob"
@@ -205,18 +208,6 @@
                 app:layout_constraintBottom_toBottomOf="@+id/npValueOfBeat"
                 app:layout_constraintEnd_toStartOf="@+id/npValueOfBeat"
                 app:layout_constraintTop_toTopOf="@+id/npValueOfBeat" />
-
-            <!--NumberPicker
-                android:id="@+id/npValueOfBeat"
-                android:layout_width="30dp"
-                android:layout_height="120dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
-
-                android:descendantFocusability="blocksDescendants"
-                android:theme="@style/DefaultNumberPickerTheme"
-                app:layout_constraintBottom_toTopOf="@id/tapButton"
-                app:layout_constraintEnd_toEndOf="parent" /-->
 
             <com.shawnlin.numberpicker.NumberPicker
                 android:id="@+id/npValueOfBeat"

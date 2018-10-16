@@ -1,6 +1,7 @@
 package com.one.russell.metronomekotlin.fragments
 
 import android.arch.lifecycle.ViewModelProviders
+import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -33,10 +34,16 @@ class TrainingFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        Glide.with(this)
-                .asDrawable()
-                .load(R.drawable.background)
-                .into(background)
+        val orientation = resources.configuration.orientation
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Glide.with(this)
+                    .load(R.drawable.background_land)
+                    .into(background)
+        } else {
+            Glide.with(this)
+                    .load(R.drawable.background)
+                    .into(background)
+        }
 
         vpTraining.adapter = TrainingPagerAdapter(childFragmentManager)
         categoriesTabLayout.setupWithViewPager(vpTraining)

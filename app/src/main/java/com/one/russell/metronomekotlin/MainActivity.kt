@@ -13,6 +13,7 @@ import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.properties.Delegates
 import android.content.Intent
+import android.content.res.Configuration
 import android.media.AudioManager
 import android.media.SoundPool
 import android.os.Build
@@ -27,7 +28,11 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 import android.media.AudioAttributes
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.InterstitialAd
 import com.google.android.gms.ads.MobileAds
 
 
@@ -37,6 +42,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tickServiceIntent: Intent
     internal var isBound = false
     private var beatPerBarDisposable: Disposable? = null
+    private var mInterstitialAd: InterstitialAd? = null
 
     private var model: MainViewModel by Delegates.notNull()
 
@@ -67,6 +73,11 @@ class MainActivity : AppCompatActivity() {
             Glide.with(this@MainActivity)
                     .load(R.drawable.play)
                     .into(playButton)
+            if (mInterstitialAd?.isLoaded == true) {
+                mInterstitialAd?.show()
+            } else {
+                Log.d("TAG", "The interstitial wasn't loaded yet.")
+            }
         }
 
         override fun onTrainingToggle(text: String, isGoing: Boolean) {
@@ -96,13 +107,24 @@ class MainActivity : AppCompatActivity() {
         val adRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)
 
-        Glide.with(this)
-                .load(R.drawable.background)
-                .into(background)
+        mInterstitialAd = InterstitialAd(this)
+        mInterstitialAd?.adUnitId = "ca-app-pub-3940256099942544/1033173712"
+        mInterstitialAd?.loadAd(AdRequest.Builder().build())
 
-        Glide.with(this)
-                .load(R.drawable.beatline)
-                .into(vLine)
+        //mInterstitialAd.adUnitId = "ca-app-pub-4449968809046813/7722652240";
+
+        pbTrainingTime.setProgressWidth(Utils.getPixelsFromDp(10))
+
+        val orientation = resources.configuration.orientation
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Glide.with(this)
+                    .load(R.drawable.background_land)
+                    .into(background)
+        } else {
+            Glide.with(this)
+                    .load(R.drawable.background)
+                    .into(background)
+        }
 
         Glide.with(this)
                 .load(R.drawable.tap)
@@ -154,7 +176,6 @@ class MainActivity : AppCompatActivity() {
         sConn = object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName, binder: IBinder) {
                 tickService = (binder as TickService.ServiceBinder).service
-                Log.d("qwe", "onServiceConnected, thread:" + Thread.currentThread().name)
 
                 tickService?.setTickListener(tickListener)
                 tickService?.setBeatsSequence((llBeats as BeatsContainerView).getBeatViewList())
@@ -173,7 +194,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onServiceDisconnected(name: ComponentName) {
-                Log.d("qwe", "MainActivity onServiceDisconnected")
                 isBound = false
             }
         }

@@ -4,6 +4,7 @@ import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.SoundPool
 import android.os.Build
+import android.util.Log
 
 class ClickPlayer {
     private var clickSoundId: Int
@@ -26,34 +27,20 @@ class ClickPlayer {
             @Suppress("DEPRECATION")
             SoundPool(2, AudioManager.STREAM_MUSIC, 0)
         }
-        accentSoundId = clicker.load(App.getAppInstance(), R.raw.clave, 1)
-        subAccentSoundId = clicker.load(App.getAppInstance(), R.raw.rotate_click, 1)
-        clickSoundId = clicker.load(App.getAppInstance(), R.raw.click, 1)
+        accentSoundId = clicker.load(App.getAppInstance(), R.raw.acc1, 1)
+        subAccentSoundId = clicker.load(App.getAppInstance(), R.raw.sub1, 1)
+        clickSoundId = clicker.load(App.getAppInstance(), R.raw.beat1, 1)
     }
 
     fun setSoundPreset(id: Int) {
-        when (id) {
-            1 -> {
-                accentSoundId = clicker.load(App.getAppInstance(), R.raw.clave, 1)
-                subAccentSoundId = clicker.load(App.getAppInstance(), R.raw.rotate_click, 1)
-                clickSoundId = clicker.load(App.getAppInstance(), R.raw.click, 1)
-            }
-            2 -> {
-                accentSoundId = clicker.load(App.getAppInstance(), R.raw.click, 1)
-                subAccentSoundId = clicker.load(App.getAppInstance(), R.raw.clave, 1)
-                clickSoundId = clicker.load(App.getAppInstance(), R.raw.rotate_click, 1)
-            }
-            3 -> {
-                accentSoundId = clicker.load(App.getAppInstance(), R.raw.rotate_click, 1)
-                subAccentSoundId = clicker.load(App.getAppInstance(), R.raw.click, 1)
-                clickSoundId = clicker.load(App.getAppInstance(), R.raw.clave, 1)
-            }
-            else -> {
-                accentSoundId = clicker.load(App.getAppInstance(), R.raw.clave, 1)
-                subAccentSoundId = clicker.load(App.getAppInstance(), R.raw.rotate_click, 1)
-                clickSoundId = clicker.load(App.getAppInstance(), R.raw.click, 1)
-            }
-        }
+        Log.d("qwe", "soundpreset = " + id)
+        val accentResId = App.getAppInstance().resources.getIdentifier("acc$id", "raw", App.getAppInstance().packageName)
+        val subaccResId = App.getAppInstance().resources.getIdentifier("sub$id", "raw", App.getAppInstance().packageName)
+        val beatResId = App.getAppInstance().resources.getIdentifier("beat$id", "raw", App.getAppInstance().packageName)
+
+        accentSoundId = clicker.load(App.getAppInstance(), accentResId, 1)
+        subAccentSoundId = clicker.load(App.getAppInstance(), subaccResId, 1)
+        clickSoundId = clicker.load(App.getAppInstance(), beatResId, 1)
     }
 
     fun click(beatType: BeatType) {

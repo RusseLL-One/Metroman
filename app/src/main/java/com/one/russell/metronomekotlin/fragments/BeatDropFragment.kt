@@ -28,9 +28,10 @@ class BeatDropFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        beatMuteChanceValue.value = model.beatDropChanceValue
-        beatMuteChanceValue.minValue = 1
+        beatMuteChanceValue.minValue = 0
         beatMuteChanceValue.maxValue = 100
+        beatMuteChanceValue.value = model.beatDropChanceValue
+        beatMuteChanceValue.wrapSelectorWheel = false
 
         val cont = context
         if(cont != null) {

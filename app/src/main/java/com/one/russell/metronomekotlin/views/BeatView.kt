@@ -50,7 +50,6 @@ class BeatView @JvmOverloads constructor(
 
         viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
             override fun onPreDraw(): Boolean {
-                viewTreeObserver.removeOnPreDrawListener(this)
                 fillBoxHeightMultiplier = when (beatType) {
                     BeatType.ACCENT -> 0f
                     BeatType.SUBACCENT -> 0.33f
@@ -58,71 +57,73 @@ class BeatView @JvmOverloads constructor(
                     else -> 1f
                 }
 
-                Glide.with(getContext())
-                        .asBitmap()
-                        .load(R.drawable.buttonside)
-                        .into(object : SimpleTarget<Bitmap>(1, measuredHeight) {
-                            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                sideBorder = resource
-                                rectLeftSrc.set(sideBorder.width, 0, 0, sideBorder.height)
-                                rectLeft.set(0f, 0f, sideBorder.width.toFloat(), height.toFloat())
+                try {
+                    Glide.with(getContext())
+                            .asBitmap()
+                            .load(R.drawable.buttonside)
+                            .into(object : SimpleTarget<Bitmap>(1, measuredHeight) {
+                                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                    sideBorder = resource
+                                    rectLeftSrc.set(sideBorder.width, 0, 0, sideBorder.height)
+                                    rectLeft.set(0f, 0f, sideBorder.width.toFloat(), height.toFloat())
 
-                                rectRightSrc.set(0, 0, sideBorder.width, sideBorder.height)
-                                rectRight.set((width - sideBorder.width).toFloat(), 0f, width.toFloat(), height.toFloat())
+                                    rectRightSrc.set(0, 0, sideBorder.width, sideBorder.height)
+                                    rectRight.set((width - sideBorder.width).toFloat(), 0f, width.toFloat(), height.toFloat())
 
-                                borderWidth = sideBorder.width.toFloat() / 3
+                                    borderWidth = sideBorder.width.toFloat() / 3
 
-                                Glide.with(getContext())
-                                        .asBitmap()
-                                        .load(R.drawable.buttonsbottom)
-                                        .into(object : SimpleTarget<Bitmap>(1, sideBorder.width) {
-                                            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                                bottomBorder = resource
+                                    Glide.with(getContext())
+                                            .asBitmap()
+                                            .load(R.drawable.buttonsbottom)
+                                            .into(object : SimpleTarget<Bitmap>(1, sideBorder.width) {
+                                                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                                    bottomBorder = resource
 
-                                                rectBottomSrc.set(0, 0, bottomBorder.width, bottomBorder.height)
-                                                rectBottom.set(sideBorder.width.toFloat(), (height - bottomBorder.height).toFloat(), (width - sideBorder.width).toFloat(), height.toFloat())
+                                                    rectBottomSrc.set(0, 0, bottomBorder.width, bottomBorder.height)
+                                                    rectBottom.set(sideBorder.width.toFloat(), (height - bottomBorder.height).toFloat(), (width - sideBorder.width).toFloat(), height.toFloat())
 
-                                                rectTopSrc.set(0, bottomBorder.height, bottomBorder.width, 0)
-                                                rectTop.set(sideBorder.width.toFloat(), 0f, (width - sideBorder.width).toFloat(), bottomBorder.height.toFloat())
+                                                    rectTopSrc.set(0, bottomBorder.height, bottomBorder.width, 0)
+                                                    rectTop.set(sideBorder.width.toFloat(), 0f, (width - sideBorder.width).toFloat(), bottomBorder.height.toFloat())
 
-                                                Glide.with(getContext())
-                                                        .asBitmap()
-                                                        .load(R.drawable.beatvalue_off)
-                                                        .into(object : SimpleTarget<Bitmap>(1, measuredHeight - bottomBorder.height*2) {
-                                                            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                                                beatTypeImageOff = resource
-                                                                beatTypeImage = beatTypeImageOff
+                                                    Glide.with(getContext())
+                                                            .asBitmap()
+                                                            .load(R.drawable.beatvalue_off)
+                                                            .into(object : SimpleTarget<Bitmap>(1, measuredHeight - bottomBorder.height * 2) {
+                                                                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                                                    beatTypeImageOff = resource
+                                                                    beatTypeImage = beatTypeImageOff
 
-                                                                rectFillSrc.set(0, (beatTypeImage.height * fillBoxHeightMultiplier).toInt(), beatTypeImage.width, beatTypeImage.height)
-                                                                rectFill.set(borderWidth, (height - 2 * borderWidth) * fillBoxHeightMultiplier + borderWidth, (width - sideBorder.width).toFloat(), height - borderWidth)
-                                                                invalidate()
-                                                            }
-                                                        })
+                                                                    rectFillSrc.set(0, (beatTypeImage.height * fillBoxHeightMultiplier).toInt(), beatTypeImage.width, beatTypeImage.height)
+                                                                    rectFill.set(borderWidth, (height - 2 * borderWidth) * fillBoxHeightMultiplier + borderWidth, (width - sideBorder.width).toFloat(), height - borderWidth)
+                                                                    invalidate()
+                                                                }
+                                                            })
 
-                                                Glide.with(getContext())
-                                                        .asBitmap()
-                                                        .load(R.drawable.beatvalue_mid)
-                                                        .into(object : SimpleTarget<Bitmap>(1, measuredHeight - bottomBorder.height*2) {
-                                                            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                                                beatTypeImageMid = resource
-                                                            }
-                                                        })
+                                                    Glide.with(getContext())
+                                                            .asBitmap()
+                                                            .load(R.drawable.beatvalue_mid)
+                                                            .into(object : SimpleTarget<Bitmap>(1, measuredHeight - bottomBorder.height * 2) {
+                                                                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                                                    beatTypeImageMid = resource
+                                                                }
+                                                            })
 
-                                                Glide.with(getContext())
-                                                        .asBitmap()
-                                                        .load(R.drawable.beatvalue_on)
-                                                        .into(object : SimpleTarget<Bitmap>(1, measuredHeight - bottomBorder.height*2) {
-                                                            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                                                beatTypeImageOn = resource
-                                                            }
-                                                        })
-                                            }
-                                        })
+                                                    Glide.with(getContext())
+                                                            .asBitmap()
+                                                            .load(R.drawable.beatvalue_on)
+                                                            .into(object : SimpleTarget<Bitmap>(1, measuredHeight - bottomBorder.height * 2) {
+                                                                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                                                    beatTypeImageOn = resource
+                                                                }
+                                                            })
+                                                }
+                                            })
+                                }
+                            })
 
-                            }
-                        })
-
-
+                    viewTreeObserver.removeOnPreDrawListener(this)
+                } catch (e: Exception) {
+                }
 
                 return true
             }
@@ -159,7 +160,7 @@ class BeatView @JvmOverloads constructor(
         colorAnimator.interpolator = DecelerateInterpolator()
         colorAnimator.addUpdateListener { animation ->
             val animatorValue = (animation.animatedValue as Int)
-            when(animatorValue) {
+            when (animatorValue) {
                 0 -> beatTypeImage = beatTypeImageOn
                 1 -> beatTypeImage = beatTypeImageMid
                 2 -> beatTypeImage = beatTypeImageOff
@@ -168,11 +169,6 @@ class BeatView @JvmOverloads constructor(
         }
 
         colorAnimator.start()
-    }
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        Log.d("asd", "onMeasure")
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
     override fun onDraw(canvas: Canvas?) {

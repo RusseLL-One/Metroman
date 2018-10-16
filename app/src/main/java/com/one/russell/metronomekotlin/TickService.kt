@@ -1,8 +1,13 @@
+@file:Suppress("DEPRECATION")
+
 package com.one.russell.metronomekotlin
 
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.hardware.Camera
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraManager
 import android.support.v4.app.NotificationCompat
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -11,14 +16,12 @@ import io.reactivex.functions.Consumer
 import java.util.concurrent.TimeUnit
 import io.reactivex.subjects.PublishSubject
 import java.util.*
-import android.widget.Toast
-import android.hardware.camera2.CameraCharacteristics
-import android.hardware.camera2.CameraManager
 import android.os.*
 import com.one.russell.metronomekotlin.views.BeatView
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-
+import android.os.Build
+import android.widget.Toast
 
 const val ACTION_STOP_CLICKING = "stop_clicking"
 
@@ -40,16 +43,22 @@ class TickService : Service() {
     private var isFlasherEnabled = false
     private var isVibrateEnabled = false
     private var vibrator: Vibrator? = null
+    private var cameraKitkat: Camera? = null
 
     private val clickObservable: PublishSubject<Long> = PublishSubject.create()
     private var clickDisposable: Disposable? = null
 
     var clickConsumer = Consumer<Long> {
         val isNextBar = isNextBar()
-        click(isNextBar) }
+        click(isNextBar)
+    }
 
     override fun onCreate() {
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        try {
+            cameraKitkat = Camera.open()
+        } catch (e: RuntimeException) {
+        }
         super.onCreate()
     }
 
@@ -73,7 +82,6 @@ class TickService : Service() {
                     .createNotificationChannel(NotificationChannel("metronome", getString(R.string.app_name), NotificationManager.IMPORTANCE_DEFAULT))
             NotificationCompat.Builder(this, "metronome")
         } else {
-            @Suppress("DEPRECATION")
             NotificationCompat.Builder(this)
         }
 
@@ -86,7 +94,6 @@ class TickService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             builder.color = resources.getColor(R.color.colorAccent, theme)
         } else {
-            @Suppress("DEPRECATION")
             builder.color = resources.getColor(R.color.colorAccent)
         }
 
@@ -106,6 +113,12 @@ class TickService : Service() {
     fun setFlasherEnabled(value: Boolean?) {
         if (value != null) {
             isFlasherEnabled = value
+            if (cameraKitkat == null && value == true) {
+                try {
+                    cameraKitkat = Camera.open()
+                } catch (e: RuntimeException) {
+                }
+            }
         }
     }
 
@@ -128,21 +141,18 @@ class TickService : Service() {
 
     fun isNextBar(): Boolean {
         beat++
-        var isNextBar = false
         if (beat >= beatsPerBar) {
-            isNextBar = true
             beat = 0
         }
-        return isNextBar
+        return beat == 0
     }
 
     fun click(isNextBar: Boolean) {
-        if(isFlasherEnabled) {
+        if (isFlasherEnabled) {
             toggleFlashLight()
         }
 
-        if(isVibrateEnabled && isNextBar) {
-            @Suppress("DEPRECATION")
+        if (isVibrateEnabled && isNextBar) {
             if (Build.VERSION.SDK_INT >= 26)
                 vibrator?.vibrate(VibrationEffect.createOneShot(50L, VibrationEffect.DEFAULT_AMPLITUDE))
             else
@@ -185,7 +195,8 @@ class TickService : Service() {
         stopForeground(true)
         clickConsumer = Consumer {
             val isNextBar = isNextBar()
-            click(isNextBar) }
+            click(isNextBar)
+        }
         isTrainingGoing = false
         trainingMessage = ""
         listener?.onTrainingToggle(trainingMessage, isTrainingGoing)
@@ -197,27 +208,44 @@ class TickService : Service() {
     }
 
     private fun toggleFlashLight() {
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            try {
                 val cameraManager = applicationContext.getSystemService(Context.CAMERA_SERVICE) as CameraManager
 
                 for (id in cameraManager.cameraIdList) {
-
                     if (cameraManager.getCameraCharacteristics(id).get(CameraCharacteristics.FLASH_INFO_AVAILABLE)!!) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            cameraManager.setTorchMode(id, true)
-                            Single.fromCallable{}.subscribeOn(Schedulers.io())
-                                    .delay(100, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
-                                    .doOnSuccess {
-                                        cameraManager.setTorchMode(id, false)
-                                    }
-                                    .subscribe()
-                        }
+                        cameraManager.setTorchMode(id, true)
+
+                        Single.fromCallable {}.subscribeOn(Schedulers.io())
+                                .delay(100, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+                                .doOnSuccess {
+                                    cameraManager.setTorchMode(id, false)
+                                }
+                                .subscribe()
                     }
                 }
+
+            } catch (e: Exception) {
+                Toast.makeText(applicationContext, "LED flasher is not available: " + e.message, Toast.LENGTH_SHORT).show()
             }
-        } catch (e2: Exception) {
-            Toast.makeText(applicationContext, "Torch Failed: " + e2.message, Toast.LENGTH_SHORT).show()
+        } else {
+            try {
+                val paramsOn = cameraKitkat?.parameters
+                paramsOn?.flashMode = Camera.Parameters.FLASH_MODE_TORCH
+                cameraKitkat?.parameters = paramsOn
+                cameraKitkat?.startPreview()
+                Single.fromCallable {}.subscribeOn(Schedulers.io())
+                        .delay(100, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+                        .doOnSuccess {
+                            val paramsOff = cameraKitkat?.parameters
+                            paramsOff?.flashMode = Camera.Parameters.FLASH_MODE_OFF
+                            cameraKitkat?.parameters = paramsOff
+                            cameraKitkat?.stopPreview()
+                        }
+                        .subscribe()
+            } catch (e: Exception) {
+                Toast.makeText(applicationContext, "LED flasher is not available: " + e.message, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -271,7 +299,8 @@ class TickService : Service() {
                             isTrainingGoing = false
                             clickConsumer = Consumer {
                                 val isNext = isNextBar()
-                                click(isNext) }
+                                click(isNext)
+                            }
                             trainingMessage = ""
                             listener?.onTrainingToggle(trainingMessage, isTrainingGoing)
                             listener?.onControlsBlock(false)
@@ -307,7 +336,8 @@ class TickService : Service() {
                         isTrainingGoing = false
                         clickConsumer = Consumer {
                             val isNext = isNextBar()
-                            click(isNext) }
+                            click(isNext)
+                        }
                         trainingMessage = ""
                         listener?.onTrainingToggle(trainingMessage, isTrainingGoing)
                         listener?.onControlsBlock(false)

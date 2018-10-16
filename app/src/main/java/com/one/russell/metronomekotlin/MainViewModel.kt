@@ -7,7 +7,7 @@ import android.os.Bundle
 import kotlin.properties.Delegates
 
 const val MIN_BPM = 10
-const val MAX_BPM = 300
+const val MAX_BPM = 500
 const val MAX_BEATS_PER_BAR = 16
 const val MAX_VALUES_OF_BEAT = 7
 
