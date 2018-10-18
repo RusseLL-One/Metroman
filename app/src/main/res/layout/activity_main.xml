@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,7 +11,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/background"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,11 +26,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             ads:adSize="SMART_BANNER"
-            ads:adUnitId="ca-app-pub-3940256099942544/6300978111"
+            ads:adUnitId="ca-app-pub-4449968809046813/5702536714"
             ads:layout_constraintBottom_toBottomOf="parent"
             ads:layout_constraintEnd_toEndOf="parent"
             ads:layout_constraintStart_toStartOf="parent" />
+
         <!--ads:adUnitId="ca-app-pub-4449968809046813/5702536714"-->
+        <!--ads:adUnitId="ca-app-pub-3940256099942544/6300978111" testkey-->
 
         <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -68,7 +74,7 @@
                 app:layout_constraintStart_toEndOf="@id/bTempoTrain"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.one.russell.metronomekotlin.views.BeatsContainerView
+            <com.one.russell.metroman.views.BeatsContainerView
                 android:id="@+id/llBeats"
                 android:layout_width="0dp"
                 android:layout_height="60dp"
@@ -93,20 +99,20 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/rotaryKnob" />
 
-            <com.one.russell.metronomekotlin.views.CircularProgressBar
+            <com.one.russell.metroman.views.CircularProgressBar
                 android:id="@+id/pbTrainingTime"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone"
                 app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintBottom_toTopOf="@id/bpmTextView"
+                app:layout_constraintBottom_toTopOf="@id/tvBpm"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/rotaryKnob"
                 app:layout_constraintTop_toBottomOf="@id/tvTrainingTitle"
                 app:layout_constraintVertical_bias="1" />
 
-            <com.one.russell.metronomekotlin.views.RotaryKnobView
+            <com.one.russell.metroman.views.RotaryKnobView
                 android:id="@+id/rotaryKnob"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -152,19 +158,35 @@
                 app:layout_constraintTop_toBottomOf="@id/npBeatsPerBar" />
 
             <TextView
-                android:id="@+id/bpmTextView"
+                android:id="@+id/tvBpm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/bpm"
+                android:lines="1"
+                android:ems="3"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/etBpm"
+                app:layout_constraintEnd_toEndOf="@id/rotaryKnob"
+                app:layout_constraintStart_toStartOf="@id/rotaryKnob" />
+
+            <EditText
+                android:id="@+id/etBpm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:gravity="center"
-                android:text="@string/bpm"
-                android:lines="2"
+                android:lines="1"
                 android:ems="3"
+                android:textColor="@color/colorAccent"
+                android:background="@android:color/transparent"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@id/rotaryKnob"
                 app:layout_constraintEnd_toEndOf="@id/rotaryKnob"
-                app:layout_constraintStart_toStartOf="@id/rotaryKnob" />
+                app:layout_constraintStart_toStartOf="@id/rotaryKnob"
+                android:inputType="number" />
 
             <View
                 android:layout_width="0dp"
@@ -225,7 +247,7 @@
                 app:np_textSize="16sp"
                 app:np_wrapSelectorWheel="false" />
 
-            <com.one.russell.metronomekotlin.views.BeatLineView
+            <com.one.russell.metroman.views.BeatLineView
                 android:id="@+id/vLine"
                 android:layout_width="50dp"
                 android:layout_height="0dp"

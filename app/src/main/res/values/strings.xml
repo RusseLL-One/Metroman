@@ -12,7 +12,7 @@
     <string name="tap" translatable="false">TAP</string>
     <string name="toggle_play">Play/Pause</string>
     <string name="tap_img">Tap to set bpm</string>
-    <string name="bpm" translatable="false">BPM\n%1$d</string>
+    <string name="bpm" translatable="false">BPM</string>
     <string name="slash" translatable="false">/</string>
     <string name="tempo_increasing_in_progress">Tempo increasing training is in progress.\nRotary knob is blocked</string>
     <string name="random_bar_drop_in_progress">Random bar dropping training is in progress.\nPress pause button to abort</string>
