@@ -64,7 +64,7 @@ class TickService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_STOP_CLICKING) {
-            stop()
+            stop(false)
         }
         return Service.START_STICKY
     }
@@ -198,7 +198,7 @@ class TickService : Service() {
         createNotification()
     }
 
-    fun stop() {
+    fun stop(isAutostop: Boolean) {
         stopForeground(true)
         clickConsumer = Consumer {
             val isNextBar = isNextBar()
@@ -206,9 +206,9 @@ class TickService : Service() {
         }
         isTrainingGoing = false
         trainingMessage = ""
-        listener?.onTrainingToggle(trainingMessage, isTrainingGoing)
+        listener?.onTrainingToggle(null, isTrainingGoing)
         listener?.onControlsBlock(false)
-        listener?.onStopClicking()
+        listener?.onStopClicking(isAutostop)
         clickDisposable?.dispose()
         isPlaying = false
         beat = -1
@@ -257,7 +257,6 @@ class TickService : Service() {
     }
 
     fun startTraining(params: Bundle) {
-        isTrainingGoing = true
         val trainingType: TrainingType
         try {
             val trainingTypeStr = params.getString("trainingType", "NONE")
@@ -266,9 +265,10 @@ class TickService : Service() {
             return
         }
         if (isPlaying) {
-            stop()
+            stop(true)
         }
 
+        isTrainingGoing = true
         isMuted = false
 
         when (trainingType) {

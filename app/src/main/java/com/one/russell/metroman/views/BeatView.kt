@@ -189,10 +189,6 @@ class BeatView @JvmOverloads constructor(
         super.onDraw(canvas)
     }
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-    }
-
     override fun toString(): String {
         return beatType.ordinal.toString()
     }

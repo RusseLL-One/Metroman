@@ -153,6 +153,20 @@ class BeatLineView @JvmOverloads constructor(
         borderAnimator.start()
     }
 
+    fun recalculateHeight() {
+        rectBG.set(0f, 0f, width.toFloat(), height.toFloat())
+
+        maskPath.reset()
+        maskPath.addCircle(measuredWidth / 2.toFloat(), measuredWidth / 2.toFloat(), measuredWidth / 2.toFloat(), Path.Direction.CCW)
+        maskPath.addCircle(measuredWidth / 2.toFloat(), measuredHeight - measuredWidth / 2.toFloat(), measuredWidth / 2.toFloat(), Path.Direction.CCW)
+        maskPath.addRect(0f, measuredWidth / 2.toFloat(), measuredWidth.toFloat(), measuredHeight - measuredWidth / 2.toFloat(), Path.Direction.CCW)
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        recalculateHeight()
+    }
+
     override fun onDraw(canvas: Canvas?) {
         val count =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

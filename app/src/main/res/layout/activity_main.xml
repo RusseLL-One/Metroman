@@ -173,12 +173,11 @@
 
             <EditText
                 android:id="@+id/etBpm"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:gravity="center"
                 android:lines="1"
-                android:ems="3"
                 android:textColor="@color/colorAccent"
                 android:background="@android:color/transparent"
                 android:textSize="24sp"
@@ -196,15 +195,6 @@
                 app:layout_constraintEnd_toEndOf="@id/npValueOfBeat"
                 app:layout_constraintStart_toStartOf="@id/npBeatsPerBar"
                 app:layout_constraintTop_toTopOf="@id/npBeatsPerBar" />
-
-            <!--NumberPicker
-                android:id="@+id/npBeatsPerBar"
-                android:layout_width="30dp"
-                android:layout_height="120dp"
-                android:descendantFocusability="blocksDescendants"
-                android:theme="@style/DefaultNumberPickerTheme"
-                app:layout_constraintEnd_toStartOf="@id/tvSeparator"
-                app:layout_constraintTop_toTopOf="@+id/npValueOfBeat" /-->
 
             <com.shawnlin.numberpicker.NumberPicker
                 android:id="@+id/npBeatsPerBar"

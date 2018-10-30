@@ -73,20 +73,22 @@ class MainActivity : AppCompatActivity() {
                     .into(playButton)
         }
 
-        override fun onStopClicking() {
+        override fun onStopClicking(isAutostop: Boolean) {
             Glide.with(this@MainActivity)
                     .load(R.drawable.play)
                     .into(playButton)
-            model.adShowAttempts++
-            if (mInterstitialAd?.isLoaded == true && model.adShowAttempts > 2) {
-                mInterstitialAd?.show()
-                model.adShowAttempts = 0
-            } else {
-                Log.d("TAG", "The interstitial wasn't loaded yet.")
+            if(!isAutostop) {
+                model.adShowAttempts++
+                if (mInterstitialAd?.isLoaded == true && model.adShowAttempts > 2) {
+                    mInterstitialAd?.show()
+                    model.adShowAttempts = 0
+                } else {
+                    Log.d("TAG", "The interstitial wasn't loaded yet.")
+                }
             }
         }
 
-        override fun onTrainingToggle(text: String, isGoing: Boolean) {
+        override fun onTrainingToggle(text: String?, isGoing: Boolean) {
             if (isGoing) {
                 tvTrainingTitle.text = text
                 tvTrainingTitle.visibility = View.VISIBLE
@@ -163,7 +165,8 @@ class MainActivity : AppCompatActivity() {
                 val manager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
                 manager.hideSoftInputFromWindow(view.windowToken, 0)
                 try {
-                    if ((etBpm as EditText).text.toString().toInt() > 500) (etBpm as EditText).setText("500")
+                    if ((etBpm as EditText).text.toString().toInt() < MIN_BPM) (etBpm as EditText).setText(MIN_BPM.toString())
+                    if ((etBpm as EditText).text.toString().toInt() > MAX_BPM) (etBpm as EditText).setText(MAX_BPM.toString())
                     model.bpmLiveData.postValue((etBpm as EditText).text.toString().toInt())
                 } catch (e : NumberFormatException) {
                     (etBpm as EditText).setText((model.bpmLiveData.value ?: 100).toString())
@@ -268,7 +271,7 @@ class MainActivity : AppCompatActivity() {
             val service = tickService
             if (service != null) {
                 if (service.isPlaying) {
-                    service.stop()
+                    service.stop(false)
                 } else {
                     service.play()
                 }
@@ -371,8 +374,8 @@ class MainActivity : AppCompatActivity() {
         fun onBpmChange(bpm: Int)
         fun onControlsBlock(block: Boolean)
         fun onStartClicking()
-        fun onStopClicking()
-        fun onTrainingToggle(text: String, isGoing: Boolean)
+        fun onStopClicking(isAutostop: Boolean)
+        fun onTrainingToggle(text: String?, isGoing: Boolean)
         fun onTrainingUpdate(percent: Float)
     }
 }
