@@ -15,8 +15,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.properties.Delegates
 import android.content.Intent
 import android.content.res.Configuration
-import android.media.AudioManager
-import android.media.SoundPool
 import android.os.Build
 import android.support.v4.content.res.ResourcesCompat
 import com.bumptech.glide.Glide
@@ -28,13 +26,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
-import android.media.AudioAttributes
-import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.InterstitialAd
 import com.google.android.gms.ads.MobileAds
@@ -51,12 +46,13 @@ class MainActivity : AppCompatActivity() {
     private var model: MainViewModel by Delegates.notNull()
 
     private var tickListener = object : TickListener {
-        override fun onTick(beatType: BeatType, beat: Int, duration: Int) {
-
+        override fun onTick(beat: Int, duration: Int) {
+        vLine.post {
             vLine.animateBall(duration)
             vLine.animateBorder()
 
             (llBeats as BeatsContainerView).animateBeat(beat)
+        }
         }
 
         override fun onBpmChange(bpm: Int) {
@@ -89,19 +85,23 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onTrainingToggle(text: String?, isGoing: Boolean) {
-            if (isGoing) {
-                tvTrainingTitle.text = text
-                tvTrainingTitle.visibility = View.VISIBLE
-                pbTrainingTime.visibility = View.VISIBLE
-                pbTrainingTime.setProgress(0)
-            } else {
-                tvTrainingTitle.visibility = View.GONE
-                pbTrainingTime.visibility = View.GONE
+            pbTrainingTime.post {
+                if (isGoing) {
+                    tvTrainingTitle.text = text
+                    tvTrainingTitle.visibility = View.VISIBLE
+                    pbTrainingTime.visibility = View.VISIBLE
+                    pbTrainingTime.setProgress(0)
+                } else {
+                    tvTrainingTitle.visibility = View.GONE
+                    pbTrainingTime.visibility = View.GONE
+                }
             }
         }
 
         override fun onTrainingUpdate(percent: Float) {
-            pbTrainingTime.setProgress((percent * 100).toInt())
+            pbTrainingTime.post {
+                pbTrainingTime.setProgress((percent * 100).toInt())
+            }
         }
     }
 
@@ -152,7 +152,7 @@ class MainActivity : AppCompatActivity() {
             etBpm.clearFocus()
         }
 
-        (etBpm as EditText).setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
+        (etBpm as EditText).setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 v.clearFocus()
                 return@OnEditorActionListener true
@@ -213,7 +213,7 @@ class MainActivity : AppCompatActivity() {
                 tickService = (binder as TickService.ServiceBinder).service
 
                 tickService?.setTickListener(tickListener)
-                tickService?.setBeatsSequence((llBeats as BeatsContainerView).getBeatViewList())
+                tickService?.setBeatsSequence((llBeats as BeatsContainerView).getBeatTypeList())
                 tickService?.setSoundPreset(model.soundPresetLiveData.value)
                 tickService?.setBpm(model.bpmLiveData.value)
                 tickService?.setFlasherEnabled(model.flasherValueLiveData.value)
@@ -263,7 +263,7 @@ class MainActivity : AppCompatActivity() {
             if (it != null) {
                 (npBeatsPerBar as NumberPicker).value = it
                 (llBeats as BeatsContainerView).setBeatsPerBar(it)
-                tickService?.setBeatsSequence((llBeats as BeatsContainerView).getBeatViewList())
+                tickService?.setBeatsSequence((llBeats as BeatsContainerView).getBeatTypeList())
             }
         })
 
@@ -276,6 +276,10 @@ class MainActivity : AppCompatActivity() {
                     service.play()
                 }
             }
+        }
+
+        llBeats.setOnViewChangedListener {
+            tickService?.setBeatsSequence((llBeats as BeatsContainerView).getBeatTypeList())
         }
 
         (npBeatsPerBar as NumberPicker).setOnValueChangedListener { _, _, newValue ->
@@ -303,23 +307,9 @@ class MainActivity : AppCompatActivity() {
             var prevTouchTime = 0L
             var prevTouchInterval = 0L
             var isFirstClick = true
-            val tapClickPlayer = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                val attributes = AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_MEDIA)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .build()
-                SoundPool.Builder()
-                        .setAudioAttributes(attributes)
-                        .setMaxStreams(2)
-                        .build()
-            } else {
-                @Suppress("DEPRECATION")
-                SoundPool(2, AudioManager.STREAM_MUSIC, 0)
-            }
-            val tapClickId = tapClickPlayer.load(this@MainActivity, R.raw.rotate_click, 1)
 
             override fun onClick(p0: View?) {
-                tapClickPlayer.play(tapClickId, 0.75f, 0.75f, 0, 0, 1f)
+                native_tap_click()
 
                 if (prevTouchTime > 0) {
                     val interval = System.currentTimeMillis() - prevTouchTime
@@ -357,7 +347,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        model.beatsValues = llBeats.getBeatViewListAsString()
+        model.beatsValues = llBeats.getBeatTypeListAsString()
         model.saveToPrefs()
         if (!isBound) return
         unbindService(sConn)
@@ -370,7 +360,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     interface TickListener {
-        fun onTick(beatType: BeatType, beat: Int, duration: Int)
+        fun onTick(beat: Int, duration: Int)
         fun onBpmChange(bpm: Int)
         fun onControlsBlock(block: Boolean)
         fun onStartClicking()
@@ -378,4 +368,6 @@ class MainActivity : AppCompatActivity() {
         fun onTrainingToggle(text: String?, isGoing: Boolean)
         fun onTrainingUpdate(percent: Float)
     }
+
+    private external fun native_tap_click()
 }

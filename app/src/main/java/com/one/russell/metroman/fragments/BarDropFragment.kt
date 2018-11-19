@@ -31,7 +31,7 @@ class BarDropFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         barMuteChanceValue.minValue = 0
-        barMuteChanceValue.maxValue = 100
+        barMuteChanceValue.maxValue = 99
         barMuteChanceValue.value = model.barDropChanceValue
         barMuteChanceValue.wrapSelectorWheel = false
 

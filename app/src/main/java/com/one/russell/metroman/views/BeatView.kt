@@ -18,7 +18,7 @@ import com.one.russell.metroman.R
 
 class BeatView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : ImageView(context, attrs, defStyleAttr), View.OnClickListener {
+) : ImageView(context, attrs, defStyleAttr) {
 
     private val paint = Paint()
     var fillBoxHeightMultiplier = 0f
@@ -128,10 +128,9 @@ class BeatView @JvmOverloads constructor(
                 return true
             }
         })
-        setOnClickListener(this)
     }
 
-    override fun onClick(p0: View?) {
+    fun onTap() {
         beatType = when (beatType) {
             BeatType.BEAT -> BeatType.SUBACCENT
             BeatType.SUBACCENT -> BeatType.ACCENT

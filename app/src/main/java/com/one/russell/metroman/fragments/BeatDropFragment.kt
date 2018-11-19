@@ -29,7 +29,7 @@ class BeatDropFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         beatMuteChanceValue.minValue = 0
-        beatMuteChanceValue.maxValue = 100
+        beatMuteChanceValue.maxValue = 99
         beatMuteChanceValue.value = model.beatDropChanceValue
         beatMuteChanceValue.wrapSelectorWheel = false
 

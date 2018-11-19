@@ -5,19 +5,15 @@ package com.one.russell.metroman
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.content.res.AssetManager
 import android.hardware.Camera
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.support.v4.app.NotificationCompat
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.functions.Consumer
 import java.util.concurrent.TimeUnit
-import io.reactivex.subjects.PublishSubject
 import java.util.*
 import android.os.*
-import com.one.russell.metroman.views.BeatView
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import android.os.Build
@@ -29,31 +25,48 @@ class TickService : Service() {
 
     private val binder = ServiceBinder()
     private var listener: MainActivity.TickListener? = null
-    private var clickPlayer: ClickPlayer = ClickPlayer()
     var isPlaying = false
     var isTrainingGoing = false
     var trainingMessage = ""
     var completionPercentage = 0f
-    private var bpm: Int = 100
-    private var prevBpm: Int = 0
-    private var beatsPerBar = 4
-    private var beat = -1
-    private var beatSequence = ArrayList<BeatView>()
-    private var isMuted = false
+    private var beatSequence = ArrayList<BeatType>()
     private var isFlasherEnabled = false
     private var isVibrateEnabled = false
     private var vibrator: Vibrator? = null
     private var cameraKitkat: Camera? = null
 
-    private val clickObservable: PublishSubject<Long> = PublishSubject.create()
-    private var clickDisposable: Disposable? = null
+    //Used in native code
+    @Suppress("UNUSED")
+    fun onTick(beat: Int, bpm: Int, completionPercentage: Float) {
+        listener?.onTick(beat, 60000 / bpm)
 
-    var clickConsumer = Consumer<Long> {
-        val isNextBar = isNextBar()
-        click(isNextBar)
+        if (isFlasherEnabled) {
+            performFlash()
+        }
+
+        if (isVibrateEnabled && beat == 0) {
+            if (Build.VERSION.SDK_INT >= 26)
+                vibrator?.vibrate(VibrationEffect.createOneShot(50L, VibrationEffect.DEFAULT_AMPLITUDE))
+            else
+                vibrator?.vibrate(50L)
+        }
+
+        if (isTrainingGoing) {
+            listener?.onBpmChange(bpm)
+            listener?.onTrainingUpdate(completionPercentage)
+
+            if (completionPercentage == 1f) {
+                isTrainingGoing = false
+                trainingMessage = ""
+
+                listener?.onTrainingToggle(trainingMessage, isTrainingGoing)
+                listener?.onControlsBlock(false)
+            }
+        }
     }
 
     override fun onCreate() {
+        native_init(assets)
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         try {
             cameraKitkat = Camera.open()
@@ -106,7 +119,7 @@ class TickService : Service() {
 
     fun setSoundPreset(id: Int?) {
         if (id != null) {
-            clickPlayer.setSoundPreset(id)
+            native_set_soundpreset(id)
         }
     }
 
@@ -128,10 +141,12 @@ class TickService : Service() {
         }
     }
 
-    fun setBeatsSequence(seq: ArrayList<BeatView>) {
-        beatsPerBar = seq.size
-
+    fun setBeatsSequence(seq: ArrayList<BeatType>) {
         beatSequence = seq
+
+        if (beatSequence.size > 0) {
+            native_set_beatsequence(seq)
+        }
     }
 
     internal inner class ServiceBinder : Binder() {
@@ -139,59 +154,15 @@ class TickService : Service() {
             get() = this@TickService
     }
 
-    fun isNextBar(): Boolean {
-        beat++
-
-        val isNextBar = if (beat >= beatsPerBar) {
-            beat = 0
-            true
-        } else {
-            false
-        }
-        /*if (beat >= beatsPerBar) {
-            beat = 0
-        }*/
-        return isNextBar
-    }
-
-    fun click(isNextBar: Boolean) {
-        if (isFlasherEnabled) {
-            toggleFlashLight()
-        }
-
-        if (isVibrateEnabled && isNextBar) {
-            if (Build.VERSION.SDK_INT >= 26)
-                vibrator?.vibrate(VibrationEffect.createOneShot(50L, VibrationEffect.DEFAULT_AMPLITUDE))
-            else
-                vibrator?.vibrate(50L)
-        }
-
-        listener?.onTick(beatSequence[beat].beatType, beat, 60000 / bpm)
-        if (prevBpm != bpm) {
-            clickObservable.onNext((60000 / bpm).toLong())
-            prevBpm = bpm
-        }
-        if (!isMuted) {
-            clickPlayer.click(beatSequence[beat].beatType)
-        }
-    }
-
     fun setBpm(bpm: Int?) {
         if (bpm != null) {
-            this.bpm = bpm
+            native_set_bpm(bpm)
         }
     }
 
     fun play() {
-        prevBpm = 0 //Для того, чтобы интервал изменился после первого клика в методе click()
-        clickDisposable = clickObservable.switchMap { interval ->
-            Observable.interval(interval, TimeUnit.MILLISECONDS)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnNext(clickConsumer)
-        }.subscribe()
+        native_start_clicking()
 
-        //Вызвываем интервал с длительностью 0 для того, чтобы первый клик прозвучал моментально
-        clickObservable.onNext(0L)
         isPlaying = true
 
         listener?.onStartClicking()
@@ -199,22 +170,19 @@ class TickService : Service() {
     }
 
     fun stop(isAutostop: Boolean) {
+        native_stop_clicking()
+
         stopForeground(true)
-        clickConsumer = Consumer {
-            val isNextBar = isNextBar()
-            click(isNextBar)
-        }
+
         isTrainingGoing = false
         trainingMessage = ""
         listener?.onTrainingToggle(null, isTrainingGoing)
         listener?.onControlsBlock(false)
         listener?.onStopClicking(isAutostop)
-        clickDisposable?.dispose()
         isPlaying = false
-        beat = -1
     }
 
-    private fun toggleFlashLight() {
+    private fun performFlash() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             try {
                 val cameraManager = applicationContext.getSystemService(Context.CAMERA_SERVICE) as CameraManager
@@ -269,7 +237,6 @@ class TickService : Service() {
         }
 
         isTrainingGoing = true
-        isMuted = false
 
         when (trainingType) {
             TrainingType.TEMPO_INCREASING_BY_BARS -> {
@@ -278,97 +245,34 @@ class TickService : Service() {
                 val bars = params.getInt("bars", 1)
                 val increment = params.getInt("increment", 10)
 
-                bpm = startBpm
                 listener?.onControlsBlock(true)
-                listener?.onBpmChange(bpm)
+                listener?.onBpmChange(startBpm)
                 trainingMessage = App.getAppInstance().resources.getString(R.string.tempo_increasing_in_progress)
                 listener?.onTrainingToggle(trainingMessage, isTrainingGoing)
-                clickConsumer = object : Consumer<Long> {
-                    var barCount = 0
 
-                    override fun accept(t: Long?) {
-                        val isNextBar = isNextBar()
-                        click(isNextBar)
-
-                        if (isNextBar) {
-                            barCount++
-                        }
-                        if (barCount >= bars) {
-                            bpm += increment
-                            if (bpm >= endBpm) bpm = endBpm
-                            listener?.onBpmChange(bpm)
-                            completionPercentage = (bpm.toFloat() - startBpm.toFloat()) /
-                                    (endBpm.toFloat() - startBpm.toFloat())
-                            listener?.onTrainingUpdate(completionPercentage)
-                            barCount = 0
-                        }
-                        if (bpm >= endBpm) {
-                            isTrainingGoing = false
-                            clickConsumer = Consumer {
-                                val isNext = isNextBar()
-                                click(isNext)
-                            }
-                            trainingMessage = ""
-                            listener?.onTrainingToggle(trainingMessage, isTrainingGoing)
-                            listener?.onControlsBlock(false)
-                        }
-                    }
-                }
+                native_start_tempo_increasing_by_bars(startBpm, endBpm, bars, increment)
             }
             TrainingType.TEMPO_INCREASING_BY_TIME -> {
                 val startBpm = params.getInt("startBpm", MIN_BPM)
                 val endBpm = params.getInt("endBpm", MAX_BPM)
                 val minutes = params.getInt("minutes", 5)
 
-                val startTime = System.currentTimeMillis()
-                val endTime = startTime + minutes * 60 * 1000
-                val timeInterval = endTime - startTime
-                val bpmInterval = endBpm - startBpm
-                bpm = startBpm
                 listener?.onControlsBlock(true)
-                listener?.onBpmChange(bpm)
+                listener?.onBpmChange(startBpm)
                 trainingMessage = App.getAppInstance().resources.getString(R.string.tempo_increasing_in_progress)
                 listener?.onTrainingToggle(trainingMessage, isTrainingGoing)
-                clickConsumer = Consumer { _ ->
-                    val isNextBar = isNextBar()
-                    click(isNextBar)
 
-                    val currentTime = System.currentTimeMillis()
-                    completionPercentage = (currentTime - startTime).toFloat() / timeInterval.toFloat()
-                    bpm = (startBpm + (bpmInterval * completionPercentage)).toInt()
-                    listener?.onBpmChange(bpm)
-                    listener?.onTrainingUpdate(completionPercentage)
-
-                    if (currentTime >= endTime) {
-                        isTrainingGoing = false
-                        clickConsumer = Consumer {
-                            val isNext = isNextBar()
-                            click(isNext)
-                        }
-                        trainingMessage = ""
-                        listener?.onTrainingToggle(trainingMessage, isTrainingGoing)
-                        listener?.onControlsBlock(false)
-                    }
-                }
+                native_start_tempo_increasing_by_time(startBpm, endBpm, minutes)
             }
             TrainingType.BAR_DROPPING_RANDOM -> {
                 val chance = params.getInt("barChance", 30)
 
                 trainingMessage = App.getAppInstance().resources.getString(R.string.random_bar_drop_in_progress)
                 listener?.onTrainingToggle(trainingMessage, isTrainingGoing)
-                completionPercentage = 1f
+                completionPercentage = chance.toFloat() / 100
                 listener?.onTrainingUpdate(completionPercentage)
 
-                clickConsumer = Consumer { _ ->
-                    val isNextBar = isNextBar()
-
-                    if (isNextBar) {
-                        val percentage = Random(System.currentTimeMillis())
-                        isMuted = percentage.nextInt(100) < chance
-                    }
-
-                    click(isNextBar)
-                }
+                native_start_bar_dropping_by_random(chance)
             }
             TrainingType.BAR_DROPPING_BY_COUNT -> {
                 val normalBars = params.getInt("normalBars", 3)
@@ -376,46 +280,35 @@ class TickService : Service() {
 
                 trainingMessage = App.getAppInstance().resources.getString(R.string.bar_drop_in_progress)
                 listener?.onTrainingToggle(trainingMessage, isTrainingGoing)
-                completionPercentage = 1f
+                completionPercentage = 0f
                 listener?.onTrainingUpdate(completionPercentage)
 
-                clickConsumer = object : Consumer<Long> {
-                    var barCount = 0
-
-                    override fun accept(t: Long?) {
-                        val isNextBar = isNextBar()
-
-                        if (isNextBar) {
-                            barCount++
-                            if (barCount >= normalBars) {
-                                isMuted = true
-                                if (barCount >= normalBars + mutedBars) {
-                                    barCount = 0
-                                    isMuted = false
-                                }
-                            }
-                        }
-                        click(isNextBar)
-                    }
-                }
+                native_start_bar_dropping_by_count(normalBars, mutedBars)
             }
             TrainingType.BEAT_DROPPING -> {
                 val chance = params.getInt("beatChance", 30)
 
                 trainingMessage = App.getAppInstance().resources.getString(R.string.random_beat_drop_in_progress)
                 listener?.onTrainingToggle(trainingMessage, isTrainingGoing)
-                completionPercentage = 1f
+                completionPercentage = chance.toFloat() / 100
                 listener?.onTrainingUpdate(completionPercentage)
 
-                clickConsumer = Consumer { _ ->
-                    val percentage = Random(System.currentTimeMillis())
-                    isMuted = percentage.nextInt(100) < chance
-
-                    val isNextBar = isNextBar()
-                    click(isNextBar)
-                }
+                native_start_beat_dropping(chance)
             }
         }
         play()
     }
+
+    // Native methods
+    private external fun native_init(assetManager: AssetManager)
+    private external fun native_start_clicking()
+    private external fun native_stop_clicking()
+    private external fun native_set_bpm(bpm: Int)
+    private external fun native_set_beatsequence(sequence: ArrayList<BeatType>)
+    private external fun native_set_soundpreset(id: Int)
+    private external fun native_start_tempo_increasing_by_bars(startBpm: Int, endBpm: Int, bars: Int, increment: Int)
+    private external fun native_start_tempo_increasing_by_time(startBpm: Int, endBpm: Int, minutes: Int)
+    private external fun native_start_bar_dropping_by_random(chance: Int)
+    private external fun native_start_bar_dropping_by_count(normalBars: Int, mutedBars: Int)
+    private external fun native_start_beat_dropping(chance: Int)
 }

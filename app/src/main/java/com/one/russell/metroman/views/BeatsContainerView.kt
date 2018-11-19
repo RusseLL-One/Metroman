@@ -3,6 +3,7 @@ package com.one.russell.metroman.views
 import android.animation.LayoutTransition
 import android.content.Context
 import android.util.AttributeSet
+import android.view.View
 import android.view.ViewTreeObserver
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.HorizontalScrollView
@@ -15,6 +16,7 @@ class BeatsContainerView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : HorizontalScrollView(context, attrs, defStyleAttr) {
 
+    private var viewListener: onViewChangedListener? = null
     private val beatsViewList = ArrayList<BeatView>()
     private val llBeats = LinearLayout(context)
     private var beatsPerBar = 4
@@ -71,15 +73,24 @@ class BeatsContainerView @JvmOverloads constructor(
                 var beatWidth = ((measuredWidth - (gap * (beatsViewList.size - 1))).toFloat() / beatsViewList.size).toInt()
                 if (beatWidth < Utils.getPixelsFromDp(30)) beatWidth = Utils.getPixelsFromDp(30)
                 (beatsViewList[index].layoutParams as LinearLayout.LayoutParams).width = beatWidth
+
+                beatsViewList[index].setOnClickListener {
+                    (it as BeatView).onTap()
+                    viewListener?.onViewChanged()
+                }
             }
         }
     }
 
-    fun getBeatViewList(): ArrayList<BeatView> {
-        return beatsViewList
+    fun getBeatTypeList(): ArrayList<BeatType> {
+        val beatsTypeList = ArrayList<BeatType>()
+        for(item in beatsViewList) {
+            beatsTypeList.add(item.beatType)
+        }
+        return beatsTypeList
     }
 
-    fun getBeatViewListAsString(): String {
+    fun getBeatTypeListAsString(): String {
         val result = StringBuilder()
         for(beat in beatsViewList) {
             val type = beat.beatType.ordinal
@@ -98,19 +109,19 @@ class BeatsContainerView @JvmOverloads constructor(
                     for (index in values.indices) {
                         val beat = values[index].toInt() - '0'.toInt()
 
-                        if (beat >= BeatType.values().size) throw NumberFormatException()
+                        if (beat >= BeatType.values.size) throw NumberFormatException()
 
                         if (!beatsViewList.isEmpty()) {
-                            beatsViewList[index].beatType = BeatType.values()[beat]
+                            beatsViewList[index].beatType = BeatType.values[beat]
                         }
                     }
                 } catch (e: NumberFormatException) {
-                    val newValues = "2000"
+                    val newValues = "3111"
                     for (index in newValues.indices) {
                         val beat = newValues[index].toInt() - '0'.toInt()
 
                         if (!beatsViewList.isEmpty()) {
-                            beatsViewList[index].beatType = BeatType.values()[beat]
+                            beatsViewList[index].beatType = BeatType.values[beat]
                         }
                     }
                 }
@@ -121,7 +132,20 @@ class BeatsContainerView @JvmOverloads constructor(
         })
     }
 
+    fun setOnViewChangedListener(l: (View?) -> Unit) {
+        viewListener = object: onViewChangedListener {
+            override fun onViewChanged() {
+                l(this@BeatsContainerView)
+            }
+        }
+    }
+
     fun animateBeat(index: Int) {
         beatsViewList[index].startColorAnimation()
     }
+}
+
+
+interface onViewChangedListener {
+    fun onViewChanged()
 }

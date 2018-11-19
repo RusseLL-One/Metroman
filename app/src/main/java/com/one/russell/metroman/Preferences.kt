@@ -39,7 +39,7 @@ class Preferences(context: Context) {
 
     fun setBeatsValues(values: String) {
         val editor = pref.edit()
-        editor.putString("beats_values", values)
+        editor.putString("beatsValues", values)
         editor.apply()
     }
 
@@ -109,9 +109,8 @@ class Preferences(context: Context) {
         editor.apply()
     }
 
-    fun getLastBpm() = pref.getInt("last_bpm", 10)
+    fun getLastBpm() = pref.getInt("last_bpm", 60)
     fun getAccentSoundId() = pref.getInt("accent_sound_id", 1)
-    //fun getBeatsPerBar() = pref.getInt("beats_per_bar", 4)
     fun getValueOfBeats() = pref.getInt("value_of_beats", 3)
     fun getFlasherValue() = pref.getBoolean("flasher", false)
     fun getVibrateValue() = pref.getBoolean("vibrate", false)
@@ -124,5 +123,9 @@ class Preferences(context: Context) {
     fun getBarDropNormalValue() = pref.getInt("normalBars", 2)
     fun getBarDropMutedValue() = pref.getInt("mutedBars", 1)
     fun getBeatDropChanceValue() = pref.getInt("beatChance", 30)
-    fun getBeatsValues() = pref.getString("beats_values", "2000")
+    fun getBeatsValues(): String {
+        val result = pref.getString("beatsValues", null)
+        return if(result == null || result.isEmpty()) "3111"
+        else result
+    }
 }

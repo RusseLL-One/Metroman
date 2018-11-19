@@ -6,10 +6,6 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
-import android.media.AudioAttributes
-import android.media.AudioManager
-import android.media.SoundPool
-import android.os.Build
 import android.support.v4.app.FragmentActivity
 import android.view.MotionEvent
 import kotlin.properties.Delegates
@@ -35,8 +31,6 @@ class RotaryKnobView @JvmOverloads constructor(
     private var deltaDegrees = 0f
     private var degrees = 270f
     private var rotateMatrix = Matrix()
-    private var rotateClickPlayer: SoundPool
-    private var rotateClickId: Int = 0
     private var model: MainViewModel by Delegates.notNull()
     private val paint: Paint
     private var isBlocked = false
@@ -44,10 +38,6 @@ class RotaryKnobView @JvmOverloads constructor(
 
     init {
         rotateMatrix = Matrix()
-
-        /*Glide.with(this)
-                .load(R.drawable.knob)
-                .into(this)*/
 
         viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
             override fun onPreDraw(): Boolean {
@@ -80,21 +70,6 @@ class RotaryKnobView @JvmOverloads constructor(
         })
 
         model = ViewModelProviders.of(context as FragmentActivity).get(MainViewModel::class.java)
-
-        rotateClickPlayer = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val attributes = AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_MEDIA)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .build()
-            SoundPool.Builder()
-                    .setAudioAttributes(attributes)
-                    .setMaxStreams(2)
-                    .build()
-        } else {
-            @Suppress("DEPRECATION")
-            SoundPool(2, AudioManager.STREAM_MUSIC, 0)
-        }
-        rotateClickId = rotateClickPlayer.load(context, R.raw.rotate_click, 1)
 
         model.bpmLiveData.observe(context, Observer {
             if (it != null) {
@@ -132,7 +107,7 @@ class RotaryKnobView @JvmOverloads constructor(
                             model.setBpmLiveData(bpm)
                         }
 
-                        rotateClickPlayer.play(rotateClickId, 0.75f, 0.75f, 0, 0, 1f)
+                        native_rotate_click()
                     }
                     deltaDegrees = newDegrees
                     degrees = deltaDegrees - startDegrees
@@ -168,4 +143,6 @@ class RotaryKnobView @JvmOverloads constructor(
     private fun cartesianToPolar(x: Float, y: Float): Float {
         return 180 + (-Math.toDegrees(Math.atan2((x - 0.5f).toDouble(), (y - 0.5f).toDouble()))).toFloat()
     }
+
+    private external fun native_rotate_click()
 }

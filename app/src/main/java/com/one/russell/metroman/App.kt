@@ -9,6 +9,11 @@ class App : Application() {
         fun getAppInstance(): Application {
             return instance
         }
+
+        // Used to load the 'native-lib' library on application startup.
+        init {
+            System.loadLibrary("native-lib")
+        }
     }
 
     override fun onCreate() {
