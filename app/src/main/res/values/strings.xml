@@ -11,6 +11,7 @@
     <string name="settings">Settings</string>
     <string name="tap" translatable="false">TAP</string>
     <string name="toggle_play">Play/Pause</string>
+    <string name="beatsize" translatable="false">%1$d / %2$d</string>
     <string name="tap_img">Tap to set bpm</string>
     <string name="bpm" translatable="false">BPM</string>
     <string name="slash" translatable="false">/</string>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
+    android:foreground="@drawable/frame">
+
+    <Button
+        android:id="@+id/btClear"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@drawable/ic_clear_black_24dp"
+        app:layout_constraintBottom_toTopOf="@id/bookmarkValue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btRemove"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btRemove"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@drawable/ic_remove_black_24dp"
+        app:layout_constraintBottom_toTopOf="@id/bookmarkValue"
+        app:layout_constraintStart_toEndOf="@id/btClear"
+        app:layout_constraintEnd_toStartOf="@id/btAdd"
+        app:layout_constraintTop_toTopOf="parent"  />
+
+    <Button
+        android:id="@+id/btAdd"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@drawable/ic_add_black_24dp"
+        app:layout_constraintBottom_toTopOf="@id/bookmarkValue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btRemove"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btLeftArrow"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/left_arrow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/bookmarkValue"
+        app:layout_constraintTop_toTopOf="@id/bookmarkValue"
+        app:layout_constraintBottom_toBottomOf="@id/bookmarkValue"/>
+
+    <Button
+        android:id="@+id/btRightArrow"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/right_arrow"
+        app:layout_constraintStart_toEndOf="@id/bookmarkValue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/bookmarkValue"
+        app:layout_constraintBottom_toBottomOf="@id/bookmarkValue"/>
+
+    <TextView
+        android:id="@+id/bookmarkValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:gravity="center"
+        android:background="@drawable/frame"
+        app:layout_constraintTop_toBottomOf="@id/btAdd"
+        app:layout_constraintBottom_toTopOf="@id/tvCount"
+        app:layout_constraintStart_toEndOf="@id/btLeftArrow"
+        app:layout_constraintEnd_toStartOf="@id/btRightArrow"/>
+
+    <TextView
+        android:id="@+id/tvCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0/0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bookmarkValue"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+</android.support.constraint.ConstraintLayout>

@@ -116,7 +116,7 @@
                 android:layout_height="0dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="1:1"
@@ -148,10 +148,10 @@
                 android:id="@+id/tapButton"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginTop="16dp"
+                android:layout_margin="8dp"
                 android:contentDescription="@string/tap_img"
                 app:layout_constraintVertical_bias="1"
-                app:layout_constraintBottom_toBottomOf="@id/rotaryKnob"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintTop_toBottomOf="@id/etBpm"
                 app:layout_constraintEnd_toEndOf="@id/etBpm"
@@ -189,55 +189,29 @@
                 android:autofillHints="0"
                 android:inputType="number" />
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:background="@drawable/frame"
-                app:layout_constraintBottom_toBottomOf="@id/npBeatsPerBar"
-                app:layout_constraintEnd_toEndOf="@id/npValueOfBeat"
-                app:layout_constraintStart_toStartOf="@id/npBeatsPerBar"
-                app:layout_constraintTop_toTopOf="@id/npBeatsPerBar" />
-
-            <com.shawnlin.numberpicker.NumberPicker
-                android:id="@+id/npBeatsPerBar"
-                android:layout_width="30dp"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="@id/npValueOfBeat"
-                app:layout_constraintEnd_toStartOf="@id/tvSeparator"
-                app:layout_constraintTop_toTopOf="@+id/npValueOfBeat"
-                app:np_dividerThickness="0dp"
-                app:np_orientation="vertical"
-                app:np_selectedTextColor="@color/colorText"
-                app:np_selectedTextSize="18sp"
-                app:np_textColor="@color/colorText"
-                app:np_textSize="16sp"
-                app:np_wrapSelectorWheel="false" />
-
-            <TextView
-                android:id="@+id/tvSeparator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/slash"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/npValueOfBeat"
-                app:layout_constraintEnd_toStartOf="@+id/npValueOfBeat"
-                app:layout_constraintTop_toTopOf="@+id/npValueOfBeat" />
-
-            <com.shawnlin.numberpicker.NumberPicker
-                android:id="@+id/npValueOfBeat"
-                android:layout_width="30dp"
-                android:layout_height="120dp"
+            <ToggleButton
+                android:id="@+id/btBeatSize"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:textOff="@null"
+                android:textOn="@null"
+                android:background="@drawable/beatsize_button"
                 app:layout_constraintBottom_toBottomOf="@id/rotaryKnob"
-                app:layout_constraintEnd_toStartOf="@id/rotaryKnob"
-                app:np_dividerThickness="0dp"
-                app:np_orientation="vertical"
-                app:np_selectedTextColor="@color/colorText"
-                app:np_selectedTextSize="18sp"
-                app:np_textColor="@color/colorText"
-                app:np_textSize="16sp"
-                app:np_wrapSelectorWheel="false" />
+                app:layout_constraintEnd_toStartOf="@id/rotaryKnob"/>
+
+            <ToggleButton
+                android:id="@+id/btBookmarks"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:textOff="@null"
+                android:textOn="@null"
+                android:background="@drawable/bookmark_button"
+                app:layout_constraintTop_toTopOf="@id/rotaryKnob"
+                app:layout_constraintEnd_toStartOf="@id/rotaryKnob"/>
 
             <com.one.russell.metroman.views.BeatLineView
                 android:id="@+id/vLine"
@@ -248,6 +222,28 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <FrameLayout
+                android:id="@+id/beatSizeFragment"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="invisible"
+                android:layout_margin="16dp"
+                app:layout_constraintStart_toEndOf="@id/vLine"
+                app:layout_constraintEnd_toStartOf="@id/btBookmarks"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/llBeats"/>
+
+            <FrameLayout
+                android:id="@+id/bookmarksFragment"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="invisible"
+                android:layout_margin="16dp"
+                app:layout_constraintStart_toEndOf="@id/vLine"
+                app:layout_constraintEnd_toStartOf="@id/btBookmarks"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/llBeats"/>
 
         </android.support.constraint.ConstraintLayout>
 

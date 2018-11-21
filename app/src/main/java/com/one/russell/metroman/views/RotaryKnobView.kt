@@ -144,5 +144,11 @@ class RotaryKnobView @JvmOverloads constructor(
         return 180 + (-Math.toDegrees(Math.atan2((x - 0.5f).toDouble(), (y - 0.5f).toDouble()))).toFloat()
     }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+
+        dotDistance = (0.75f * measuredHeight / 2).toInt()
+    }
+
     private external fun native_rotate_click()
 }

@@ -21,18 +21,16 @@ import com.bumptech.glide.Glide
 import com.one.russell.metroman.fragments.SettingsFragment
 import com.one.russell.metroman.fragments.TrainingFragment
 import com.one.russell.metroman.views.BeatsContainerView
-import com.shawnlin.numberpicker.NumberPicker
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.subjects.PublishSubject
-import java.util.concurrent.TimeUnit
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.ToggleButton
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.InterstitialAd
 import com.google.android.gms.ads.MobileAds
+import com.one.russell.metroman.fragments.BeatsizeSubfragment
+import com.one.russell.metroman.fragments.BookmarksSubfragment
 
 
 class MainActivity : AppCompatActivity() {
@@ -40,7 +38,6 @@ class MainActivity : AppCompatActivity() {
     internal var tickService: TickService? = null
     private lateinit var tickServiceIntent: Intent
     internal var isBound = false
-    private var beatPerBarDisposable: Disposable? = null
     private var mInterstitialAd: InterstitialAd? = null
 
     private var model: MainViewModel by Delegates.notNull()
@@ -120,6 +117,15 @@ class MainActivity : AppCompatActivity() {
         mInterstitialAd?.adUnitId = "ca-app-pub-4449968809046813/7722652240"
         mInterstitialAd?.loadAd(AdRequest.Builder().build())
 
+        if(supportFragmentManager.findFragmentByTag("bookmarks_fragment") == null) {
+            supportFragmentManager.beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).replace(R.id.bookmarksFragment, BookmarksSubfragment(), "bookmarks_fragment").commit()
+        }
+        if(supportFragmentManager.findFragmentByTag("beatsize_fragment") == null) {
+            supportFragmentManager.beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).replace(R.id.beatSizeFragment, BeatsizeSubfragment(), "beatsize_fragment").commit()
+        }
+
+        btBeatSize.typeface = ResourcesCompat.getFont(this, R.font.xolonium_regular)
+
         pbTrainingTime.setProgressWidth(Utils.getPixelsFromDp(10))
 
         val orientation = resources.configuration.orientation
@@ -176,18 +182,6 @@ class MainActivity : AppCompatActivity() {
 
         llBeats.setBeatViewListFromString(model.beatsValues)
 
-        (npBeatsPerBar as NumberPicker).maxValue = MAX_BEATS_PER_BAR
-        (npBeatsPerBar as NumberPicker).minValue = 1
-        (npBeatsPerBar as NumberPicker).wrapSelectorWheel = false
-        (npBeatsPerBar as NumberPicker).typeface = ResourcesCompat.getFont(this, R.font.xolonium_regular)
-
-        (npValueOfBeat as NumberPicker).maxValue = MAX_VALUES_OF_BEAT
-        (npValueOfBeat as NumberPicker).minValue = 1
-        (npValueOfBeat as NumberPicker).displayedValues = arrayOf("1", "2", "4", "8", "16", "32", "64")
-        (npValueOfBeat as NumberPicker).wrapSelectorWheel = false
-        (npValueOfBeat as NumberPicker).value = model.valueOfBeatsLiveData.value ?: 3
-        (npValueOfBeat as NumberPicker).typeface = ResourcesCompat.getFont(this, R.font.xolonium_regular)
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             pbTrainingTime.setProgressColor(resources.getColor(R.color.colorAccent, theme))
             pbTrainingTime.setTextColor(resources.getColor(R.color.colorAccent, theme))
@@ -197,14 +191,6 @@ class MainActivity : AppCompatActivity() {
             @Suppress("DEPRECATION")
             pbTrainingTime.setTextColor(resources.getColor(R.color.colorAccent))
         }
-
-        val beatsPerBarSubject = PublishSubject.create<Int>()
-
-        beatPerBarDisposable = beatsPerBarSubject.debounce(500, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { beatsPerBar ->
-                    model.beatsPerBarLiveData.postValue(beatsPerBar)
-                }
 
         tickServiceIntent = Intent(this, TickService::class.java)
 
@@ -261,11 +247,41 @@ class MainActivity : AppCompatActivity() {
 
         model.beatsPerBarLiveData.observe(this, Observer {
             if (it != null) {
-                (npBeatsPerBar as NumberPicker).value = it
+                btBeatSize.text = getString(R.string.beatsize, it, model.valueOfBeatsLiveData.value ?: 4)
+
                 (llBeats as BeatsContainerView).setBeatsPerBar(it)
                 tickService?.setBeatsSequence((llBeats as BeatsContainerView).getBeatTypeList())
             }
         })
+
+        model.valueOfBeatsLiveData.observe(this, Observer {
+            if (it != null) {
+                btBeatSize.text = getString(R.string.beatsize, model.beatsPerBarLiveData.value ?: 4, it)
+            }
+        })
+
+        btBookmarks.setOnClickListener {
+            if(bookmarksFragment.visibility == View.INVISIBLE) {
+                bookmarksFragment.visibility = View.VISIBLE
+                beatSizeFragment.visibility = View.INVISIBLE
+                btBeatSize.isChecked = false
+                setToggleButtonTextColor(btBeatSize, R.color.colorAccent)
+            } else {
+                bookmarksFragment.visibility = View.INVISIBLE
+            }
+        }
+
+        btBeatSize.setOnClickListener {
+            if(beatSizeFragment.visibility == View.INVISIBLE) {
+                beatSizeFragment.visibility = View.VISIBLE
+                setToggleButtonTextColor(btBeatSize, R.color.colorPrimaryDark)
+                bookmarksFragment.visibility = View.INVISIBLE
+                btBookmarks.isChecked = false
+            } else {
+                setToggleButtonTextColor(btBeatSize, R.color.colorAccent)
+                beatSizeFragment.visibility = View.INVISIBLE
+            }
+        }
 
         playButton.setOnClickListener {
             val service = tickService
@@ -280,15 +296,6 @@ class MainActivity : AppCompatActivity() {
 
         llBeats.setOnViewChangedListener {
             tickService?.setBeatsSequence((llBeats as BeatsContainerView).getBeatTypeList())
-        }
-
-        (npBeatsPerBar as NumberPicker).setOnValueChangedListener { _, _, newValue ->
-            beatsPerBarSubject.onNext(newValue)
-        }
-
-        (npValueOfBeat as NumberPicker).setOnValueChangedListener { _, _, value ->
-            //todo смена длительности ноты
-            model.valueOfBeatsLiveData.postValue(value)
         }
 
         bSettings.setOnClickListener {
@@ -345,6 +352,17 @@ class MainActivity : AppCompatActivity() {
         startService(tickServiceIntent)
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        if(btBeatSize.isChecked) {
+            beatSizeFragment.visibility = View.VISIBLE
+            setToggleButtonTextColor(btBeatSize, R.color.colorPrimaryDark)
+        } else if(btBookmarks.isChecked) {
+            bookmarksFragment.visibility = View.VISIBLE
+        }
+    }
+
     override fun onStop() {
         super.onStop()
         model.beatsValues = llBeats.getBeatTypeListAsString()
@@ -354,9 +372,13 @@ class MainActivity : AppCompatActivity() {
         isBound = false
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        beatPerBarDisposable?.dispose()
+    private fun setToggleButtonTextColor(button: ToggleButton, colorId: Int) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            button.setTextColor(resources.getColor(colorId,theme))
+        } else {
+            @Suppress("DEPRECATION")
+            button.setTextColor(resources.getColor(colorId))
+        }
     }
 
     interface TickListener {

@@ -25,11 +25,11 @@ class Preferences(context: Context) {
         editor.apply()
     }
 
-    /*fun setBeatsPerBar(beats: Int) {
+    fun setBookmarks(bookmarks: String) {
         val editor = pref.edit()
-        editor.putInt("beats_per_bar", beats)
+        editor.putString("bookmarks", bookmarks)
         editor.apply()
-    }*/
+    }
 
     fun setValueOfBeats(value: Int) {
         val editor = pref.edit()
@@ -111,7 +111,8 @@ class Preferences(context: Context) {
 
     fun getLastBpm() = pref.getInt("last_bpm", 60)
     fun getAccentSoundId() = pref.getInt("accent_sound_id", 1)
-    fun getValueOfBeats() = pref.getInt("value_of_beats", 3)
+    fun getBookmarks() = pref.getString("bookmarks", "")
+    fun getValueOfBeats() = pref.getInt("value_of_beats", 4)
     fun getFlasherValue() = pref.getBoolean("flasher", false)
     fun getVibrateValue() = pref.getBoolean("vibrate", false)
     fun getTempoIncStartValue() = pref.getInt("startBpm", 90)

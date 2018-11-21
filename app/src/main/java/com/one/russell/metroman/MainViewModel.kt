@@ -4,6 +4,8 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.content.Context
 import android.os.Bundle
+import java.lang.StringBuilder
+import java.util.*
 import kotlin.properties.Delegates
 
 const val MIN_BPM = 10
@@ -21,6 +23,7 @@ class MainViewModel : ViewModel() {
     var flasherValueLiveData = MutableLiveData<Boolean>()
     var vibrateValueLiveData = MutableLiveData<Boolean>()
     var beatsValues = String()
+    val bookmarks = ArrayList<Int>()
     var adShowAttempts = 2
 
     var tempoIncStartValue = 90
@@ -39,6 +42,13 @@ class MainViewModel : ViewModel() {
         prefs = Preferences(context)
 
         beatsValues = prefs.getBeatsValues()
+
+        bookmarks.clear() //For screen rotation case
+        val bookmarksStr = prefs.getBookmarks()
+        val st = StringTokenizer(bookmarksStr, ",")
+        while (st.hasMoreTokens()) {
+            bookmarks.add(Integer.parseInt(st.nextToken()))
+        }
 
         soundPresetLiveData.postValue(prefs.getAccentSoundId())
         bpmLiveData.postValue(prefs.getLastBpm())
@@ -142,10 +152,13 @@ class MainViewModel : ViewModel() {
         val lastBpm = bpmLiveData.value ?: 10
         prefs.setLastBpm(lastBpm)
 
-        /*val beatsPerBar = beatsPerBarLiveData.value ?: 4
-        prefs.setBeatsPerBar(beatsPerBar)*/
+        val bookmarksStr = StringBuilder()
+        for (i in bookmarks) {
+            bookmarksStr.append(i).append(",")
+        }
+        prefs.setBookmarks(bookmarksStr.toString())
 
-        val valueOfBeats = valueOfBeatsLiveData.value ?: 3
+        val valueOfBeats = valueOfBeatsLiveData.value ?: 4
         prefs.setValueOfBeats(valueOfBeats)
 
         val flasherValue = flasherValueLiveData.value ?: false

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
+    android:foreground="@drawable/frame">
+
+    <com.shawnlin.numberpicker.NumberPicker
+        android:id="@+id/npBeatsPerBar"
+        android:layout_width="0dp"
+        android:layout_height="120dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tvSeparator"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:np_dividerThickness="0dp"
+        app:np_orientation="vertical"
+        app:np_selectedTextColor="@color/colorText"
+        app:np_selectedTextSize="18sp"
+        app:np_textColor="@color/colorText"
+        app:np_textSize="16sp"
+        app:np_wrapSelectorWheel="false" />
+
+    <TextView
+        android:id="@+id/tvSeparator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/slash"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/npValueOfBeat"
+        app:layout_constraintStart_toEndOf="@id/npBeatsPerBar"
+        app:layout_constraintEnd_toStartOf="@id/npValueOfBeat"
+        app:layout_constraintTop_toTopOf="@+id/npValueOfBeat" />
+
+    <com.shawnlin.numberpicker.NumberPicker
+        android:id="@+id/npValueOfBeat"
+        android:layout_width="0dp"
+        android:layout_height="120dp"
+        app:layout_constraintStart_toEndOf="@id/tvSeparator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:np_dividerThickness="0dp"
+        app:np_orientation="vertical"
+        app:np_selectedTextColor="@color/colorText"
+        app:np_selectedTextSize="18sp"
+        app:np_textColor="@color/colorText"
+        app:np_textSize="16sp"
+        app:np_wrapSelectorWheel="false" />
+
+</android.support.constraint.ConstraintLayout>
