@@ -187,7 +187,7 @@ void ClickPlayer::callback_handler() {
 
     status = gJavaVM->GetEnv((void **) &env, JNI_VERSION_1_6);
     if (status < 0) {
-        status = gJavaVM->AttachCurrentThread(&env, NULL);
+        status = gJavaVM->AttachCurrentThread(&env, nullptr);
         if (status < 0) {
             return;
         }

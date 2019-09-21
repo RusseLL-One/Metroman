@@ -33,7 +33,7 @@
         <!--ads:adUnitId="ca-app-pub-4449968809046813/5702536714"-->
         <!--ads:adUnitId="ca-app-pub-3940256099942544/6300978111" testkey-->
 
-        <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/clMainActivity"
@@ -73,7 +73,7 @@
                 app:layout_constraintStart_toEndOf="@id/bTempoTrain"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.one.russell.metroman.views.BeatsContainerView
+            <com.one.russell.metronome_kotlin.views.BeatsContainerView
                 android:id="@+id/llBeats"
                 android:layout_width="0dp"
                 android:layout_height="60dp"
@@ -98,7 +98,7 @@
                 app:layout_constraintStart_toEndOf="@id/vLine"
                 app:layout_constraintTop_toBottomOf="@id/llBeats" />
 
-            <com.one.russell.metroman.views.CircularProgressBar
+            <com.one.russell.metronome_kotlin.views.CircularProgressBar
                 android:id="@+id/pbTrainingTime"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -110,7 +110,7 @@
                 app:layout_constraintStart_toEndOf="@id/vLine"
                 app:layout_constraintTop_toBottomOf="@id/tvTrainingTitle" />
 
-            <com.one.russell.metroman.views.RotaryKnobView
+            <com.one.russell.metronome_kotlin.views.RotaryKnobView
                 android:id="@+id/rotaryKnob"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -213,7 +213,7 @@
                 app:layout_constraintTop_toTopOf="@id/rotaryKnob"
                 app:layout_constraintEnd_toStartOf="@id/rotaryKnob"/>
 
-            <com.one.russell.metroman.views.BeatLineView
+            <com.one.russell.metronome_kotlin.views.BeatLineView
                 android:id="@+id/vLine"
                 android:layout_width="50dp"
                 android:layout_height="0dp"
@@ -245,7 +245,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/llBeats"/>
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
 

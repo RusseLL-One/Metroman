@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "140145435091",
+    "firebase_url": "https://metroman-cef91.firebaseio.com",
+    "project_id": "metroman-cef91",
+    "storage_bucket": "metroman-cef91.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:140145435091:android:85d8272902c4df4aa40f26",
+        "android_client_info": {
+          "package_name": "com.one.russell.metronome_kotlin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "140145435091-1d4n4lkof9oib73kl8q3v1im7umroph1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6AWr7RjXXejjKxluVDyYvN9PzIcT7pfM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "140145435091-1d4n4lkof9oib73kl8q3v1im7umroph1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

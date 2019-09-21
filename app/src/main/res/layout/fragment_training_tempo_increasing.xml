@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:fillViewport="true">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:animateLayoutChanges="true">
@@ -62,7 +62,7 @@
             app:np_textColor="@color/colorText"
             app:np_textSize="14sp" />
 
-        <android.support.design.widget.TabLayout
+        <com.google.android.material.tabs.TabLayout
             android:id="@+id/tempoIncTabLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -190,6 +190,6 @@
             app:layout_constraintStart_toStartOf="@id/startValue"
             app:layout_constraintTop_toTopOf="@id/startValue" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

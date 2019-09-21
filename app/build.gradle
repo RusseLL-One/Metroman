@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 
+apply plugin: 'io.fabric'
+
 apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
@@ -7,12 +9,12 @@ apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.one.russell.metronome_kotlin"
+        applicationId 'com.one.russell.metronome_kotlin'
         minSdkVersion 19
         targetSdkVersion 28
         versionCode 5
         versionName "1.1.2"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
                 cppFlags "-std=c++14"
@@ -27,11 +29,18 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //buildConfigField "String", "ADMOB_BANNER_KEY", "ca-app-pub-4449968809046813/5702536714"
+            //buildConfigField "String", "ADMOB_INTERSTITIAL_KEY", "ca-app-pub-4449968809046813/7722652240"
+        }
+        debug {
+            minifyEnabled true
+            //buildConfigField "String", "ADMOB_BANNER_KEY", "ca-app-pub-3940256099942544/6300978111"
+            //buildConfigField "String", "ADMOB_INTERSTITIAL_KEY", "ca-app-pub-3940256099942544/1033173712"
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility '1.8'
+        targetCompatibility '1.8'
     }
     buildToolsVersion '28.0.3'
     externalNativeBuild {
@@ -44,18 +53,18 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "com.android.support:design:28.0.0"
-    implementation "com.android.support:customtabs:28.0.0"
-    implementation "com.android.support:support-media-compat:28.0.0"
-    implementation "com.android.support:support-v13:28.0.0"
-    implementation 'com.google.android.gms:play-services-ads:17.0.0'
-    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.browser:browser:1.0.0'
+    implementation 'androidx.media:media:1.1.0'
+    implementation 'androidx.legacy:legacy-support-v13:1.0.0'
+    implementation 'com.google.android.gms:play-services-ads:18.2.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.shawnlin:number-picker:2.4.6'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
-    implementation 'android.arch.lifecycle:extensions:1.1.1'
-    implementation 'com.github.bumptech.glide:glide:4.6.1'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    implementation 'com.google.firebase:firebase-analytics:17.2.0'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 }
+
+apply plugin: 'com.google.gms.google-services'

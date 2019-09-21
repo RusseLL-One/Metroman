@@ -10,7 +10,7 @@ extern "C" {
 std::unique_ptr<ClickPlayer> player;
 
 JNIEXPORT void JNICALL
-Java_com_one_russell_metroman_TickService_native_1init(
+Java_com_one_russell_metronome_1kotlin_TickService_native_1init(
         JNIEnv *env,
         jobject instance,
         jobject jAssetManager) {
@@ -25,7 +25,7 @@ Java_com_one_russell_metroman_TickService_native_1init(
 }
 
 JNIEXPORT void JNICALL
-Java_com_one_russell_metroman_TickService_native_1set_1beatsequence(
+Java_com_one_russell_metronome_1kotlin_TickService_native_1set_1beatsequence(
         JNIEnv *env,
         jobject instance,
         jobject sequence) {
@@ -47,21 +47,21 @@ Java_com_one_russell_metroman_TickService_native_1set_1beatsequence(
 }
 
 JNIEXPORT void JNICALL
-Java_com_one_russell_metroman_TickService_native_1start_1clicking(
+Java_com_one_russell_metronome_1kotlin_TickService_native_1start_1clicking(
         JNIEnv *env,
         jobject instance) {
     player->play();
 }
 
 JNIEXPORT void JNICALL
-Java_com_one_russell_metroman_TickService_native_1stop_1clicking(
+Java_com_one_russell_metronome_1kotlin_TickService_native_1stop_1clicking(
         JNIEnv *env,
         jobject instance) {
     player->stop();
 }
 
 JNIEXPORT void JNICALL
-Java_com_one_russell_metroman_TickService_native_1set_1bpm(
+Java_com_one_russell_metronome_1kotlin_TickService_native_1set_1bpm(
         JNIEnv *pEnv,
         jobject pThis,
         int16_t bpm) {
@@ -69,7 +69,7 @@ Java_com_one_russell_metroman_TickService_native_1set_1bpm(
 }
 
 JNIEXPORT void JNICALL
-Java_com_one_russell_metroman_TickService_native_1set_1soundpreset(
+Java_com_one_russell_metronome_1kotlin_TickService_native_1set_1soundpreset(
         JNIEnv *pEnv,
         jobject pThis,
         int8_t id) {
@@ -77,7 +77,7 @@ Java_com_one_russell_metroman_TickService_native_1set_1soundpreset(
 }
 
 JNIEXPORT void JNICALL
-Java_com_one_russell_metroman_TickService_native_1start_1tempo_1increasing_1by_1bars(
+Java_com_one_russell_metronome_1kotlin_TickService_native_1start_1tempo_1increasing_1by_1bars(
         JNIEnv *pEnv,
         jobject pThis,
         int16_t startBpm,
@@ -88,7 +88,7 @@ Java_com_one_russell_metroman_TickService_native_1start_1tempo_1increasing_1by_1
 }
 
 JNIEXPORT void JNICALL
-Java_com_one_russell_metroman_TickService_native_1start_1tempo_1increasing_1by_1time(
+Java_com_one_russell_metronome_1kotlin_TickService_native_1start_1tempo_1increasing_1by_1time(
         JNIEnv *pEnv,
         jobject pThis,
         int16_t startBpm,
@@ -98,7 +98,7 @@ Java_com_one_russell_metroman_TickService_native_1start_1tempo_1increasing_1by_1
 }
 
 JNIEXPORT void JNICALL
-Java_com_one_russell_metroman_TickService_native_1start_1bar_1dropping_1by_1random(
+Java_com_one_russell_metronome_1kotlin_TickService_native_1start_1bar_1dropping_1by_1random(
         JNIEnv *pEnv,
         jobject pThis,
         int8_t chance) {
@@ -106,7 +106,7 @@ Java_com_one_russell_metroman_TickService_native_1start_1bar_1dropping_1by_1rand
 }
 
 JNIEXPORT void JNICALL
-Java_com_one_russell_metroman_TickService_native_1start_1bar_1dropping_1by_1count(
+Java_com_one_russell_metronome_1kotlin_TickService_native_1start_1bar_1dropping_1by_1count(
         JNIEnv *pEnv,
         jobject pThis,
         int8_t normalBars,
@@ -115,7 +115,7 @@ Java_com_one_russell_metroman_TickService_native_1start_1bar_1dropping_1by_1coun
 }
 
 JNIEXPORT void JNICALL
-Java_com_one_russell_metroman_TickService_native_1start_1beat_1dropping(
+Java_com_one_russell_metronome_1kotlin_TickService_native_1start_1beat_1dropping(
         JNIEnv *pEnv,
         jobject pThis,
         int8_t chance) {
@@ -123,14 +123,14 @@ Java_com_one_russell_metroman_TickService_native_1start_1beat_1dropping(
 }
 
 JNIEXPORT void JNICALL
-Java_com_one_russell_metroman_MainActivity_native_1tap_1click(
+Java_com_one_russell_metronome_1kotlin_MainActivity_native_1tap_1click(
         JNIEnv *pEnv,
         jobject pThis) {
     player->playRotateClick();
 }
 
 JNIEXPORT void JNICALL
-Java_com_one_russell_metroman_views_RotaryKnobView_native_1rotate_1click(
+Java_com_one_russell_metronome_1kotlin_views_RotaryKnobView_native_1rotate_1click(
         JNIEnv *pEnv,
         jobject pThis) {
     player->playRotateClick();
