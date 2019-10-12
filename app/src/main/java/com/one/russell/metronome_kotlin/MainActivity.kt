@@ -27,6 +27,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.ToggleButton
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.InterstitialAd
 import com.google.android.gms.ads.MobileAds
 import com.one.russell.metronome_kotlin.fragments.BeatsizeSubfragment
@@ -61,13 +62,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onStartClicking() {
-            Glide.with(this@MainActivity)
+            Glide.with(applicationContext)
                     .load(R.drawable.pause)
                     .into(playButton)
         }
 
         override fun onStopClicking(isAutostop: Boolean) {
-            Glide.with(this@MainActivity)
+            Glide.with(applicationContext)
                     .load(R.drawable.play)
                     .into(playButton)
             if(!isAutostop) {
@@ -107,14 +108,15 @@ class MainActivity : AppCompatActivity() {
         setTheme(R.style.AppTheme)
         setContentView(R.layout.activity_main)
 
-        MobileAds.initialize(this, "ca-app-pub-4449968809046813~5053592036")
+        MobileAds.initialize(this, getString(R.string.admob_api_key))
 
-        val adRequest = AdRequest.Builder().build()
+        val adRequest = AdRequest.Builder()
+                //.addTestDevice(getString(R.string.test_device_id))
+                .build()
         adView.loadAd(adRequest)
 
         mInterstitialAd = InterstitialAd(this)
-        mInterstitialAd?.adUnitId = "ca-app-pub-3940256099942544/1033173712" //testkey
-        //mInterstitialAd?.adUnitId = "ca-app-pub-4449968809046813/7722652240"
+        mInterstitialAd?.adUnitId = getString(R.string.admob_interstitial_key)
         mInterstitialAd?.loadAd(AdRequest.Builder().build())
 
         if(supportFragmentManager.findFragmentByTag("bookmarks_fragment") == null) {
@@ -134,20 +136,20 @@ class MainActivity : AppCompatActivity() {
                     .load(R.drawable.background_land)
                     .into(background)
         } else {
-            Glide.with(this)
+            Glide.with(applicationContext)
                     .load(R.drawable.background)
                     .into(background)
         }
 
-        Glide.with(this)
+        Glide.with(applicationContext)
                 .load(R.drawable.tap)
                 .into(tapButton)
 
-        Glide.with(this@MainActivity)
+        Glide.with(applicationContext)
                 .load(R.drawable.pause)
                 .into(playButton)
 
-        Glide.with(this)
+        Glide.with(applicationContext)
                 .load(R.drawable.play)
                 .into(playButton)
 
@@ -332,14 +334,17 @@ class MainActivity : AppCompatActivity() {
                         } else {
                             //Если интервал нажатий слишком большой, сбрасываем последовательность
                             isFirstClick = true
+                            prevTouchInterval = 0L
                         }
                     } else {
                         //Если интервал нажатий слишком маленький, устанавливаем его минимальное значение
                         prevTouchInterval = (60000 / MAX_BPM).toLong()
                     }
 
-                    val bpm = (60000 / prevTouchInterval).toInt()
-                    model.setBpmLiveData(bpm)
+                    if (prevTouchInterval > 0) {
+                        val bpm = (60000 / prevTouchInterval).toInt()
+                        model.setBpmLiveData(bpm)
+                    }
                 }
                 prevTouchTime = System.currentTimeMillis()
             }

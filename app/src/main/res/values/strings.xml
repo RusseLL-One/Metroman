@@ -34,4 +34,9 @@
     <string name="increase_on_bpm">Increase on (BPM)</string>
     <string name="time">Time (minutes)</string>
     <string name="vibrate">Vibrate</string>
+
+    <string name="test_device_id" translatable="false">"CB0F4DD2D83069293D90AB874ECE33A7"</string>
+    <string name="admob_api_key" translatable="false">"ca-app-pub-4449968809046813~5053592036"</string>
+    <string name="admob_banner_key" translatable="false">"ca-app-pub-4449968809046813/5702536714"</string>
+    <string name="admob_interstitial_key" translatable="false">"ca-app-pub-4449968809046813/7722652240"</string>
 </resources>

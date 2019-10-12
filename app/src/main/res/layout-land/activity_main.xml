@@ -25,17 +25,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             ads:adSize="SMART_BANNER"
-            ads:adUnitId="ca-app-pub-4449968809046813/5702536714"
-            ads:layout_constraintBottom_toBottomOf="parent"
-            ads:layout_constraintEnd_toEndOf="parent"
-            ads:layout_constraintStart_toStartOf="parent" />
+            ads:adUnitId="@string/admob_banner_key" />
 
-        <!--ads:adUnitId="ca-app-pub-4449968809046813/5702536714"-->
-        <!--ads:adUnitId="ca-app-pub-3940256099942544/6300978111" testkey-->
-
-        <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/clMainActivity"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -94,7 +86,7 @@
                 android:textSize="12sp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@id/pbTrainingTime"
-                app:layout_constraintEnd_toStartOf="@id/npBeatsPerBar"
+                app:layout_constraintEnd_toStartOf="@id/btBookmarks"
                 app:layout_constraintStart_toEndOf="@id/vLine"
                 app:layout_constraintTop_toBottomOf="@id/llBeats" />
 
@@ -106,7 +98,7 @@
                 android:visibility="gone"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/npBeatsPerBar"
+                app:layout_constraintEnd_toStartOf="@id/btBookmarks"
                 app:layout_constraintStart_toEndOf="@id/vLine"
                 app:layout_constraintTop_toBottomOf="@id/tvTrainingTitle" />
 

@@ -74,17 +74,19 @@ class BookmarksSubfragment : Fragment() {
         }
 
         btRemove.setOnClickListener {
-            model.bookmarks.removeAt(current - 1)
-            count = model.bookmarks.size
-            if (current > count) {
-                current = count
-            }
-            if(count == 0) {
-                bookmarkValue.text = ""
-                tvCount.text = current.toString() + "/" + count.toString()
-            } else {
-                bookmarkValue.text = model.bookmarks[current - 1].toString()
-                tvCount.text = current.toString() + "/" + count.toString()
+            if(current >= 1) {
+                model.bookmarks.removeAt(current - 1)
+                count = model.bookmarks.size
+                if (current > count) {
+                    current = count
+                }
+                if (count == 0) {
+                    bookmarkValue.text = ""
+                    tvCount.text = current.toString() + "/" + count.toString()
+                } else {
+                    bookmarkValue.text = model.bookmarks[current - 1].toString()
+                    tvCount.text = current.toString() + "/" + count.toString()
+                }
             }
         }
 
